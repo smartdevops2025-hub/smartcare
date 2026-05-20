@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMARTCARE — Nurse Induction Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0f4f8;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main layout */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* ========= LEFT SIDEBAR ========= */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0b3b4f 0%, #0f4a5e 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            transition: all 0.2s;
+        }
+
+        .sidebar-header {
+            padding: 1.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        .user-info {
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.08);
+            margin: 1rem 1rem 0.5rem 1rem;
+            border-radius: 1rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.2rem;
+        }
+
+        .privilege-badge-side {
+            display: inline-block;
+            background: #2c7a5e;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            margin-top: 0.4rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            margin: 0.2rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: #e0f2fe;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left: 3px solid #7ab7c7;
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            width: 28px;
+        }
+
+        .logout-btn {
+            margin: 1rem;
+            padding: 0.7rem;
+            background: rgba(220, 80, 80, 0.2);
+            border: 1px solid rgba(220, 80, 80, 0.4);
+            border-radius: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 80, 80, 0.4);
+        }
+
+        /* ========= MAIN CONTENT ========= */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        /* Page header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0c4e6e;
+        }
+
+        .page-desc {
+            color: #4b5563;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Tracker Table */
+        .tracker-card {
+            background: white;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            padding: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.9rem 0.5rem;
+            background: #f8fafc;
+            color: #1e293b;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 0.8rem 0.5rem;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3e3;
+            color: #b45309;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .privilege-l1 { color: #2563eb; font-weight: 600; }
+        .privilege-l2 { color: #16a34a; font-weight: 600; }
+        .privilege-l3 { color: #7c3aed; font-weight: 600; }
+
+        .filter-bar {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input, .filter-bar select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-small {
+            background: #0f5b63;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- LEFT SIDEBAR (Privilege-based menu) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>SMARTCARE</h2>
+            <p>Induction & privileging</p>
+        </div>
+        <div class="user-info" id="userInfo">
+            <!-- Dynamic user info will be injected -->
+        </div>
+        <div class="nav-menu" id="navMenu">
+            <!-- Dynamic menu based on privilege -->
+        </div>
+        <div class="logout-btn" onclick="logout()">← Logout</div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="main-content" id="mainContent">
+        <!-- Dynamic page content loads here -->
+    </div>
+</div>
+
+<script>
+    // ========== MOCK USER DATA (In real app, from login session) ==========
+    // For demo, we'll simulate different users via URL parameter or localStorage
+    // Default: Admin (shows everything)
+    let currentUser = {
+        id: "ADMIN999",
+        name: "System Admin",
+        role: "admin",
+        privilege: 3,
+        department: "All"
+    };
+
+    // Check if coming from login (in production, use session)
+    // For demo, you can change this to test different views:
+    // "NURSE101" (Level1), "NURSE102" (Level2), "NURSE103" (Level3), "SUP001" (Supervisor)
+    const demoUserId = localStorage.getItem('demoUser') || "ADMIN999";
+    
+    // User database (same as login page)
+    const usersDB = {
+        "ADMIN999": { name: "System Admin", role: "admin", privilege: 3, department: "All" },
+        "NURSE101": { name: "Sarah Johnson", role: "nurse", privilege: 1, department: "ICU" },
+        "NURSE102": { name: "Michael Chen", role: "nurse", privilege: 2, department: "OT" },
+        "NURSE103": { name: "Emma Davis", role: "nurse", privilege: 3, department: "Infection Control" },
+        "SUP001": { name: "Dr. James Wilson", role: "supervisor", privilege: 2, department: "ICU" }
+    };
+    
+    if(usersDB[demoUserId]) {
+        currentUser = { id: demoUserId, ...usersDB[demoUserId] };
+    }
+
+    // ========== PRIVILEGE-BASED MENU DEFINITION ==========
+    const allMenuItems = [
+        { id: "tracker", name: "📋 Nurse Tracker", icon: "📊", roles: ["admin", "supervisor", "nurse_privilege_3"] },
+        { id: "preEval", name: "📝 Pre-evaluation", icon: "✍️", roles: ["admin", "nurse", "supervisor"] },
+        { id: "trainingStatus", name: "✅ Training Status", icon: "🎓", roles: ["admin", "supervisor"] },
+        { id: "postEval", name: "📈 Post-evaluation", icon: "📊", roles: ["admin", "nurse_privilege_2", "nurse_privilege_3", "supervisor"] },
+        { id: "reports", name: "📑 Reports", icon: "📄", roles: ["admin", "supervisor", "nurse_privilege_3"] },
+        { id: "userManagement", name: "👥 User Management", icon: "⚙️", roles: ["admin"] },
+        { id: "settings", name: "🔧 System Settings", icon: "⚙️", roles: ["admin"] }
+    ];
+
+    function getMenuForUser(user) {
+        if(user.role === "admin") {
+            return allMenuItems; // Admin sees everything
+        }
+        
+        // Filter based on role and privilege
+        return allMenuItems.filter(item => {
+            if(user.role === "supervisor") {
+                return item.roles.includes("supervisor");
+            }
+            if(user.role === "nurse") {
+                if(user.privilege === 3) {
+                    return item.roles.includes("nurse_privilege_3") || item.roles.includes("nurse");
+                }
+                if(user.privilege === 2) {
+                    return item.roles.includes("nurse_privilege_2") || item.roles.includes("nurse");
+                }
+                // privilege level 1
+                return item.roles.includes("nurse") && !item.roles.includes("nurse_privilege_2") && !item.roles.includes("nurse_privilege_3");
+            }
+            return false;
+        });
+    }
+
+    // ========== MOCK NURSES DATA (Tracker) ==========
+    let nursesData = [
+        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "ICU", preEval: 72, postEval: null, trainingStatus: "In Progress", privilege: 1, joiningDate: "2025-01-15" },
+        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "OT", preEval: 88, postEval: 91, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-11-20" },
+        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: 94, postEval: 96, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-08-10" },
+        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: 65, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01" },
+        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15" }
+    ];
+
+    // Render Tracker Sheet
+    function renderTrackerSheet() {
+        const filterDept = document.getElementById('filterDept')?.value || 'all';
+        const searchTerm = document.getElementById('searchName')?.value.toLowerCase() || '';
+        
+        let filtered = nursesData.filter(nurse => {
+            const matchDept = filterDept === 'all' || nurse.department === filterDept;
+            const matchSearch = nurse.name.toLowerCase().includes(searchTerm) || nurse.empId.toLowerCase().includes(searchTerm);
+            return matchDept && matchSearch;
+        });
+        
+        let html = `
+            <div class="page-header">
+                <h1 class="page-title">📋 Nurse Tracker Sheet</h1>
+                <p class="page-desc">Track induction progress, training status & privilege levels</p>
+            </div>
+            <div class="tracker-card">
+                <div class="filter-bar">
+                    <input type="text" id="searchName" placeholder="🔍 Search by name or ID" onkeyup="renderTrackerSheet()">
+                    <select id="filterDept" onchange="renderTrackerSheet()">
+                        <option value="all">All Departments</option>
+                        <option value="ICU">ICU</option>
+                        <option value="OT">OT</option>
+                        <option value="Infection Control">Infection Control</option>
+                    </select>
+                    <button class="btn-small" onclick="exportReport()">📎 Export Report</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        filtered.forEach(n => {
+            let privilegeClass = n.privilege === 1 ? 'privilege-l1' : (n.privilege === 2 ? 'privilege-l2' : 'privilege-l3');
+            let privilegeText = n.privilege === 1 ? '⭐ Level 1 (Trainee)' : (n.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : '<span class="status-pending">⏳ In Progress</span>';
+            html += `<tr>
+                <td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td>
+                <td>${n.preEval}%</td><td>${n.postEval ? n.postEval+'%' : '—'}</td>
+                <td>${statusBadge}</td>
+                <td class="${privilegeClass}">${privilegeText}</td>
+                <td>${n.joiningDate}</td>
+            </tr>`;
+        });
+        
+        html += `</tbody></table><p style="margin-top:1rem; font-size:0.7rem; color:#666;">Showing ${filtered.length} nurses</p></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+    }
+
+    // Placeholder for other pages
+    function renderPlaceholder(pageName) {
+        document.getElementById('mainContent').innerHTML = `
+            <div class="page-header">
+                <h1 class="page-title">${pageName}</h1>
+                <p class="page-desc">This module will be fully implemented in the next phase.</p>
+            </div>
+            <div class="tracker-card" style="padding:3rem; text-align:center; color:#6b7280;">
+                🚧 Coming soon: ${pageName}<br><br>
+                <small>Backend integration & forms will be added here.</small>
+            </div>
+        `;
+    }
+
+    // ========== RENDER SIDEBAR & INITIAL PAGE ==========
+    function initDashboard() {
+        // Sidebar user info
+        const privLabel = currentUser.privilege === 3 ? "Level 3 (Preceptor)" : (currentUser.privilege === 2 ? "Level 2 (Independent)" : (currentUser.privilege === 1 ? "Level 1 (Trainee)" : "Admin Access"));
+        document.getElementById('userInfo').innerHTML = `
+            <div class="user-name">👤 ${currentUser.name}</div>
+            <div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div>
+            <div class="privilege-badge-side">${privLabel}</div>
+        `;
+        
+        const menuItems = getMenuForUser(currentUser);
+        let menuHtml = '';
+        menuItems.forEach(item => {
+            menuHtml += `<div class="nav-item" onclick="navigateTo('${item.id}', '${item.name}')">
+                <span class="nav-icon">${item.icon}</span> <span>${item.name}</span>
+            </div>`;
+        });
+        document.getElementById('navMenu').innerHTML = menuHtml;
+        
+        // Default to Tracker if accessible, else first menu item
+        const hasTracker = menuItems.some(i => i.id === 'tracker');
+        if(hasTracker) {
+            navigateTo('tracker', 'Nurse Tracker');
+        } else if(menuItems.length) {
+            navigateTo(menuItems[0].id, menuItems[0].name);
+        }
+    }
+    
+    function navigateTo(moduleId, moduleName) {
+        if(moduleId === 'tracker') renderTrackerSheet();
+        else renderPlaceholder(moduleName);
+        
+        // Update active state
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        event?.target?.closest('.nav-item')?.classList.add('active');
+    }
+    
+    function logout() {
+        localStorage.removeItem('demoUser');
+        window.location.href = 'index.html';
+    }
+    
+    function exportReport() {
+        alert("📎 Report exported (CSV format) - Full reports module coming soon.");
+    }
+    
+    // Make functions global
+    window.renderTrackerSheet = renderTrackerSheet;
+    window.navigateTo = navigateTo;
+    window.logout = logout;
+    window.exportReport = exportReport;
+    
+    // Start
+    initDashboard();
+</script>
+</body>
+</html>
