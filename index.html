@@ -66,16 +66,10 @@
         }
 
         .app-name {
-            font-size: 2.4rem;
+            font-size: 2.8rem;
             font-weight: 700;
             letter-spacing: -0.3px;
             line-height: 1.2;
-        }
-
-        .app-name span {
-            font-weight: 300;
-            font-size: 1.8rem;
-            color: #cffafe;
         }
 
         .tagline {
@@ -137,7 +131,7 @@
             margin-bottom: 0.4rem;
         }
 
-        input, select {
+        input {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid #d1d9e6;
@@ -147,7 +141,7 @@
             background: #fefefe;
         }
 
-        input:focus, select:focus {
+        input:focus {
             outline: none;
             border-color: #2c7a5e;
             box-shadow: 0 0 0 3px rgba(44,122,94,0.2);
@@ -194,6 +188,16 @@
             margin-right: 0.4rem;
         }
 
+        /* Hidden admin note - only visible to you */
+        .admin-secret-note {
+            margin-top: 1rem;
+            font-size: 0.65rem;
+            color: #7f8c8d;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+
         @media (max-width: 720px) {
             .login-container {
                 flex-direction: column;
@@ -225,7 +229,7 @@
         <!-- LEFT SIDE: BRAND + MODULES + PRIVILEGE OVERVIEW -->
         <div class="brand-panel">
             <div class="app-icon">🫀⚕️</div>
-            <div class="app-name">SMARTCARE <span>| induct</span></div>
+            <div class="app-name">SMARTCARE</div>
             <div class="tagline">
                 Competency-based nursing induction · ICU · OT · Infection Control
             </div>
@@ -243,38 +247,34 @@
             </div>
         </div>
 
-        <!-- RIGHT SIDE: LOGIN FORM -->
+        <!-- RIGHT SIDE: LOGIN FORM (NO ROLE DROPDOWN) -->
         <div class="form-panel">
             <div class="form-header">
                 <h2>Welcome back</h2>
-                <p>Sign in to access induction & training dashboard</p>
+                <p>Sign in to access your induction dashboard</p>
             </div>
 
             <form id="loginForm">
                 <div class="input-group">
                     <label>Employee ID / Email</label>
-                    <input type="text" id="username" placeholder="e.g., NURSE1001 / admin@smartcare.com" required>
+                    <input type="text" id="username" placeholder="e.g., NURSE1001" required>
                 </div>
                 <div class="input-group">
                     <label>Password</label>
                     <input type="password" id="password" placeholder="••••••••" required>
                 </div>
-                <div class="input-group">
-                    <label>Role</label>
-                    <select id="roleSelect">
-                        <option value="admin">Admin (Full oversight)</option>
-                        <option value="nurse">Staff Nurse</option>
-                        <option value="supervisor">Supervisor / Educator</option>
-                    </select>
-                </div>
                 <button type="submit" class="login-btn">→ Access SMARTCARE</button>
             </form>
 
             <div class="demo-hint">
-                🔐 <strong>Demo access</strong><br>
-                Admin: admin@smartcare / pass123<br>
-                Nurse: nurse01 / nurse123 (Privileges based on training)<br>
-                Supervisor: supo@smartcare / supo123
+                🔐 <strong>Staff Nurse Demo</strong><br>
+                Email: nurse01@smartcare.com / Password: nurse123<br>
+                (Privileges & left panel access based on your role)
+            </div>
+            
+            <!-- Hidden admin info - only you know this -->
+            <div class="admin-secret-note">
+                ⚙️ Admin access: Use employee ID: <strong>ADMIN999</strong> (regular login screen)
             </div>
         </div>
     </div>
@@ -284,37 +284,77 @@
 </div>
 
 <script>
-    // Simple front-end simulation of role-based redirect (for demonstration)
-    // In real implementation, connect with backend JWT validation.
+    // User database simulation (privilege-based access)
+    // In real backend, this would be securely stored
+    const users = {
+        // Admin (secret - not shown in role dropdown)
+        "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3 },
+        
+        // Staff nurses - different privileges based on training completion
+        "NURSE101": { password: "nurse123", role: "nurse", name: "Sarah Johnson", privilege: 1, department: "ICU" },
+        "NURSE102": { password: "nurse123", role: "nurse", name: "Michael Chen", privilege: 2, department: "OT" },
+        "NURSE103": { password: "nurse123", role: "nurse", name: "Emma Davis", privilege: 3, department: "Infection Control" },
+        
+        // Supervisor
+        "SUP001": { password: "super123", role: "supervisor", name: "Dr. James Wilson", privilege: 2, department: "ICU" }
+    };
+
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
-        const role = document.getElementById('roleSelect').value;
 
-        // Very basic demo validation (just for UI flow)
         if(!username || !password) {
-            alert("Please enter credentials");
+            alert("Please enter your Employee ID/Email and Password");
             return;
         }
 
-        // Simulated login feedback
-        let dashboardMsg = "";
-        if(role === "admin") {
-            dashboardMsg = "Admin Dashboard — You can oversee all modules, modify privileges, and generate reports.";
-        } else if(role === "supervisor") {
-            dashboardMsg = "Supervisor View — Update training completion status & view department tracker.";
-        } else {
-            dashboardMsg = "Nurse Portal — Complete pre-evaluation, view training status, post-evaluation & your privilege level (Level 1/2/3).";
+        // Authenticate user
+        const user = users[username];
+        
+        if(!user || user.password !== password) {
+            alert("❌ Invalid credentials. Please check your Employee ID and Password.");
+            return;
         }
 
-        alert(`✅ Logged in as ${role.toUpperCase()}\n👋 Welcome, ${username}\n\n${dashboardMsg}\n\n(Full dashboard will be built next - tracker, eval, reports)`);
+        // Successful login - show role-specific dashboard preview
+        let dashboardMsg = "";
+        let accessibleModules = [];
         
-        // In real app, redirect to respective dashboard:
-        // if(role === 'admin') window.location.href = '/admin/dashboard';
-        // else if(role === 'supervisor') window.location.href = '/supervisor/tracker';
-        // else window.location.href = '/nurse/my-induction';
+        if(user.role === "admin") {
+            dashboardMsg = "🔐 ADMIN ACCESS — You have full system oversight.";
+            accessibleModules = ["Staff Nurse Entry", "Pre-evaluation", "Training Status", "Post-evaluation", "Reports", "Tracker Sheet", "User Management", "System Settings"];
+        } 
+        else if(user.role === "supervisor") {
+            dashboardMsg = "👩‍🏫 SUPERVISOR ACCESS — You can update training status and view department reports.";
+            accessibleModules = ["Training Status Updater", "Department Reports", "Team Tracker"];
+        } 
+        else {
+            // Staff nurse - modules based on privilege level
+            if(user.privilege === 1) {
+                dashboardMsg = "🟢 LEVEL 1 (Trainee) — Induction in progress. Complete pre-evaluation and training.";
+                accessibleModules = ["My Profile", "Pre-evaluation", "Training Modules", "My Progress"];
+            } 
+            else if(user.privilege === 2) {
+                dashboardMsg = "🟡 LEVEL 2 (Independent Nurse) — Training complete. Post-evaluation available.";
+                accessibleModules = ["My Profile", "Pre-evaluation", "Training Modules", "Post-evaluation", "My Progress", "Basic Reports"];
+            } 
+            else {
+                dashboardMsg = "🔵 LEVEL 3 (Preceptor) — Full access. Can mentor junior nurses.";
+                accessibleModules = ["My Profile", "Pre-evaluation", "Training Modules", "Post-evaluation", "Reports", "Tracker Sheet", "Mentor Dashboard"];
+            }
+        }
+        
+        // Build the accessible modules message
+        const modulesList = accessibleModules.join(", ");
+        
+        alert(`✅ Welcome ${user.name} (${user.role.toUpperCase()})\n\n📋 Your Privilege Level: ${user.privilege || 'N/A'}\n${user.department ? `🏥 Department: ${user.department}\n` : ''}\n${dashboardMsg}\n\n📌 Accessible Modules (Left Panel):\n${modulesList}\n\n(Full dashboard with left panel navigation will load in the next phase)`);
+        
+        // In real implementation:
+        // Store user data in session/localStorage
+        // Redirect to dashboard with role-based left panel menu
+        // window.location.href = "/dashboard.html";
     });
 </script>
 </body>
