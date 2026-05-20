@@ -18,7 +18,6 @@
             overflow: hidden;
         }
 
-        /* Main layout */
         .app-container {
             display: flex;
             height: 100vh;
@@ -34,7 +33,6 @@
             flex-direction: column;
             box-shadow: 2px 0 12px rgba(0,0,0,0.08);
             overflow-y: auto;
-            transition: all 0.2s;
         }
 
         .sidebar-header {
@@ -45,7 +43,6 @@
         .sidebar-header h2 {
             font-size: 1.8rem;
             font-weight: 700;
-            letter-spacing: -0.3px;
         }
 
         .sidebar-header p {
@@ -72,14 +69,20 @@
             margin-top: 0.2rem;
         }
 
-        .privilege-badge-side {
-            display: inline-block;
-            background: #2c7a5e;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            margin-top: 0.4rem;
+        /* Visual Privilege Indicator */
+        .privilege-indicator {
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            border-radius: 0.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
+        .privilege-l1 { background: #3b82f6; color: white; }
+        .privilege-l2 { background: #10b981; color: white; }
+        .privilege-l3 { background: #8b5cf6; color: white; }
+        .privilege-admin { background: #ef4444; color: white; }
+        .privilege-supervisor { background: #f59e0b; color: white; }
 
         .nav-menu {
             flex: 1;
@@ -136,7 +139,6 @@
             padding: 2rem;
         }
 
-        /* Page header */
         .page-header {
             margin-bottom: 2rem;
         }
@@ -153,7 +155,15 @@
             margin-top: 0.3rem;
         }
 
-        /* Tracker Table */
+        /* Cards & Forms */
+        .card {
+            background: white;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
         .tracker-card {
             background: white;
             border-radius: 1.2rem;
@@ -202,10 +212,6 @@
             display: inline-block;
         }
 
-        .privilege-l1 { color: #2563eb; font-weight: 600; }
-        .privilege-l2 { color: #16a34a; font-weight: 600; }
-        .privilege-l3 { color: #7c3aed; font-weight: 600; }
-
         .filter-bar {
             margin-bottom: 1.5rem;
             display: flex;
@@ -220,13 +226,51 @@
             font-size: 0.8rem;
         }
 
-        .btn-small {
+        .btn-small, .quiz-btn {
             background: #0f5b63;
             color: white;
             border: none;
-            padding: 0.4rem 1rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 1.5rem;
             cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .quiz-btn:hover {
+            background: #094a50;
+        }
+
+        .quiz-question {
+            background: #f8fafc;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.8rem;
+        }
+
+        .quiz-question p {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-option {
+            margin: 0.3rem 0 0.3rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quiz-option input {
+            width: auto;
+        }
+
+        .score-display {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e0f2fe;
+            border-radius: 1rem;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -241,58 +285,69 @@
 </head>
 <body>
 <div class="app-container">
-    <!-- LEFT SIDEBAR (Privilege-based menu) -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h2>SMARTCARE</h2>
             <p>Induction & privileging</p>
         </div>
-        <div class="user-info" id="userInfo">
-            <!-- Dynamic user info will be injected -->
-        </div>
-        <div class="nav-menu" id="navMenu">
-            <!-- Dynamic menu based on privilege -->
-        </div>
+        <div class="user-info" id="userInfo"></div>
+        <div class="nav-menu" id="navMenu"></div>
         <div class="logout-btn" onclick="logout()">← Logout</div>
     </div>
-
-    <!-- MAIN CONTENT AREA -->
-    <div class="main-content" id="mainContent">
-        <!-- Dynamic page content loads here -->
-    </div>
+    <div class="main-content" id="mainContent"></div>
 </div>
 
 <script>
-    // ========== MOCK USER DATA (In real app, from login session) ==========
-    // For demo, we'll simulate different users via URL parameter or localStorage
-    // Default: Admin (shows everything)
-    let currentUser = {
-        id: "ADMIN999",
-        name: "System Admin",
-        role: "admin",
-        privilege: 3,
-        department: "All"
-    };
-
-    // Check if coming from login (in production, use session)
-    // For demo, you can change this to test different views:
-    // "NURSE101" (Level1), "NURSE102" (Level2), "NURSE103" (Level3), "SUP001" (Supervisor)
-    const demoUserId = localStorage.getItem('demoUser') || "ADMIN999";
-    
-    // User database (same as login page)
-    const usersDB = {
-        "ADMIN999": { name: "System Admin", role: "admin", privilege: 3, department: "All" },
-        "NURSE101": { name: "Sarah Johnson", role: "nurse", privilege: 1, department: "ICU" },
-        "NURSE102": { name: "Michael Chen", role: "nurse", privilege: 2, department: "OT" },
-        "NURSE103": { name: "Emma Davis", role: "nurse", privilege: 3, department: "Infection Control" },
-        "SUP001": { name: "Dr. James Wilson", role: "supervisor", privilege: 2, department: "ICU" }
-    };
-    
-    if(usersDB[demoUserId]) {
-        currentUser = { id: demoUserId, ...usersDB[demoUserId] };
+    // ========== USER SESSION ==========
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        window.location.href = 'index.html';
     }
 
-    // ========== PRIVILEGE-BASED MENU DEFINITION ==========
+    // ========== NURSES DATA (for tracker) ==========
+    let nursesData = [
+        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15" },
+        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "OT", preEval: 88, postEval: 91, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-11-20" },
+        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: 94, postEval: 96, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-08-10" },
+        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01" },
+        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15" }
+    ];
+
+    // ========== PRE-EVALUATION QUIZZES ==========
+    const quizzes = {
+        "ICU": {
+            title: "ICU Pre-evaluation",
+            questions: [
+                { text: "What is the normal range for adult heart rate?", options: ["40-60 bpm", "60-100 bpm", "100-140 bpm", "20-40 bpm"], correct: 1 },
+                { text: "Which of the following indicates sepsis?", options: ["Temperature >38°C or <36°C", "Heart rate <60 bpm", "Blood pressure >140/90", "Respiratory rate <12"], correct: 0 },
+                { text: "What is the first-line vasopressor in septic shock?", options: ["Dopamine", "Epinephrine", "Norepinephrine", "Phenylephrine"], correct: 2 },
+                { text: "Normal PaO2 range on ABG is:", options: ["35-45 mmHg", "50-60 mmHg", "75-100 mmHg", "100-120 mmHg"], correct: 2 },
+                { text: "Which sedation score is commonly used in ICU?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 }
+            ]
+        },
+        "OT": {
+            title: "OT Pre-evaluation",
+            questions: [
+                { text: "What is the standard surgical hand scrub time?", options: ["1 minute", "2-5 minutes", "10 minutes", "15 minutes"], correct: 1 },
+                { text: "Which of these is a sterile field violation?", options: ["Turning back to sterile field", "Speaking quietly", "Wearing mask", "Using sterile gloves"], correct: 0 },
+                { text: "What is the correct order for donning PPE?", options: ["Gown, mask, gloves, goggles", "Gown, mask, goggles, gloves", "Gloves, gown, mask, goggles", "Mask, goggles, gown, gloves"], correct: 1 },
+                { text: "Surgical site infection risk is highest in which surgery?", options: ["Laparoscopic", "Clean", "Clean-contaminated", "Dirty/infected"], correct: 3 },
+                { text: "What is the ideal temperature range for OT?", options: ["16-18°C", "18-22°C", "22-25°C", "25-28°C"], correct: 1 }
+            ]
+        },
+        "Infection Control": {
+            title: "Infection Control Pre-evaluation",
+            questions: [
+                { text: "What is the most effective way to prevent HAI?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE only"], correct: 1 },
+                { text: "How long should you rub hands during hand hygiene?", options: ["5 seconds", "10-15 seconds", "20-30 seconds", "60 seconds"], correct: 2 },
+                { text: "Which transmission-based precaution is used for TB?", options: ["Contact", "Droplet", "Airborne", "Standard"], correct: 2 },
+                { text: "What color bag is used for infectious waste?", options: ["Black", "Yellow", "Blue", "Red"], correct: 1 },
+                { text: "Needlestick injury first aid includes:", options: ["Wash with soap and water", "Squeeze to bleed", "Apply tourniquet", "Ignore if no blood"], correct: 0 }
+            ]
+        }
+    };
+
+    // ========== PRIVILEGE-BASED MENU ==========
     const allMenuItems = [
         { id: "tracker", name: "📋 Nurse Tracker", icon: "📊", roles: ["admin", "supervisor", "nurse_privilege_3"] },
         { id: "preEval", name: "📝 Pre-evaluation", icon: "✍️", roles: ["admin", "nurse", "supervisor"] },
@@ -304,39 +359,19 @@
     ];
 
     function getMenuForUser(user) {
-        if(user.role === "admin") {
-            return allMenuItems; // Admin sees everything
-        }
-        
-        // Filter based on role and privilege
+        if(user.role === "admin") return allMenuItems;
         return allMenuItems.filter(item => {
-            if(user.role === "supervisor") {
-                return item.roles.includes("supervisor");
-            }
+            if(user.role === "supervisor") return item.roles.includes("supervisor");
             if(user.role === "nurse") {
-                if(user.privilege === 3) {
-                    return item.roles.includes("nurse_privilege_3") || item.roles.includes("nurse");
-                }
-                if(user.privilege === 2) {
-                    return item.roles.includes("nurse_privilege_2") || item.roles.includes("nurse");
-                }
-                // privilege level 1
+                if(user.privilege === 3) return item.roles.includes("nurse_privilege_3") || item.roles.includes("nurse");
+                if(user.privilege === 2) return item.roles.includes("nurse_privilege_2") || item.roles.includes("nurse");
                 return item.roles.includes("nurse") && !item.roles.includes("nurse_privilege_2") && !item.roles.includes("nurse_privilege_3");
             }
             return false;
         });
     }
 
-    // ========== MOCK NURSES DATA (Tracker) ==========
-    let nursesData = [
-        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "ICU", preEval: 72, postEval: null, trainingStatus: "In Progress", privilege: 1, joiningDate: "2025-01-15" },
-        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "OT", preEval: 88, postEval: 91, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-11-20" },
-        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: 94, postEval: 96, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-08-10" },
-        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: 65, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01" },
-        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15" }
-    ];
-
-    // Render Tracker Sheet
+    // ========== RENDER TRACKER ==========
     function renderTrackerSheet() {
         const filterDept = document.getElementById('filterDept')?.value || 'all';
         const searchTerm = document.getElementById('searchName')?.value.toLowerCase() || '';
@@ -364,19 +399,17 @@
                     <button class="btn-small" onclick="exportReport()">📎 Export Report</button>
                 </div>
                 <table>
-                    <thead>
-                        <tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr>
-                    </thead>
+                    <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr></thead>
                     <tbody>
         `;
         
         filtered.forEach(n => {
             let privilegeClass = n.privilege === 1 ? 'privilege-l1' : (n.privilege === 2 ? 'privilege-l2' : 'privilege-l3');
-            let privilegeText = n.privilege === 1 ? '⭐ Level 1 (Trainee)' : (n.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
-            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : '<span class="status-pending">⏳ In Progress</span>';
+            let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3');
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : '<span class="status-pending">⏳ Pending</span>';
             html += `<tr>
                 <td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td>
-                <td>${n.preEval}%</td><td>${n.postEval ? n.postEval+'%' : '—'}</td>
+                <td>${n.preEval ? n.preEval+'%' : '—'}</td><td>${n.postEval ? n.postEval+'%' : '—'}</td>
                 <td>${statusBadge}</td>
                 <td class="${privilegeClass}">${privilegeText}</td>
                 <td>${n.joiningDate}</td>
@@ -387,28 +420,150 @@
         document.getElementById('mainContent').innerHTML = html;
     }
 
-    // Placeholder for other pages
+    // ========== RENDER PRE-EVALUATION ==========
+    function renderPreEvaluation() {
+        const quiz = quizzes[currentUser.department];
+        if (!quiz) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><p>No pre-evaluation available for your department.</p></div>`;
+            return;
+        }
+
+        let html = `
+            <div class="page-header">
+                <h1 class="page-title">📝 ${quiz.title}</h1>
+                <p class="page-desc">Answer all questions to complete your pre-evaluation. Passing score: 70%</p>
+            </div>
+            <div class="card">
+                <form id="preEvalForm">
+        `;
+        
+        quiz.questions.forEach((q, idx) => {
+            html += `<div class="quiz-question">
+                <p>${idx+1}. ${q.text}</p>`;
+            q.options.forEach((opt, optIdx) => {
+                html += `<label class="quiz-option">
+                    <input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}
+                </label>`;
+            });
+            html += `</div>`;
+        });
+        
+        html += `<button type="submit" class="quiz-btn">Submit Pre-evaluation</button></form></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        
+        document.getElementById('preEvalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            quiz.questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if(selected && parseInt(selected.value) === q.correct) score++;
+            });
+            const percentage = Math.round((score / quiz.questions.length) * 100);
+            const passed = percentage >= 70;
+            alert(`📊 Your score: ${percentage}% - ${passed ? 'PASSED ✓' : 'FAILED ✗ (Need 70% to pass)'}`);
+            
+            // Update nurse data
+            const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
+            if(nurseRecord) {
+                nurseRecord.preEval = percentage;
+                if(passed) nurseRecord.trainingStatus = "In Progress";
+            }
+            renderTrackerSheet();
+        });
+    }
+
+    // ========== RENDER POST-EVALUATION ==========
+    function renderPostEvaluation() {
+        const quiz = quizzes[currentUser.department];
+        if (!quiz) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><p>No post-evaluation available.</p></div>`;
+            return;
+        }
+
+        let html = `
+            <div class="page-header">
+                <h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1>
+                <p class="page-desc">Complete after training to assess improvement</p>
+            </div>
+            <div class="card">
+                <form id="postEvalForm">
+        `;
+        
+        quiz.questions.forEach((q, idx) => {
+            html += `<div class="quiz-question">
+                <p>${idx+1}. ${q.text}</p>`;
+            q.options.forEach((opt, optIdx) => {
+                html += `<label class="quiz-option">
+                    <input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}
+                </label>`;
+            });
+            html += `</div>`;
+        });
+        
+        html += `<button type="submit" class="quiz-btn">Submit Post-evaluation</button></form></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        
+        document.getElementById('postEvalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            quiz.questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if(selected && parseInt(selected.value) === q.correct) score++;
+            });
+            const percentage = Math.round((score / quiz.questions.length) * 100);
+            alert(`📊 Post-evaluation score: ${percentage}%`);
+            
+            const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
+            if(nurseRecord) {
+                nurseRecord.postEval = percentage;
+                if(percentage >= 85 && nurseRecord.privilege < 3) {
+                    nurseRecord.privilege = Math.min(3, nurseRecord.privilege + 1);
+                    alert(`🎉 Congratulations! Your privilege level has been upgraded to Level ${nurseRecord.privilege}!`);
+                }
+                nurseRecord.trainingStatus = "Completed";
+            }
+            renderTrackerSheet();
+        });
+    }
+
     function renderPlaceholder(pageName) {
         document.getElementById('mainContent').innerHTML = `
             <div class="page-header">
                 <h1 class="page-title">${pageName}</h1>
                 <p class="page-desc">This module will be fully implemented in the next phase.</p>
             </div>
-            <div class="tracker-card" style="padding:3rem; text-align:center; color:#6b7280;">
-                🚧 Coming soon: ${pageName}<br><br>
-                <small>Backend integration & forms will be added here.</small>
+            <div class="card" style="padding:3rem; text-align:center; color:#6b7280;">
+                🚧 Coming soon: ${pageName}
             </div>
         `;
     }
 
-    // ========== RENDER SIDEBAR & INITIAL PAGE ==========
+    // ========== RENDER SIDEBAR WITH PRIVILEGE INDICATOR ==========
     function initDashboard() {
-        // Sidebar user info
-        const privLabel = currentUser.privilege === 3 ? "Level 3 (Preceptor)" : (currentUser.privilege === 2 ? "Level 2 (Independent)" : (currentUser.privilege === 1 ? "Level 1 (Trainee)" : "Admin Access"));
+        let privilegeClass = '', privilegeText = '';
+        if(currentUser.role === 'admin') {
+            privilegeClass = 'privilege-admin';
+            privilegeText = '👑 ADMIN — Full Access';
+        } else if(currentUser.role === 'supervisor') {
+            privilegeClass = 'privilege-supervisor';
+            privilegeText = '👩‍🏫 SUPERVISOR — Department Oversight';
+        } else {
+            if(currentUser.privilege === 1) {
+                privilegeClass = 'privilege-l1';
+                privilegeText = '⭐ LEVEL 1 — Trainee (Induction in Progress)';
+            } else if(currentUser.privilege === 2) {
+                privilegeClass = 'privilege-l2';
+                privilegeText = '⭐⭐ LEVEL 2 — Independent Nurse';
+            } else {
+                privilegeClass = 'privilege-l3';
+                privilegeText = '⭐⭐⭐ LEVEL 3 — Preceptor';
+            }
+        }
+        
         document.getElementById('userInfo').innerHTML = `
             <div class="user-name">👤 ${currentUser.name}</div>
             <div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div>
-            <div class="privilege-badge-side">${privLabel}</div>
+            <div class="privilege-indicator ${privilegeClass}">${privilegeText}</div>
         `;
         
         const menuItems = getMenuForUser(currentUser);
@@ -420,40 +575,36 @@
         });
         document.getElementById('navMenu').innerHTML = menuHtml;
         
-        // Default to Tracker if accessible, else first menu item
-        const hasTracker = menuItems.some(i => i.id === 'tracker');
-        if(hasTracker) {
-            navigateTo('tracker', 'Nurse Tracker');
-        } else if(menuItems.length) {
-            navigateTo(menuItems[0].id, menuItems[0].name);
-        }
+        navigateTo('tracker', 'Nurse Tracker');
     }
     
     function navigateTo(moduleId, moduleName) {
         if(moduleId === 'tracker') renderTrackerSheet();
+        else if(moduleId === 'preEval') renderPreEvaluation();
+        else if(moduleId === 'postEval') renderPostEvaluation();
         else renderPlaceholder(moduleName);
         
-        // Update active state
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        event?.target?.closest('.nav-item')?.classList.add('active');
+        if(event && event.target) {
+            const activeItem = event.target.closest('.nav-item');
+            if(activeItem) activeItem.classList.add('active');
+        }
     }
     
     function logout() {
-        localStorage.removeItem('demoUser');
+        localStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     }
     
     function exportReport() {
-        alert("📎 Report exported (CSV format) - Full reports module coming soon.");
+        alert("📎 Report exported - Full reports module coming soon.");
     }
     
-    // Make functions global
     window.renderTrackerSheet = renderTrackerSheet;
     window.navigateTo = navigateTo;
     window.logout = logout;
     window.exportReport = exportReport;
     
-    // Start
     initDashboard();
 </script>
 </body>
