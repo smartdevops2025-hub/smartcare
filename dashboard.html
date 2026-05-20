@@ -155,6 +155,43 @@
             margin-top: 0.3rem;
         }
 
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #0c4e6e;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text {
+            color: #4b5563;
+            font-size: 1rem;
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+
+        .instruction-card {
+            background: #e0f2fe;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            color: #0c4e6e;
+        }
+
         /* Cards & Forms */
         .card {
             background: white;
@@ -294,7 +331,20 @@
         <div class="nav-menu" id="navMenu"></div>
         <div class="logout-btn" onclick="logout()">← Logout</div>
     </div>
-    <div class="main-content" id="mainContent"></div>
+    <div class="main-content" id="mainContent">
+        <!-- Welcome Screen - Shown by default -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-icon">🫀⚕️</div>
+            <div class="welcome-title">Welcome to SMARTCARE</div>
+            <div class="welcome-text">
+                Select any option from the left panel to get started.<br>
+                Your accessible modules are shown based on your privilege level.
+            </div>
+            <div class="instruction-card">
+                💡 Tip: Click on any menu item to view content
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -371,7 +421,24 @@
         });
     }
 
-    // ========== RENDER TRACKER ==========
+    // ========== RENDER FUNCTIONS (Only called when clicking menu) ==========
+    
+    function showWelcomeScreen() {
+        document.getElementById('mainContent').innerHTML = `
+            <div class="welcome-screen">
+                <div class="welcome-icon">🫀⚕️</div>
+                <div class="welcome-title">Welcome to SMARTCARE</div>
+                <div class="welcome-text">
+                    Select any option from the left panel to get started.<br>
+                    Your accessible modules are shown based on your privilege level.
+                </div>
+                <div class="instruction-card">
+                    💡 Tip: Click on any menu item to view content
+                </div>
+            </div>
+        `;
+    }
+
     function renderTrackerSheet() {
         const filterDept = document.getElementById('filterDept')?.value || 'all';
         const searchTerm = document.getElementById('searchName')?.value.toLowerCase() || '';
@@ -420,7 +487,6 @@
         document.getElementById('mainContent').innerHTML = html;
     }
 
-    // ========== RENDER PRE-EVALUATION ==========
     function renderPreEvaluation() {
         const quiz = quizzes[currentUser.department];
         if (!quiz) {
@@ -462,21 +528,27 @@
             const passed = percentage >= 70;
             alert(`📊 Your score: ${percentage}% - ${passed ? 'PASSED ✓' : 'FAILED ✗ (Need 70% to pass)'}`);
             
-            // Update nurse data
             const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
             if(nurseRecord) {
                 nurseRecord.preEval = percentage;
                 if(passed) nurseRecord.trainingStatus = "In Progress";
             }
-            renderTrackerSheet();
+            // Stay on same page but show updated message
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="renderPreEvaluation()">Retake</button> <button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`;
         });
     }
 
-    // ========== RENDER POST-EVALUATION ==========
     function renderPostEvaluation() {
         const quiz = quizzes[currentUser.department];
         if (!quiz) {
             document.getElementById('mainContent').innerHTML = `<div class="card"><p>No post-evaluation available.</p></div>`;
+            return;
+        }
+
+        // Check if pre-evaluation is completed
+        const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
+        if(!nurseRecord || !nurseRecord.preEval) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Please complete Pre-evaluation first before attempting Post-evaluation.</p><br><button class="quiz-btn" onclick="navigateTo('preEval','Pre-evaluation')">Go to Pre-evaluation</button></div>`;
             return;
         }
 
@@ -511,7 +583,6 @@
                 if(selected && parseInt(selected.value) === q.correct) score++;
             });
             const percentage = Math.round((score / quiz.questions.length) * 100);
-            alert(`📊 Post-evaluation score: ${percentage}%`);
             
             const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
             if(nurseRecord) {
@@ -519,10 +590,13 @@
                 if(percentage >= 85 && nurseRecord.privilege < 3) {
                     nurseRecord.privilege = Math.min(3, nurseRecord.privilege + 1);
                     alert(`🎉 Congratulations! Your privilege level has been upgraded to Level ${nurseRecord.privilege}!`);
+                    // Update sidebar to show new privilege
+                    updateSidebarPrivilege();
                 }
                 nurseRecord.trainingStatus = "Completed";
+                alert(`📊 Post-evaluation score: ${percentage}%`);
+                document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`;
             }
-            renderTrackerSheet();
         });
     }
 
@@ -538,7 +612,38 @@
         `;
     }
 
-    // ========== RENDER SIDEBAR WITH PRIVILEGE INDICATOR ==========
+    function updateSidebarPrivilege() {
+        let privilegeClass = '', privilegeText = '';
+        if(currentUser.role === 'admin') {
+            privilegeClass = 'privilege-admin';
+            privilegeText = '👑 ADMIN — Full Access';
+        } else if(currentUser.role === 'supervisor') {
+            privilegeClass = 'privilege-supervisor';
+            privilegeText = '👩‍🏫 SUPERVISOR — Department Oversight';
+        } else {
+            const updatedNurse = nursesData.find(n => n.empId === currentUser.id);
+            const currentPrivilege = updatedNurse ? updatedNurse.privilege : currentUser.privilege;
+            if(currentPrivilege === 1) {
+                privilegeClass = 'privilege-l1';
+                privilegeText = '⭐ LEVEL 1 — Trainee (Induction in Progress)';
+            } else if(currentPrivilege === 2) {
+                privilegeClass = 'privilege-l2';
+                privilegeText = '⭐⭐ LEVEL 2 — Independent Nurse';
+            } else {
+                privilegeClass = 'privilege-l3';
+                privilegeText = '⭐⭐⭐ LEVEL 3 — Preceptor';
+            }
+            currentUser.privilege = currentPrivilege;
+        }
+        
+        document.getElementById('userInfo').innerHTML = `
+            <div class="user-name">👤 ${currentUser.name}</div>
+            <div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div>
+            <div class="privilege-indicator ${privilegeClass}">${privilegeText}</div>
+        `;
+    }
+
+    // ========== RENDER SIDEBAR & WELCOME SCREEN ==========
     function initDashboard() {
         let privilegeClass = '', privilegeText = '';
         if(currentUser.role === 'admin') {
@@ -575,20 +680,25 @@
         });
         document.getElementById('navMenu').innerHTML = menuHtml;
         
-        navigateTo('tracker', 'Nurse Tracker');
+        // Show welcome screen instead of tracker
+        showWelcomeScreen();
     }
     
     function navigateTo(moduleId, moduleName) {
-        if(moduleId === 'tracker') renderTrackerSheet();
-        else if(moduleId === 'preEval') renderPreEvaluation();
-        else if(moduleId === 'postEval') renderPostEvaluation();
-        else renderPlaceholder(moduleName);
-        
+        // Remove active class from all nav items
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        // Add active class to clicked item
         if(event && event.target) {
             const activeItem = event.target.closest('.nav-item');
             if(activeItem) activeItem.classList.add('active');
         }
+        
+        // Render selected module
+        if(moduleId === 'tracker') renderTrackerSheet();
+        else if(moduleId === 'preEval') renderPreEvaluation();
+        else if(moduleId === 'postEval') renderPostEvaluation();
+        else renderPlaceholder(moduleName);
     }
     
     function logout() {
@@ -600,10 +710,14 @@
         alert("📎 Report exported - Full reports module coming soon.");
     }
     
+    // Make functions global
     window.renderTrackerSheet = renderTrackerSheet;
     window.navigateTo = navigateTo;
     window.logout = logout;
     window.exportReport = exportReport;
+    window.showWelcomeScreen = showWelcomeScreen;
+    window.renderPreEvaluation = renderPreEvaluation;
+    window.renderPostEvaluation = renderPostEvaluation;
     
     initDashboard();
 </script>
