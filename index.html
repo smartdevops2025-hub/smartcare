@@ -164,17 +164,6 @@
             box-shadow: 0 10px 20px -8px rgba(15,91,99,0.4);
         }
 
-        .demo-hint {
-            margin-top: 1.8rem;
-            background: #f0f9ff;
-            padding: 0.8rem;
-            border-radius: 1rem;
-            font-size: 0.7rem;
-            color: #2c5a6e;
-            text-align: center;
-            border: 1px dashed #bcd9e6;
-        }
-
         .privilege-badge {
             display: inline-block;
             background: #eef2ff;
@@ -183,15 +172,6 @@
             font-size: 0.7rem;
             font-weight: 500;
             margin-right: 0.4rem;
-        }
-
-        .admin-secret-note {
-            margin-top: 1rem;
-            font-size: 0.65rem;
-            color: #7f8c8d;
-            text-align: center;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 1rem;
         }
 
         @media (max-width: 720px) {
@@ -250,26 +230,15 @@
 
             <form id="loginForm">
                 <div class="input-group">
-                    <label>Employee ID / Email</label>
-                    <input type="text" id="username" placeholder="e.g., NURSE1001" required>
+                    <label>Employee ID</label>
+                    <input type="text" id="username" placeholder="Enter your Employee ID" required autocomplete="off">
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="login-btn">→ Access SMARTCARE</button>
             </form>
-
-            <div class="demo-hint">
-                🔐 <strong>Demo Access</strong><br>
-                Nurse: NURSE101 / nurse123 &nbsp;|&nbsp;
-                Supervisor: SUP001 / super123 &nbsp;|&nbsp;
-                Admin: ADMIN999 / Admin@2025
-            </div>
-            
-            <div class="admin-secret-note">
-                ⚙️ Admin uses same login page — full access granted automatically
-            </div>
         </div>
     </div>
     <footer>
@@ -278,7 +247,7 @@
 </div>
 
 <script>
-    // User database
+    // User database (not visible to users)
     const users = {
         "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" },
         "NURSE101": { password: "nurse123", role: "nurse", name: "Sarah Johnson", privilege: 1, department: "ICU", preEvalScore: null, trainingStatus: "Pending", postEvalScore: null },
