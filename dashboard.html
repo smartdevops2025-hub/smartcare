@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>SMARTCARE — Nurse Induction Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -37,48 +37,67 @@
             flex-direction: column;
             box-shadow: 2px 0 12px rgba(0,0,0,0.08);
             overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        /* Mobile sidebar toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: #0b3b4f;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .sidebar-header {
-            padding: 1.8rem 1.5rem;
+            padding: 1.5rem 1.2rem;
             border-bottom: 1px solid rgba(255,255,255,0.15);
         }
 
         .sidebar-header h2 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
         }
 
         .sidebar-header p {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             opacity: 0.7;
             margin-top: 0.3rem;
         }
 
         .user-info {
-            padding: 1rem 1.5rem;
+            padding: 0.8rem 1rem;
             background: rgba(255,255,255,0.08);
-            margin: 1rem 1rem 0.5rem 1rem;
-            border-radius: 1rem;
+            margin: 0.8rem;
+            border-radius: 0.8rem;
         }
 
         .user-name {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .user-role {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             opacity: 0.7;
             margin-top: 0.2rem;
         }
 
         .privilege-indicator {
-            margin-top: 0.8rem;
-            padding: 0.5rem;
-            border-radius: 0.8rem;
+            margin-top: 0.6rem;
+            padding: 0.4rem;
+            border-radius: 0.6rem;
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
         }
         .privilege-l1 { background: #3b82f6; color: white; }
@@ -90,18 +109,18 @@
 
         .nav-menu {
             flex: 1;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
         }
 
         .nav-item {
-            padding: 0.75rem 1.5rem;
-            margin: 0.2rem 0;
+            padding: 0.6rem 1rem;
+            margin: 0.1rem 0;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            font-size: 0.9rem;
+            gap: 0.6rem;
+            font-size: 0.85rem;
             color: #e0f2fe;
         }
 
@@ -116,19 +135,19 @@
         }
 
         .nav-icon {
-            font-size: 1.2rem;
-            width: 28px;
+            font-size: 1.1rem;
+            width: 24px;
         }
 
         .logout-btn {
-            margin: 1rem;
-            padding: 0.7rem;
+            margin: 0.8rem;
+            padding: 0.6rem;
             background: rgba(220, 80, 80, 0.2);
             border: 1px solid rgba(220, 80, 80, 0.4);
-            border-radius: 0.8rem;
+            border-radius: 0.6rem;
             text-align: center;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: all 0.2s;
         }
 
@@ -140,23 +159,73 @@
         .main-content {
             flex: 1;
             overflow-y: auto;
-            padding: 2rem;
+            padding: 1rem;
+            transition: margin-left 0.3s ease;
         }
 
         .page-header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .page-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: #0c4e6e;
         }
 
         .page-desc {
             color: #4b5563;
-            font-size: 0.85rem;
-            margin-top: 0.3rem;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Dashboard Widgets */
+        .dashboard-widgets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .widget {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .widget:hover {
+            transform: translateY(-2px);
+        }
+
+        .widget-title {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .widget-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0c4e6e;
+            margin: 0.3rem 0;
+        }
+
+        .widget-trend {
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+
+        .widget-icon {
+            float: right;
+            font-size: 2rem;
+            opacity: 0.3;
         }
 
         .welcome-screen {
@@ -164,17 +233,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 70vh;
+            min-height: 60vh;
             text-align: center;
         }
 
         .welcome-icon {
-            font-size: 5rem;
-            margin-bottom: 1.5rem;
+            font-size: 4rem;
+            margin-bottom: 1rem;
         }
 
         .welcome-title {
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 600;
             color: #0c4e6e;
             margin-bottom: 0.5rem;
@@ -182,44 +251,44 @@
 
         .welcome-text {
             color: #4b5563;
-            font-size: 1rem;
-            max-width: 500px;
-            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            max-width: 400px;
+            margin-bottom: 1.5rem;
         }
 
         .instruction-card {
             background: #e0f2fe;
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.5rem;
             border-radius: 2rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #0c4e6e;
         }
 
         .card {
             background: white;
-            border-radius: 1.2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
 
         .tracker-card {
             background: white;
-            border-radius: 1.2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             overflow-x: auto;
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         th {
             text-align: left;
-            padding: 0.9rem 0.5rem;
+            padding: 0.6rem 0.3rem;
             background: #f8fafc;
             color: #1e293b;
             font-weight: 600;
@@ -227,16 +296,16 @@
         }
 
         td {
-            padding: 0.8rem 0.5rem;
+            padding: 0.6rem 0.3rem;
             border-bottom: 1px solid #eef2f6;
         }
 
         .status-completed {
             background: #dcfce7;
             color: #15803d;
-            padding: 0.2rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             display: inline-block;
         }
@@ -244,9 +313,9 @@
         .status-pending {
             background: #fff3e3;
             color: #b45309;
-            padding: 0.2rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             display: inline-block;
         }
@@ -254,35 +323,35 @@
         .status-inprogress {
             background: #fef9c3;
             color: #854d0e;
-            padding: 0.2rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             display: inline-block;
         }
 
         .filter-bar {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
             align-items: center;
         }
 
         .filter-bar input, .filter-bar select {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border: 1px solid #cbd5e1;
             border-radius: 2rem;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
-        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn {
+        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .import-btn {
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 1.5rem;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .btn-small { background: #0f5b63; }
@@ -293,6 +362,7 @@
         .delete-btn { background: #ef4444; }
         .save-btn { background: #8b5cf6; }
         .export-btn { background: #6b7280; }
+        .import-btn { background: #8b5cf6; }
 
         .btn-small:hover, .quiz-btn:hover { background: #094a50; }
         .update-btn:hover { background: #d97706; }
@@ -301,34 +371,38 @@
         .delete-btn:hover { background: #dc2626; }
         .save-btn:hover { background: #7c3aed; }
         .export-btn:hover { background: #4b5563; }
+        .import-btn:hover { background: #7c3aed; }
 
         .setting-group {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid #e2e8f0;
         }
         .setting-group h3 {
             color: #0c4e6e;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
         }
         .setting-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 0;
+            padding: 0.5rem 0;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.5rem;
         }
         .setting-label {
             font-weight: 500;
             color: #334155;
+            font-size: 0.85rem;
         }
         .setting-value {
             color: #64748b;
+            font-size: 0.85rem;
         }
         .toggle-switch {
-            width: 50px;
-            height: 24px;
+            width: 44px;
+            height: 22px;
             background: #cbd5e1;
             border-radius: 40px;
             cursor: pointer;
@@ -340,36 +414,38 @@
         }
         .toggle-switch::after {
             content: "";
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: white;
             border-radius: 50%;
             position: absolute;
             top: 2px;
-            left: 4px;
+            left: 3px;
             transition: 0.2s;
         }
         .toggle-switch.active::after {
-            left: 26px;
+            left: 23px;
         }
 
         .quiz-question {
             background: #f8fafc;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0.8rem;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-radius: 0.6rem;
         }
 
         .quiz-question p {
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
         }
 
         .quiz-option {
-            margin: 0.3rem 0 0.3rem 1rem;
+            margin: 0.2rem 0 0.2rem 0.8rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            font-size: 0.8rem;
         }
 
         .quiz-option input {
@@ -377,44 +453,44 @@
         }
 
         .score-display {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-top: 1rem;
-            padding: 1rem;
+            margin-top: 0.8rem;
+            padding: 0.8rem;
             background: #e0f2fe;
-            border-radius: 1rem;
+            border-radius: 0.8rem;
             text-align: center;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
+            padding: 1rem;
+            border-radius: 0.8rem;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: #0c4e6e;
         }
 
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #6b7280;
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
 
         .chart-container {
-            max-width: 400px;
+            max-width: 300px;
             margin: 0 auto;
         }
 
@@ -432,44 +508,116 @@
         }
         .modal-content {
             background: white;
-            padding: 2rem;
-            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
         }
         .modal-content h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             color: #0c4e6e;
+            font-size: 1.2rem;
         }
-        .modal-content input, .modal-content select {
+        .modal-content input, .modal-content select, .modal-content textarea {
             width: 100%;
-            padding: 0.7rem;
-            margin-bottom: 1rem;
+            padding: 0.6rem;
+            margin-bottom: 0.8rem;
             border: 1px solid #cbd5e1;
-            border-radius: 0.8rem;
+            border-radius: 0.6rem;
+            font-size: 0.85rem;
         }
         .modal-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             justify-content: flex-end;
         }
 
         .audit-log-entry {
-            padding: 0.5rem;
+            padding: 0.4rem;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
         .audit-log-entry:hover {
             background: #f8fafc;
         }
 
+        /* Bulk Import Preview */
+        .import-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 0.8rem 0;
+            font-size: 0.7rem;
+        }
+        .import-preview table {
+            font-size: 0.7rem;
+        }
+
+        /* ========= MOBILE RESPONSIVE ========= */
         @media (max-width: 768px) {
-            .sidebar { width: 240px; }
-            .main-content { padding: 1rem; }
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100%;
+                width: 260px;
+                transition: left 0.3s ease;
+                z-index: 200;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+            .main-content {
+                padding: 0.8rem;
+                margin-top: 3rem;
+            }
+            .dashboard-widgets {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.6rem;
+            }
+            .widget-value {
+                font-size: 1.3rem;
+            }
+            .page-title {
+                font-size: 1.2rem;
+            }
+            .filter-bar {
+                gap: 0.5rem;
+            }
+            .filter-bar input, .filter-bar select, .btn-small, .export-btn {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+            th, td {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.2rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stat-number {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-widgets {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
 <div class="app-container">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -525,6 +673,20 @@
     </div>
 </div>
 
+<!-- Modal for Bulk Import -->
+<div id="importModal" class="modal">
+    <div class="modal-content">
+        <h3>📎 Bulk Import Nurses</h3>
+        <p style="font-size:0.75rem; margin-bottom:0.5rem;">Upload CSV/Excel file with columns: Name, EmpId, Department, Privilege, Role, Password</p>
+        <input type="file" id="importFile" accept=".csv,.xlsx,.xls">
+        <div id="importPreview" class="import-preview"></div>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeImportModal()">Cancel</button>
+            <button class="import-btn" onclick="processBulkImport()">Import Data</button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal for Password Change -->
 <div id="passwordModal" class="modal">
     <div class="modal-content">
@@ -540,6 +702,17 @@
 </div>
 
 <script>
+    // ========== MOBILE SIDEBAR TOGGLE ==========
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function closeSidebarOnMobile() {
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+    }
+
     // ========== AUDIT LOG ==========
     let auditLog = [];
 
@@ -553,22 +726,16 @@
             details: details
         };
         auditLog.unshift(logEntry);
-        // Keep last 1000 entries
         if(auditLog.length > 1000) auditLog.pop();
         localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
     }
 
-    // Load audit log from localStorage
     const savedAudit = localStorage.getItem('smartcare_audit');
-    if(savedAudit) {
-        auditLog = JSON.parse(savedAudit);
-    }
+    if(savedAudit) auditLog = JSON.parse(savedAudit);
 
     // ========== USER SESSION ==========
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
-        window.location.href = 'index.html';
-    }
+    if (!currentUser) window.location.href = 'index.html';
 
     addAuditLog("LOGIN", "User logged into the system");
 
@@ -582,13 +749,11 @@
     };
 
     const savedConfig = localStorage.getItem('smartcare_config');
-    if(savedConfig) {
-        systemConfig = JSON.parse(savedConfig);
-    }
+    if(savedConfig) systemConfig = JSON.parse(savedConfig);
 
     function saveSystemConfig() {
         localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
-        addAuditLog("CONFIG_UPDATE", `System configuration updated: ${JSON.stringify(systemConfig)}`);
+        addAuditLog("CONFIG_UPDATE", `System configuration updated`);
     }
 
     // ========== NURSES DATA ==========
@@ -616,6 +781,148 @@
         });
         localStorage.setItem('smartcare_users', JSON.stringify(loginUsers));
         addAuditLog("USERS_UPDATED", "User database synchronized");
+    }
+
+    // ========== BULK IMPORT ==========
+    let pendingImportData = [];
+
+    function openImportModal() {
+        document.getElementById('importFile').value = '';
+        document.getElementById('importPreview').innerHTML = '';
+        pendingImportData = [];
+        document.getElementById('importModal').style.display = 'flex';
+    }
+
+    function closeImportModal() {
+        document.getElementById('importModal').style.display = 'none';
+    }
+
+    document.getElementById('importFile')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const data = evt.target.result;
+            let workbook;
+            try {
+                workbook = XLSX.read(data, { type: 'binary' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet);
+                pendingImportData = rows.map(row => ({
+                    name: row.Name || row.name || '',
+                    empId: row.EmpId || row.empId || row.EmployeeID || '',
+                    department: row.Department || row.department || 'ICU',
+                    privilege: parseInt(row.Privilege || row.privilege || 1),
+                    role: row.Role || row.role || 'nurse',
+                    password: row.Password || row.password || 'nurse123'
+                })).filter(r => r.name && r.empId);
+                
+                let previewHtml = '<table><thead><tr><th>Name</th><th>Emp ID</th><th>Dept</th><th>Privilege</th><th>Role</th></tr></thead><tbody>';
+                pendingImportData.forEach(r => {
+                    previewHtml += `<tr><td>${r.name}</td><td>${r.empId}</td><td>${r.department}</td><td>${r.privilege}</td><td>${r.role}</td></tr>`;
+                });
+                previewHtml += '</tbody></table>';
+                document.getElementById('importPreview').innerHTML = `<p>✅ ${pendingImportData.length} records found. Review before importing:</p>${previewHtml}`;
+            } catch(err) {
+                document.getElementById('importPreview').innerHTML = '<p style="color:red;">Error reading file. Please check format.</p>';
+            }
+        };
+        reader.readAsBinaryString(file);
+    });
+
+    function processBulkImport() {
+        if(pendingImportData.length === 0) {
+            alert("No valid data to import. Please upload a file first.");
+            return;
+        }
+        
+        let imported = 0;
+        let skipped = 0;
+        const nextId = Math.max(...nursesData.map(n => n.id), 0) + 1;
+        
+        pendingImportData.forEach((item, idx) => {
+            const exists = nursesData.some(n => n.empId === item.empId);
+            if(!exists) {
+                nursesData.push({
+                    id: nextId + idx,
+                    name: item.name,
+                    empId: item.empId,
+                    department: item.department,
+                    privilege: Math.min(3, Math.max(1, item.privilege)),
+                    role: ['nurse', 'supervisor', 'manager'].includes(item.role) ? item.role : 'nurse',
+                    password: item.password,
+                    preEval: null,
+                    postEval: null,
+                    trainingStatus: "Pending",
+                    joiningDate: new Date().toISOString().split('T')[0]
+                });
+                imported++;
+            } else {
+                skipped++;
+            }
+        });
+        
+        updateLoginUsers();
+        addAuditLog("BULK_IMPORT", `Imported ${imported} nurses (${skipped} skipped due to duplicate EmpId)`);
+        alert(`✅ Import complete!\n\nImported: ${imported}\nSkipped (duplicate): ${skipped}`);
+        closeImportModal();
+        renderUserManagement();
+        renderDashboard();
+    }
+
+    // ========== DASHBOARD WIDGETS ==========
+    function renderDashboard() {
+        const totalNurses = nursesData.length;
+        const completed = nursesData.filter(n => n.trainingStatus === 'Completed').length;
+        const pending = nursesData.filter(n => n.trainingStatus === 'Pending').length;
+        const inProgress = nursesData.filter(n => n.trainingStatus === 'In Progress').length;
+        const avgPreEval = nursesData.filter(n => n.preEval).reduce((sum, n) => sum + n.preEval, 0) / (nursesData.filter(n => n.preEval).length || 1);
+        const avgPostEval = nursesData.filter(n => n.postEval).reduce((sum, n) => sum + n.postEval, 0) / (nursesData.filter(n => n.postEval).length || 1);
+        const level3Count = nursesData.filter(n => n.privilege === 3).length;
+        
+        let deptStats = {};
+        nursesData.forEach(n => {
+            if(!deptStats[n.department]) deptStats[n.department] = { total: 0, completed: 0 };
+            deptStats[n.department].total++;
+            if(n.trainingStatus === 'Completed') deptStats[n.department].completed++;
+        });
+        
+        let deptHtml = '<div class="stats-grid">';
+        for(let dept in deptStats) {
+            let percent = Math.round((deptStats[dept].completed / deptStats[dept].total) * 100);
+            deptHtml += `<div class="stat-card"><div class="stat-number">${percent}%</div><div class="stat-label">${dept}</div><small>${deptStats[dept].completed}/${deptStats[dept].total}</small></div>`;
+        }
+        deptHtml += '</div>';
+        
+        let html = `
+            <div class="page-header">
+                <h1 class="page-title">📊 Dashboard</h1>
+                <p class="page-desc">Real-time statistics and insights</p>
+            </div>
+            <div class="dashboard-widgets">
+                <div class="widget"><div class="widget-icon">👩‍⚕️</div><div class="widget-title">Total Nurses</div><div class="widget-value">${totalNurses}</div><div class="widget-trend"><span class="trend-up">↑</span> Active staff</div></div>
+                <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Training Completed</div><div class="widget-value">${completed}</div><div class="widget-trend">${Math.round((completed/totalNurses)*100)}% of total</div></div>
+                <div class="widget"><div class="widget-icon">🔄</div><div class="widget-title">In Progress</div><div class="widget-value">${inProgress}</div><div class="widget-trend">Pending: ${pending}</div></div>
+                <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Level 3 Preceptors</div><div class="widget-value">${level3Count}</div><div class="widget-trend">Advanced practitioners</div></div>
+                <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Pre-eval</div><div class="widget-value">${Math.round(avgPreEval)}%</div><div class="widget-trend ${avgPreEval >= 70 ? 'trend-up' : 'trend-down'}">${avgPreEval >= 70 ? '✓ Passing' : '⚠ Needs improvement'}</div></div>
+                <div class="widget"><div class="widget-icon">📈</div><div class="widget-title">Avg Post-eval</div><div class="widget-value">${Math.round(avgPostEval)}%</div><div class="widget-trend trend-up">↑ ${Math.round(avgPostEval - avgPreEval)}% improvement</div></div>
+            </div>
+            <div class="card"><h3 style="margin-bottom:0.8rem;">🏥 Department-wise Completion</h3>${deptHtml}</div>
+            <div class="card"><h3 style="margin-bottom:0.8rem;">📊 Training Status Distribution</h3><div class="chart-container"><canvas id="trainingChart"></canvas></div></div>
+            <div class="card"><h3 style="margin-bottom:0.8rem;">📈 Pre vs Post Evaluation</h3><div class="chart-container"><canvas id="evalChart"></canvas></div></div>
+        `;
+        
+        document.getElementById('mainContent').innerHTML = html;
+        
+        setTimeout(() => {
+            const ctx1 = document.getElementById('trainingChart')?.getContext('2d');
+            if(ctx1) new Chart(ctx1, { type: 'doughnut', data: { labels: ['Completed', 'In Progress', 'Pending'], datasets: [{ data: [completed, inProgress, pending], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }] } });
+            const ctx2 = document.getElementById('evalChart')?.getContext('2d');
+            if(ctx2) new Chart(ctx2, { type: 'bar', data: { labels: ['Pre-evaluation', 'Post-evaluation'], datasets: [{ label: 'Average Score (%)', data: [avgPreEval, avgPostEval], backgroundColor: ['#3b82f6', '#8b5cf6'] }] } });
+        }, 100);
+        
+        closeSidebarOnMobile();
     }
 
     // ========== TRAINING MODULES ==========
@@ -655,10 +962,11 @@
 
     // ========== PRIVILEGE-BASED MENU ==========
     const allMenuItems = [
-        { id: "tracker", name: "📋 Nurse Tracker", icon: "📊", roles: ["admin", "manager", "supervisor", "nurse_privilege_3"] },
+        { id: "dashboard", name: "📊 Dashboard", icon: "📊", roles: ["admin", "manager", "supervisor", "nurse_privilege_3", "nurse_privilege_2", "nurse"] },
+        { id: "tracker", name: "📋 Nurse Tracker", icon: "📋", roles: ["admin", "manager", "supervisor", "nurse_privilege_3"] },
         { id: "preEval", name: "📝 Pre-evaluation", icon: "✍️", roles: ["admin", "manager", "nurse", "supervisor"] },
         { id: "trainingStatus", name: "✅ Training Status", icon: "🎓", roles: ["admin", "manager", "supervisor"] },
-        { id: "postEval", name: "📈 Post-evaluation", icon: "📊", roles: ["admin", "manager", "nurse_privilege_2", "nurse_privilege_3", "supervisor"] },
+        { id: "postEval", name: "📈 Post-evaluation", icon: "📈", roles: ["admin", "manager", "nurse_privilege_2", "nurse_privilege_3", "supervisor"] },
         { id: "reports", name: "📑 Reports", icon: "📄", roles: ["admin", "manager", "supervisor", "nurse_privilege_3"] },
         { id: "auditLog", name: "📜 Audit Log", icon: "📋", roles: ["admin", "manager"] },
         { id: "userManagement", name: "👥 User Management", icon: "👥", roles: ["admin", "manager"] },
@@ -707,31 +1015,12 @@
     async function exportToPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('landscape');
-        
-        const tableData = nursesData.map(n => [
-            n.empId,
-            n.name,
-            n.department,
-            n.preEval ? n.preEval + '%' : '—',
-            n.postEval ? n.postEval + '%' : '—',
-            n.trainingStatus,
-            n.privilege === 1 ? "Level 1" : (n.privilege === 2 ? "Level 2" : "Level 3"),
-            n.joiningDate
-        ]);
-        
-        doc.autoTable({
-            head: [['Emp ID', 'Name', 'Department', 'Pre-eval', 'Post-eval', 'Training Status', 'Privilege', 'Joining Date']],
-            body: tableData,
-            theme: 'striped',
-            headStyles: { fillColor: [11, 59, 79] },
-            margin: { top: 20 }
-        });
-        
+        const tableData = nursesData.map(n => [n.empId, n.name, n.department, n.preEval ? n.preEval + '%' : '—', n.postEval ? n.postEval + '%' : '—', n.trainingStatus, n.privilege === 1 ? "Level 1" : (n.privilege === 2 ? "Level 2" : "Level 3"), n.joiningDate]);
+        doc.autoTable({ head: [['Emp ID', 'Name', 'Department', 'Pre-eval', 'Post-eval', 'Training Status', 'Privilege', 'Joining Date']], body: tableData, theme: 'striped', headStyles: { fillColor: [11, 59, 79] }, margin: { top: 20 } });
         doc.setFontSize(18);
         doc.text("SMARTCARE - Nurse Induction Report", 14, 15);
         doc.setFontSize(10);
         doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 25);
-        
         doc.save(`smartcare_report_${new Date().toISOString().split('T')[0]}.pdf`);
         addAuditLog("EXPORT_PDF", "Exported nurse data to PDF");
         alert("✅ PDF file downloaded successfully!");
@@ -739,53 +1028,18 @@
 
     // ========== AUDIT LOG PAGE ==========
     function renderAuditLog() {
-        let html = `
-            <div class="page-header">
-                <h1 class="page-title">📜 Audit Log</h1>
-                <p class="page-desc">Track all user activities and system changes</p>
-            </div>
-            <div class="filter-bar">
-                <input type="text" id="auditSearch" placeholder="🔍 Search by user or action" onkeyup="renderAuditLog()">
-                <button class="export-btn" onclick="exportAuditLog()">📎 Export Audit Log (CSV)</button>
-                <button class="delete-btn" onclick="clearAuditLog()">🗑️ Clear Audit Log</button>
-            </div>
-            <div class="tracker-card">
-                <div id="auditList">
-        `;
-        
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Track all user activities and system changes</p></div><div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search by user or action" onkeyup="renderAuditLog()"><button class="export-btn" onclick="exportAuditLog()">📎 Export Audit Log (CSV)</button><button class="delete-btn" onclick="clearAuditLog()">🗑️ Clear Audit Log</button></div><div class="tracker-card"><div id="auditList">`;
         const searchTerm = document.getElementById('auditSearch')?.value.toLowerCase() || '';
-        let filtered = auditLog.filter(log => 
-            log.user.toLowerCase().includes(searchTerm) || 
-            log.action.toLowerCase().includes(searchTerm) ||
-            log.details.toLowerCase().includes(searchTerm)
-        );
-        
-        filtered.forEach(log => {
-            html += `<div class="audit-log-entry">
-                <strong>${new Date(log.timestamp).toLocaleString()}</strong> | 
-                <span style="color:#0f5b63;">${log.user}</span> (${log.role}) | 
-                <span style="font-weight:600;">${log.action}</span> | 
-                ${log.details}
-            </div>`;
-        });
-        
-        if(filtered.length === 0) {
-            html += `<p style="padding:1rem; text-align:center;">No audit logs found.</p>`;
-        }
-        
+        let filtered = auditLog.filter(log => log.user.toLowerCase().includes(searchTerm) || log.action.toLowerCase().includes(searchTerm) || log.details.toLowerCase().includes(searchTerm));
+        filtered.forEach(log => { html += `<div class="audit-log-entry"><strong>${new Date(log.timestamp).toLocaleString()}</strong> | <span style="color:#0f5b63;">${log.user}</span> (${log.role}) | <span style="font-weight:600;">${log.action}</span> | ${log.details}</div>`; });
+        if(filtered.length === 0) html += `<p style="padding:1rem; text-align:center;">No audit logs found.</p>`;
         html += `<p style="margin-top:1rem; font-size:0.7rem;">Total: ${filtered.length} entries</p></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
+        closeSidebarOnMobile();
     }
 
     function exportAuditLog() {
-        const exportData = auditLog.map(log => ({
-            "Timestamp": log.timestamp,
-            "User": log.user,
-            "User ID": log.userId,
-            "Role": log.role,
-            "Action": log.action,
-            "Details": log.details
-        }));
+        const exportData = auditLog.map(log => ({ "Timestamp": log.timestamp, "User": log.user, "User ID": log.userId, "Role": log.role, "Action": log.action, "Details": log.details }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Audit Log");
@@ -795,7 +1049,7 @@
     }
 
     function clearAuditLog() {
-        if(confirm("Are you sure you want to clear all audit logs? This action cannot be undone.")) {
+        if(confirm("Are you sure you want to clear all audit logs?")) {
             auditLog = [];
             localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
             addAuditLog("AUDIT_CLEAR", "Audit log was cleared");
@@ -806,97 +1060,25 @@
 
     // ========== SETTINGS PAGE ==========
     function renderSettings() {
-        let html = `
-            <div class="page-header">
-                <h1 class="page-title">🔧 System Settings</h1>
-                <p class="page-desc">Configure system preferences and manage your account</p>
-            </div>
-            <div class="card">
-                <div class="setting-group">
-                    <h3>👤 Account Settings</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">Change Password</span>
-                        <button class="edit-btn" onclick="openPasswordModal()">Change Password</button>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">Name</span>
-                        <span class="setting-value">${currentUser.name}</span>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">Employee ID</span>
-                        <span class="setting-value">${currentUser.id}</span>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">Role</span>
-                        <span class="setting-value">${currentUser.role.toUpperCase()}</span>
-                    </div>
-                </div>
-                <div class="setting-group">
-                    <h3>⚙️ Evaluation Settings</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">Passing Score for Pre-evaluation (%)</span>
-                        <input type="number" id="passingScore" value="${systemConfig.passingScore}" min="0" max="100" style="width:80px; padding:0.3rem;">
-                        <button class="save-btn" onclick="updatePassingScore()">Save</button>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">Privilege Upgrade Score (%)</span>
-                        <input type="number" id="upgradeScore" value="${systemConfig.privilegeUpgradeScore}" min="0" max="100" style="width:80px; padding:0.3rem;">
-                        <button class="save-btn" onclick="updateUpgradeScore()">Save</button>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">Auto-assign Privilege Level</span>
-                        <div class="toggle-switch ${systemConfig.autoAssignPrivilege ? 'active' : ''}" onclick="toggleAutoAssign()"></div>
-                    </div>
-                </div>
-                <div class="setting-group">
-                    <h3>📊 Export Data</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">Export to Excel</span>
-                        <button class="export-btn" onclick="exportToExcel()">Export Excel</button>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">Export to PDF</span>
-                        <button class="export-btn" onclick="exportToPDF()">Export PDF</button>
-                    </div>
-                </div>
-            </div>
-        `;
+        let html = `<div class="page-header"><h1 class="page-title">🔧 System Settings</h1><p class="page-desc">Configure system preferences and manage your account</p></div><div class="card"><div class="setting-group"><h3>👤 Account Settings</h3><div class="setting-row"><span class="setting-label">Change Password</span><button class="edit-btn" onclick="openPasswordModal()">Change Password</button></div><div class="setting-row"><span class="setting-label">Name</span><span class="setting-value">${currentUser.name}</span></div><div class="setting-row"><span class="setting-label">Employee ID</span><span class="setting-value">${currentUser.id}</span></div><div class="setting-row"><span class="setting-label">Role</span><span class="setting-value">${currentUser.role.toUpperCase()}</span></div></div><div class="setting-group"><h3>⚙️ Evaluation Settings</h3><div class="setting-row"><span class="setting-label">Passing Score for Pre-evaluation (%)</span><input type="number" id="passingScore" value="${systemConfig.passingScore}" min="0" max="100" style="width:80px; padding:0.3rem;"><button class="save-btn" onclick="updatePassingScore()">Save</button></div><div class="setting-row"><span class="setting-label">Privilege Upgrade Score (%)</span><input type="number" id="upgradeScore" value="${systemConfig.privilegeUpgradeScore}" min="0" max="100" style="width:80px; padding:0.3rem;"><button class="save-btn" onclick="updateUpgradeScore()">Save</button></div><div class="setting-row"><span class="setting-label">Auto-assign Privilege Level</span><div class="toggle-switch ${systemConfig.autoAssignPrivilege ? 'active' : ''}" onclick="toggleAutoAssign()"></div></div></div><div class="setting-group"><h3>📊 Export Data</h3><div class="setting-row"><span class="setting-label">Export to Excel</span><button class="export-btn" onclick="exportToExcel()">Export Excel</button></div><div class="setting-row"><span class="setting-label">Export to PDF</span><button class="export-btn" onclick="exportToPDF()">Export PDF</button></div></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
+        closeSidebarOnMobile();
     }
 
     // ========== USER MANAGEMENT ==========
     function renderUserManagement() {
-        let html = `
-            <div class="page-header">
-                <h1 class="page-title">👥 User Management</h1>
-                <p class="page-desc">Add, edit, or remove nurse accounts</p>
-            </div>
-            <div class="filter-bar">
-                <button class="add-btn" onclick="openAddModal()">+ Add New User</button>
-                <input type="text" id="searchUser" placeholder="🔍 Search by name or ID" onkeyup="renderUserManagement()">
-                <button class="export-btn" onclick="exportToExcel()">📎 Export Excel</button>
-                <button class="export-btn" onclick="exportToPDF()">📄 Export PDF</button>
-            </div>
-            <div class="tracker-card">
-                <table>
-                    <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Privilege</th><th>Role</th><th>Training Status</th><th>Actions</th></tr></thead>
-                    <tbody>
-        `;
+        let html = `<div class="page-header"><h1 class="page-title">👥 User Management</h1><p class="page-desc">Add, edit, or remove nurse accounts</p></div><div class="filter-bar"><button class="add-btn" onclick="openAddModal()">+ Add New User</button><button class="import-btn" onclick="openImportModal()">📎 Bulk Import (CSV/Excel)</button><input type="text" id="searchUser" placeholder="🔍 Search by name or ID" onkeyup="renderUserManagement()"><button class="export-btn" onclick="exportToExcel()">📎 Export Excel</button><button class="export-btn" onclick="exportToPDF()">📄 Export PDF</button></div><div class="tracker-card"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Privilege</th><th>Role</th><th>Training Status</th><th>Actions</th></tr></thead><tbody>`;
         const searchTerm = document.getElementById('searchUser')?.value.toLowerCase() || '';
         let filtered = nursesData.filter(n => n.name.toLowerCase().includes(searchTerm) || n.empId.toLowerCase().includes(searchTerm));
-        
         filtered.forEach(n => {
             let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3');
             let roleText = n.role === 'manager' ? '👔 Nurse Manager' : (n.role === 'supervisor' ? '👩‍🏫 Supervisor' : '👩‍⚕️ Nurse');
             let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>');
-            html += `<tr>
-                <td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td>
-                <td>${privilegeText}</td><td>${roleText}</td><td>${statusBadge}</td>
-                <td><button class="edit-btn" onclick="openEditModal(${n.id})">✏️ Edit</button> <button class="delete-btn" onclick="deleteUser(${n.id})">🗑️ Delete</button></td>
-            </tr>`;
+            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${privilegeText}</td><td>${roleText}</td><td>${statusBadge}</td><td><button class="edit-btn" onclick="openEditModal(${n.id})">✏️ Edit</button> <button class="delete-btn" onclick="deleteUser(${n.id})">🗑️ Delete</button></td></tr>`;
         });
-        html += `</tbody></table><p>Total: ${filtered.length} users</p></div>`;
+        html += `</tbody></table><p style="margin-top:0.8rem;">Total: ${filtered.length} users</p></div>`;
         document.getElementById('mainContent').innerHTML = html;
+        closeSidebarOnMobile();
     }
 
     function openAddModal() {
@@ -934,9 +1116,7 @@
         const privilege = parseInt(document.getElementById('userPrivilege').value);
         const role = document.getElementById('userRole').value;
         const password = document.getElementById('userPassword').value.trim();
-        
         if(!name || !empId) { alert("Please fill all fields"); return; }
-        
         if(id) {
             const index = nursesData.findIndex(n => n.id == id);
             if(index !== -1) {
@@ -946,19 +1126,13 @@
             }
         } else {
             const newId = Math.max(...nursesData.map(n => n.id), 0) + 1;
-            nursesData.push({
-                id: newId, name, empId, department, privilege, role,
-                preEval: null, postEval: null, trainingStatus: "Pending",
-                joiningDate: new Date().toISOString().split('T')[0],
-                password: password
-            });
+            nursesData.push({ id: newId, name, empId, department, privilege, role, preEval: null, postEval: null, trainingStatus: "Pending", joiningDate: new Date().toISOString().split('T')[0], password: password });
             addAuditLog("USER_ADDED", `Added new user: ${name} (${empId}) as ${role}`);
             alert(`✅ User ${name} added successfully`);
         }
         updateLoginUsers();
         closeModal();
         renderUserManagement();
-        renderTrackerSheet();
     }
 
     function deleteUser(id) {
@@ -969,7 +1143,6 @@
             addAuditLog("USER_DELETED", `Deleted user: ${nurse?.name} (${nurse?.empId})`);
             alert(`✅ User deleted successfully`);
             renderUserManagement();
-            renderTrackerSheet();
         }
     }
 
@@ -978,11 +1151,9 @@
     // ========== TRAINING STATUS UPDATER ==========
     function renderTrainingStatusUpdater() {
         let html = `<div class="page-header"><h1 class="page-title">✅ Training Status Updater</h1><p class="page-desc">Update nurse training completion status and module progress</p></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchTrain" placeholder="🔍 Search by name or ID" onkeyup="renderTrainingStatusUpdater()"><select id="filterDeptTrain" onchange="renderTrainingStatusUpdater()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select></div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval</th><th>Training Status</th><th>Update Status</th><th>Modules Completed</th></tr></thead><tbody>`;
-        
         const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
         const searchTerm = document.getElementById('searchTrain')?.value.toLowerCase() || '';
         let filtered = nursesData.filter(nurse => (filterDept === 'all' || nurse.department === filterDept) && (nurse.name.toLowerCase().includes(searchTerm) || nurse.empId.toLowerCase().includes(searchTerm)));
-        
         filtered.forEach(nurse => {
             let statusOptions = `<select id="status_${nurse.empId}"><option value="Pending" ${nurse.trainingStatus === 'Pending' ? 'selected' : ''}>⏳ Pending</option><option value="In Progress" ${nurse.trainingStatus === 'In Progress' ? 'selected' : ''}>🔄 In Progress</option><option value="Completed" ${nurse.trainingStatus === 'Completed' ? 'selected' : ''}>✅ Completed</option></select>`;
             let modulesHtml = `<select id="modules_${nurse.empId}" style="width:150px;">${trainingModules.map(m => `<option value="${m}">${m}</option>`).join('')}</select>`;
@@ -990,6 +1161,7 @@
         });
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
+        closeSidebarOnMobile();
     }
 
     function updateTraining(empId) {
@@ -1016,26 +1188,27 @@
         const inProgressCount = nursesData.filter(n => n.trainingStatus === 'In Progress').length;
         const avgPreEval = nursesData.filter(n => n.preEval).reduce((sum, n) => sum + n.preEval, 0) / (nursesData.filter(n => n.preEval).length || 1);
         const avgPostEval = nursesData.filter(n => n.postEval).reduce((sum, n) => sum + n.postEval, 0) / (nursesData.filter(n => n.postEval).length || 1);
-        
         let deptStats = {};
         nursesData.forEach(n => { if(!deptStats[n.department]) deptStats[n.department] = { total: 0, completed: 0 }; deptStats[n.department].total++; if(n.trainingStatus === 'Completed') deptStats[n.department].completed++; });
         let deptHtml = '<div class="stats-grid">';
         for(let dept in deptStats) { let percent = Math.round((deptStats[dept].completed / deptStats[dept].total) * 100); deptHtml += `<div class="stat-card"><div class="stat-number">${percent}%</div><div class="stat-label">${dept} Completion</div><small>${deptStats[dept].completed}/${deptStats[dept].total} nurses</small></div>`; }
         deptHtml += '</div>';
-        
         let html = `<div class="page-header"><h1 class="page-title">📑 Reports & Analytics</h1><p class="page-desc">Induction progress, evaluation trends, and department insights</p><div class="filter-bar"><button class="export-btn" onclick="exportToExcel()">📎 Export to Excel</button><button class="export-btn" onclick="exportToPDF()">📄 Export to PDF</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-number">${totalNurses}</div><div class="stat-label">Total Nurses</div></div><div class="stat-card"><div class="stat-number">${completedCount}</div><div class="stat-label">Training Completed</div></div><div class="stat-card"><div class="stat-number">${pendingCount + inProgressCount}</div><div class="stat-label">In Progress/Pending</div></div><div class="stat-card"><div class="stat-number">${Math.round(avgPreEval)}%</div><div class="stat-label">Avg Pre-eval Score</div></div><div class="stat-card"><div class="stat-number">${Math.round(avgPostEval)}%</div><div class="stat-label">Avg Post-eval Score</div></div><div class="stat-card"><div class="stat-number">${Math.round(avgPostEval - avgPreEval)}%</div><div class="stat-label">Improvement</div></div></div><div class="card"><h3>🏥 Department-wise Completion</h3>${deptHtml}</div><div class="card"><h3>📊 Training Status Distribution</h3><div class="chart-container"><canvas id="trainingChart"></canvas></div></div><div class="card"><h3>📈 Pre vs Post Evaluation Comparison</h3><div class="chart-container"><canvas id="evalChart"></canvas></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
-        
         setTimeout(() => {
             const ctx1 = document.getElementById('trainingChart')?.getContext('2d');
             if(ctx1) new Chart(ctx1, { type: 'doughnut', data: { labels: ['Completed', 'In Progress', 'Pending'], datasets: [{ data: [completedCount, inProgressCount, pendingCount], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }] } });
             const ctx2 = document.getElementById('evalChart')?.getContext('2d');
             if(ctx2) new Chart(ctx2, { type: 'bar', data: { labels: ['Pre-evaluation', 'Post-evaluation'], datasets: [{ label: 'Average Score (%)', data: [avgPreEval, avgPostEval], backgroundColor: ['#3b82f6', '#8b5cf6'] }] } });
         }, 100);
+        closeSidebarOnMobile();
     }
 
     // ========== RENDER FUNCTIONS ==========
-    function showWelcomeScreen() { document.getElementById('mainContent').innerHTML = `<div class="welcome-screen"><div class="welcome-icon">🫀⚕️</div><div class="welcome-title">Welcome to SMARTCARE</div><div class="welcome-text">Select any option from the left panel to get started.<br>Your accessible modules are shown based on your privilege level.</div><div class="instruction-card">💡 Tip: Click on any menu item to view content</div></div>`; }
+    function showWelcomeScreen() { 
+        document.getElementById('mainContent').innerHTML = `<div class="welcome-screen"><div class="welcome-icon">🫀⚕️</div><div class="welcome-title">Welcome to SMARTCARE</div><div class="welcome-text">Select any option from the left panel to get started.<br>Your accessible modules are shown based on your privilege level.</div><div class="instruction-card">💡 Tip: Click on any menu item to view content</div></div>`;
+        closeSidebarOnMobile();
+    }
 
     function renderTrackerSheet() {
         const filterDept = document.getElementById('filterDept')?.value || 'all';
@@ -1043,8 +1216,9 @@
         let filtered = nursesData.filter(nurse => (filterDept === 'all' || nurse.department === filterDept) && (nurse.name.toLowerCase().includes(searchTerm) || nurse.empId.toLowerCase().includes(searchTerm)));
         let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Tracker Sheet</h1><p class="page-desc">Track induction progress, training status & privilege levels</p></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search by name or ID" onkeyup="renderTrackerSheet()"><select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select><button class="btn-small" onclick="exportToExcel()">📎 Export Excel</button><button class="btn-small" onclick="exportToPDF()">📄 Export PDF</button></div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr></thead><tbody>`;
         filtered.forEach(n => { let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>'); let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3'); html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.preEval ? n.preEval+'%' : '—'}</td><td>${n.postEval ? n.postEval+'%' : '—'}</td><td>${statusBadge}</td><td>${privilegeText}</td><td>${n.joiningDate}</td></tr>`; });
-        html += `</tbody></table><p>Showing ${filtered.length} nurses</p></div>`;
+        html += `</tbody></table><p style="margin-top:0.8rem;">Showing ${filtered.length} nurses</p></div>`;
         document.getElementById('mainContent').innerHTML = html;
+        closeSidebarOnMobile();
     }
 
     function renderPreEvaluation() {
@@ -1055,6 +1229,7 @@
         html += `<button type="submit" class="quiz-btn">Submit Pre-evaluation</button></form></div>`;
         document.getElementById('mainContent').innerHTML = html;
         document.getElementById('preEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); alert(`Score: ${percentage}% - ${percentage >= systemConfig.passingScore ? 'PASSED ✓' : 'FAILED ✗'}`); const nurseRecord = nursesData.find(n => n.empId === currentUser.id); if(nurseRecord) { nurseRecord.preEval = percentage; if(percentage >= systemConfig.passingScore && nurseRecord.trainingStatus === 'Pending') nurseRecord.trainingStatus = "In Progress"; addAuditLog("PRE_EVAL", `${currentUser.name} completed pre-evaluation with score ${percentage}%`); } document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="renderPreEvaluation()">Retake</button> <button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; });
+        closeSidebarOnMobile();
     }
 
     function renderPostEvaluation() {
@@ -1067,9 +1242,13 @@
         html += `<button type="submit" class="quiz-btn">Submit Post-evaluation</button></form></div>`;
         document.getElementById('mainContent').innerHTML = html;
         document.getElementById('postEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); if(nurseRecord) { nurseRecord.postEval = percentage; if(systemConfig.autoAssignPrivilege && percentage >= systemConfig.privilegeUpgradeScore && nurseRecord.privilege < 3) { const oldPrivilege = nurseRecord.privilege; nurseRecord.privilege++; addAuditLog("PRIVILEGE_UPGRADE", `${currentUser.name} upgraded from Level ${oldPrivilege} to Level ${nurseRecord.privilege} (Post-eval: ${percentage}%)`); alert(`🎉 Privilege upgraded to Level ${nurseRecord.privilege}!`); updateSidebarPrivilege(); } nurseRecord.trainingStatus = "Completed"; addAuditLog("POST_EVAL", `${currentUser.name} completed post-evaluation with score ${percentage}%`); alert(`Post-evaluation score: ${percentage}%`); document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; } });
+        closeSidebarOnMobile();
     }
 
-    function renderPlaceholder(pageName) { document.getElementById('mainContent').innerHTML = `<div class="page-header"><h1 class="page-title">${pageName}</h1><p class="page-desc">Coming soon.</p></div><div class="card" style="padding:3rem; text-align:center;">🚧 Coming soon: ${pageName}</div>`; }
+    function renderPlaceholder(pageName) { 
+        document.getElementById('mainContent').innerHTML = `<div class="page-header"><h1 class="page-title">${pageName}</h1><p class="page-desc">Coming soon.</p></div><div class="card" style="padding:3rem; text-align:center;">🚧 Coming soon: ${pageName}</div>`;
+        closeSidebarOnMobile();
+    }
 
     function updateSidebarPrivilege() {
         let privilegeClass = '', privilegeText = '';
@@ -1120,7 +1299,6 @@
         const currentPwd = document.getElementById('currentPwd').value;
         const newPwd = document.getElementById('newPwd').value;
         const confirmPwd = document.getElementById('confirmPwd').value;
-        
         if(currentUser.role === 'admin') {
             if(currentPwd !== "Admin@2025") { alert("❌ Current password is incorrect"); return; }
         } else {
@@ -1129,7 +1307,6 @@
         }
         if(newPwd.length < 4) { alert("❌ Password must be at least 4 characters"); return; }
         if(newPwd !== confirmPwd) { alert("❌ New passwords do not match"); return; }
-        
         if(currentUser.role === 'admin') {
             addAuditLog("PASSWORD_CHANGE", "Admin password changed");
             alert("✅ Password changed successfully! Please login again.");
@@ -1159,7 +1336,8 @@
     function navigateTo(moduleId, moduleName) {
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         if(event && event.target) { const activeItem = event.target.closest('.nav-item'); if(activeItem) activeItem.classList.add('active'); }
-        if(moduleId === 'tracker') renderTrackerSheet();
+        if(moduleId === 'dashboard') renderDashboard();
+        else if(moduleId === 'tracker') renderTrackerSheet();
         else if(moduleId === 'preEval') renderPreEvaluation();
         else if(moduleId === 'trainingStatus') renderTrainingStatusUpdater();
         else if(moduleId === 'postEval') renderPostEvaluation();
@@ -1168,6 +1346,7 @@
         else if(moduleId === 'auditLog') renderAuditLog();
         else if(moduleId === 'settings') renderSettings();
         else renderPlaceholder(moduleName);
+        closeSidebarOnMobile();
     }
     
     function logout() { 
@@ -1176,7 +1355,8 @@
         window.location.href = 'index.html'; 
     }
     
-    window.renderTrackerSheet = renderTrackerSheet;
+    window.toggleSidebar = toggleSidebar;
+    window.renderDashboard = renderDashboard;
     window.navigateTo = navigateTo;
     window.logout = logout;
     window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
@@ -1200,6 +1380,9 @@
     window.exportToPDF = exportToPDF;
     window.exportAuditLog = exportAuditLog;
     window.clearAuditLog = clearAuditLog;
+    window.openImportModal = openImportModal;
+    window.closeImportModal = closeImportModal;
+    window.processBulkImport = processBulkImport;
     
     initDashboard();
 </script>
