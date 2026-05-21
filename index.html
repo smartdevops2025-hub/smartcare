@@ -247,26 +247,55 @@
 </div>
 
 <script>
-    // User database (not visible to users)
-    const users = {
+    // ========== MASTER USER DATABASE (Hardcoded + will sync with localStorage) ==========
+    // This ensures Nurse Manager works even on first login
+    
+    const masterUsers = {
+        // Admin
         "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" },
-        "NURSE101": { password: "nurse123", role: "nurse", name: "Sarah Johnson", privilege: 1, department: "ICU", preEvalScore: null, trainingStatus: "Pending", postEvalScore: null },
-        "NURSE102": { password: "nurse123", role: "nurse", name: "Michael Chen", privilege: 2, department: "OT", preEvalScore: 88, trainingStatus: "Completed", postEvalScore: 91 },
-        "NURSE103": { password: "nurse123", role: "nurse", name: "Emma Davis", privilege: 3, department: "Infection Control", preEvalScore: 94, trainingStatus: "Completed", postEvalScore: 96 },
-        "SUP001": { password: "super123", role: "supervisor", name: "Dr. James Wilson", privilege: 2, department: "ICU", preEvalScore: 95, trainingStatus: "Completed", postEvalScore: 98 }
+        
+        // Nurses
+        "NURSE101": { password: "nurse123", role: "nurse", name: "Sarah Johnson", privilege: 1, department: "ICU" },
+        "NURSE102": { password: "nurse123", role: "nurse", name: "Michael Chen", privilege: 2, department: "OT" },
+        "NURSE103": { password: "nurse123", role: "nurse", name: "Emma Davis", privilege: 3, department: "Infection Control" },
+        "NURSE104": { password: "nurse123", role: "nurse", name: "Priya Sharma", privilege: 1, department: "ICU" },
+        
+        // Supervisor
+        "SUP001": { password: "super123", role: "supervisor", name: "James Wilson", privilege: 2, department: "ICU" },
+        
+        // Nurse Manager (FIXED)
+        "MGR001": { password: "manager123", role: "manager", name: "Mary Thompson", privilege: 3, department: "ICU" }
     };
+    
+    // Load any existing users from localStorage and merge
+    let storedUsers = localStorage.getItem('smartcare_users');
+    if(storedUsers) {
+        const parsedUsers = JSON.parse(storedUsers);
+        Object.assign(masterUsers, parsedUsers);
+    }
+    
+    // Save master users to localStorage for dashboard to use
+    localStorage.setItem('smartcare_users', JSON.stringify(masterUsers));
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const username = document.getElementById('username').value.trim();
+        const username = document.getElementById('username').value.trim().toUpperCase();
         const password = document.getElementById('password').value.trim();
         
-        if(users[username] && users[username].password === password) {
-            // Store user data in localStorage
-            localStorage.setItem('currentUser', JSON.stringify({
+        // Check against master users
+        if(masterUsers[username] && masterUsers[username].password === password) {
+            // Store current user data
+            const userData = {
                 id: username,
-                ...users[username]
-            }));
+                name: masterUsers[username].name,
+                role: masterUsers[username].role,
+                privilege: masterUsers[username].privilege,
+                department: masterUsers[username].department
+            };
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            
+            // Also ensure dashboard has this user in its nursesData (for new users)
+            // This will be handled by dashboard's initialization
             window.location.href = 'dashboard.html';
         } else {
             alert("❌ Invalid Employee ID or Password");
