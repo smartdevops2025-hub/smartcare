@@ -272,7 +272,7 @@
             font-size: 0.8rem;
         }
 
-        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn {
+        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn {
             color: white;
             border: none;
             padding: 0.5rem 1.2rem;
@@ -287,12 +287,76 @@
         .add-btn { background: #10b981; }
         .edit-btn { background: #3b82f6; }
         .delete-btn { background: #ef4444; }
+        .save-btn { background: #8b5cf6; }
 
         .btn-small:hover, .quiz-btn:hover { background: #094a50; }
         .update-btn:hover { background: #d97706; }
         .add-btn:hover { background: #059669; }
         .edit-btn:hover { background: #2563eb; }
         .delete-btn:hover { background: #dc2626; }
+        .save-btn:hover { background: #7c3aed; }
+
+        .setting-group {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .setting-group h3 {
+            color: #0c4e6e;
+            margin-bottom: 1rem;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .setting-label {
+            font-weight: 500;
+            color: #334155;
+        }
+        .setting-value {
+            color: #64748b;
+        }
+        .toggle-switch {
+            width: 50px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 40px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+        }
+        .toggle-switch.active {
+            background: #10b981;
+        }
+        .toggle-switch::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            transition: 0.2s;
+        }
+        .toggle-switch.active::after {
+            left: 26px;
+        }
+        .password-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .password-input input {
+            padding: 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+        }
 
         .quiz-question {
             background: #f8fafc;
@@ -359,7 +423,6 @@
             margin: 0 auto;
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -453,11 +516,44 @@
     </div>
 </div>
 
+<!-- Modal for Password Change -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <h3>Change Password</h3>
+        <input type="password" id="currentPwd" placeholder="Current Password">
+        <input type="password" id="newPwd" placeholder="New Password">
+        <input type="password" id="confirmPwd" placeholder="Confirm New Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordModal()">Cancel</button>
+            <button class="save-btn" onclick="changePassword()">Update Password</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ========== USER SESSION ==========
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
         window.location.href = 'index.html';
+    }
+
+    // ========== SYSTEM CONFIGURATION ==========
+    let systemConfig = {
+        passingScore: 70,
+        privilegeUpgradeScore: 85,
+        autoAssignPrivilege: true,
+        enableNotifications: true,
+        allowSelfRegistration: false
+    };
+
+    // Load saved config from localStorage
+    const savedConfig = localStorage.getItem('smartcare_config');
+    if(savedConfig) {
+        systemConfig = JSON.parse(savedConfig);
+    }
+
+    function saveSystemConfig() {
+        localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
     }
 
     // ========== NURSES DATA ==========
@@ -469,7 +565,6 @@
         { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor" }
     ];
 
-    // Update login users database when nurses are added/edited
     function updateLoginUsers() {
         let loginUsers = {
             "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" }
@@ -529,7 +624,7 @@
         { id: "postEval", name: "📈 Post-evaluation", icon: "📊", roles: ["admin", "nurse_privilege_2", "nurse_privilege_3", "supervisor"] },
         { id: "reports", name: "📑 Reports", icon: "📄", roles: ["admin", "supervisor", "nurse_privilege_3"] },
         { id: "userManagement", name: "👥 User Management", icon: "👥", roles: ["admin"] },
-        { id: "settings", name: "🔧 System Settings", icon: "⚙️", roles: ["admin"] }
+        { id: "settings", name: "🔧 Settings", icon: "⚙️", roles: ["admin"] }
     ];
 
     function getMenuForUser(user) {
@@ -545,7 +640,198 @@
         });
     }
 
-    // ========== USER MANAGEMENT (Add/Edit/Delete) ==========
+    // ========== SETTINGS PAGE ==========
+    function renderSettings() {
+        let html = `
+            <div class="page-header">
+                <h1 class="page-title">🔧 System Settings</h1>
+                <p class="page-desc">Configure system preferences and manage your account</p>
+            </div>
+            
+            <div class="card">
+                <div class="setting-group">
+                    <h3>👤 Account Settings</h3>
+                    <div class="setting-row">
+                        <span class="setting-label">Change Password</span>
+                        <button class="edit-btn" onclick="openPasswordModal()">Change Password</button>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Name</span>
+                        <span class="setting-value">${currentUser.name}</span>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Employee ID</span>
+                        <span class="setting-value">${currentUser.id}</span>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Role</span>
+                        <span class="setting-value">${currentUser.role.toUpperCase()}</span>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Department</span>
+                        <span class="setting-value">${currentUser.department}</span>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>⚙️ Evaluation Settings</h3>
+                    <div class="setting-row">
+                        <span class="setting-label">Passing Score for Pre-evaluation (%)</span>
+                        <input type="number" id="passingScore" value="${systemConfig.passingScore}" min="0" max="100" style="width:80px; padding:0.3rem;">
+                        <button class="save-btn" onclick="updatePassingScore()">Save</button>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Privilege Upgrade Score (%)</span>
+                        <input type="number" id="upgradeScore" value="${systemConfig.privilegeUpgradeScore}" min="0" max="100" style="width:80px; padding:0.3rem;">
+                        <button class="save-btn" onclick="updateUpgradeScore()">Save</button>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Auto-assign Privilege Level</span>
+                        <div class="toggle-switch ${systemConfig.autoAssignPrivilege ? 'active' : ''}" onclick="toggleAutoAssign()"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>🔔 Notification Settings</h3>
+                    <div class="setting-row">
+                        <span class="setting-label">Enable Email Notifications</span>
+                        <div class="toggle-switch ${systemConfig.enableNotifications ? 'active' : ''}" onclick="toggleNotifications()"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>📊 System Information</h3>
+                    <div class="setting-row">
+                        <span class="setting-label">System Version</span>
+                        <span class="setting-value">SMARTCARE v2.0.0</span>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Total Nurses</span>
+                        <span class="setting-value">${nursesData.length}</span>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Last Backup</span>
+                        <span class="setting-value">${new Date().toLocaleDateString()}</span>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Data Export</span>
+                        <button class="btn-small" onclick="exportAllData()">Export All Data (JSON)</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('mainContent').innerHTML = html;
+    }
+
+    function updatePassingScore() {
+        const newScore = parseInt(document.getElementById('passingScore').value);
+        if(!isNaN(newScore) && newScore >= 0 && newScore <= 100) {
+            systemConfig.passingScore = newScore;
+            saveSystemConfig();
+            alert(`✅ Passing score updated to ${newScore}%`);
+        } else {
+            alert("❌ Please enter a valid score between 0 and 100");
+        }
+    }
+
+    function updateUpgradeScore() {
+        const newScore = parseInt(document.getElementById('upgradeScore').value);
+        if(!isNaN(newScore) && newScore >= 0 && newScore <= 100) {
+            systemConfig.privilegeUpgradeScore = newScore;
+            saveSystemConfig();
+            alert(`✅ Privilege upgrade score updated to ${newScore}%`);
+        } else {
+            alert("❌ Please enter a valid score between 0 and 100");
+        }
+    }
+
+    function toggleAutoAssign() {
+        systemConfig.autoAssignPrivilege = !systemConfig.autoAssignPrivilege;
+        saveSystemConfig();
+        renderSettings();
+    }
+
+    function toggleNotifications() {
+        systemConfig.enableNotifications = !systemConfig.enableNotifications;
+        saveSystemConfig();
+        renderSettings();
+    }
+
+    function openPasswordModal() {
+        document.getElementById('currentPwd').value = "";
+        document.getElementById('newPwd').value = "";
+        document.getElementById('confirmPwd').value = "";
+        document.getElementById('passwordModal').style.display = "flex";
+    }
+
+    function closePasswordModal() {
+        document.getElementById('passwordModal').style.display = "none";
+    }
+
+    function changePassword() {
+        const currentPwd = document.getElementById('currentPwd').value;
+        const newPwd = document.getElementById('newPwd').value;
+        const confirmPwd = document.getElementById('confirmPwd').value;
+        
+        // For admin, check against hardcoded; for others, check against nursesData
+        if(currentUser.role === 'admin') {
+            if(currentPwd !== "Admin@2025") {
+                alert("❌ Current password is incorrect");
+                return;
+            }
+        } else {
+            const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
+            if(!nurseRecord || nurseRecord.password !== currentPwd) {
+                alert("❌ Current password is incorrect");
+                return;
+            }
+        }
+        
+        if(newPwd.length < 4) {
+            alert("❌ Password must be at least 4 characters");
+            return;
+        }
+        
+        if(newPwd !== confirmPwd) {
+            alert("❌ New passwords do not match");
+            return;
+        }
+        
+        // Update password
+        if(currentUser.role === 'admin') {
+            // Admin password would be updated in a real backend
+            alert("✅ Password changed successfully! Please login again.");
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        } else {
+            const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
+            if(nurseRecord) {
+                nurseRecord.password = newPwd;
+                updateLoginUsers();
+                alert("✅ Password changed successfully!");
+                closePasswordModal();
+            }
+        }
+    }
+
+    function exportAllData() {
+        const exportData = {
+            nurses: nursesData,
+            systemConfig: systemConfig,
+            exportDate: new Date().toISOString()
+        };
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_export_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        alert("📎 Data exported successfully!");
+    }
+
+    // ========== USER MANAGEMENT ==========
     function renderUserManagement() {
         let html = `
             <div class="page-header">
@@ -568,15 +854,12 @@
             let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3');
             let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>');
             html += `<tr>
-                <td>${n.empId}</td>
-                <td><strong>${n.name}</strong></td>
-                <td>${n.department}</td>
-                <td>${privilegeText}</td>
-                <td>${statusBadge}</td>
+                <td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td>
+                <td>${privilegeText}</td><td>${statusBadge}</td>
                 <td><button class="edit-btn" onclick="openEditModal(${n.id})">✏️ Edit</button> <button class="delete-btn" onclick="deleteUser(${n.id})">🗑️ Delete</button></td>
             </tr>`;
         });
-        html += `</tbody></table><p style="margin-top:1rem;">Total: ${filtered.length} nurses</p></div>`;
+        html += `</tbody></table><p>Total: ${filtered.length} nurses</p></div>`;
         document.getElementById('mainContent').innerHTML = html;
     }
 
@@ -616,14 +899,12 @@
         if(!name || !empId) { alert("Please fill all fields"); return; }
         
         if(id) {
-            // Edit existing
             const index = nursesData.findIndex(n => n.id == id);
             if(index !== -1) {
                 nursesData[index] = { ...nursesData[index], name, empId, department, privilege, password };
                 alert(`✅ Nurse ${name} updated successfully`);
             }
         } else {
-            // Add new
             const newId = Math.max(...nursesData.map(n => n.id), 0) + 1;
             nursesData.push({
                 id: newId, name, empId, department, privilege,
@@ -716,7 +997,7 @@
         const filterDept = document.getElementById('filterDept')?.value || 'all';
         const searchTerm = document.getElementById('searchName')?.value.toLowerCase() || '';
         let filtered = nursesData.filter(nurse => (filterDept === 'all' || nurse.department === filterDept) && (nurse.name.toLowerCase().includes(searchTerm) || nurse.empId.toLowerCase().includes(searchTerm)));
-        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Tracker Sheet</h1><p class="page-desc">Track induction progress, training status & privilege levels</p></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search by name or ID" onkeyup="renderTrackerSheet()"><select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select><button class="btn-small" onclick="exportReport()">📎 Export Report</button></div><tr><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr></thead><tbody>`;
+        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Tracker Sheet</h1><p class="page-desc">Track induction progress, training status & privilege levels</p></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search by name or ID" onkeyup="renderTrackerSheet()"><select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select><button class="btn-small" onclick="exportReport()">📎 Export Report</button></div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr></thead><tbody>`;
         filtered.forEach(n => { let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>'); let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3'); html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.preEval ? n.preEval+'%' : '—'}</td><td>${n.postEval ? n.postEval+'%' : '—'}</td><td>${statusBadge}</td><td>${privilegeText}</td><td>${n.joiningDate}</td></tr>`; });
         html += `</tbody></table><p>Showing ${filtered.length} nurses</p></div>`;
         document.getElementById('mainContent').innerHTML = html;
@@ -725,11 +1006,11 @@
     function renderPreEvaluation() {
         const quiz = quizzes[currentUser.department];
         if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No pre-evaluation available for your department.</p></div>`; return; }
-        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Passing score: 70%</p></div><div class="card"><form id="preEvalForm">`;
+        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}%</p></div><div class="card"><form id="preEvalForm">`;
         quiz.questions.forEach((q, idx) => { html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`; q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; }); html += `</div>`; });
         html += `<button type="submit" class="quiz-btn">Submit Pre-evaluation</button></form></div>`;
         document.getElementById('mainContent').innerHTML = html;
-        document.getElementById('preEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); alert(`Score: ${percentage}% - ${percentage >= 70 ? 'PASSED ✓' : 'FAILED ✗'}`); const nurseRecord = nursesData.find(n => n.empId === currentUser.id); if(nurseRecord) { nurseRecord.preEval = percentage; if(percentage >= 70 && nurseRecord.trainingStatus === 'Pending') nurseRecord.trainingStatus = "In Progress"; } document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="renderPreEvaluation()">Retake</button> <button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; });
+        document.getElementById('preEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); alert(`Score: ${percentage}% - ${percentage >= systemConfig.passingScore ? 'PASSED ✓' : 'FAILED ✗'}`); const nurseRecord = nursesData.find(n => n.empId === currentUser.id); if(nurseRecord) { nurseRecord.preEval = percentage; if(percentage >= systemConfig.passingScore && nurseRecord.trainingStatus === 'Pending') nurseRecord.trainingStatus = "In Progress"; } document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="renderPreEvaluation()">Retake</button> <button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; });
     }
 
     function renderPostEvaluation() {
@@ -737,11 +1018,11 @@
         if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No post-evaluation available.</p></div>`; return; }
         const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
         if(!nurseRecord || !nurseRecord.preEval) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Complete Pre-evaluation first.</p><br><button class="quiz-btn" onclick="navigateTo('preEval','Pre-evaluation')">Go to Pre-evaluation</button></div>`; return; }
-        let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Complete after training</p></div><div class="card"><form id="postEvalForm">`;
+        let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Upgrade score: ${systemConfig.privilegeUpgradeScore}%</p></div><div class="card"><form id="postEvalForm">`;
         quiz.questions.forEach((q, idx) => { html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`; q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; }); html += `</div>`; });
         html += `<button type="submit" class="quiz-btn">Submit Post-evaluation</button></form></div>`;
         document.getElementById('mainContent').innerHTML = html;
-        document.getElementById('postEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); if(nurseRecord) { nurseRecord.postEval = percentage; if(percentage >= 85 && nurseRecord.privilege < 3) { nurseRecord.privilege++; alert(`🎉 Privilege upgraded to Level ${nurseRecord.privilege}!`); updateSidebarPrivilege(); } nurseRecord.trainingStatus = "Completed"; alert(`Post-evaluation score: ${percentage}%`); document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; } });
+        document.getElementById('postEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); if(nurseRecord) { nurseRecord.postEval = percentage; if(systemConfig.autoAssignPrivilege && percentage >= systemConfig.privilegeUpgradeScore && nurseRecord.privilege < 3) { nurseRecord.privilege++; alert(`🎉 Privilege upgraded to Level ${nurseRecord.privilege}!`); updateSidebarPrivilege(); } nurseRecord.trainingStatus = "Completed"; alert(`Post-evaluation score: ${percentage}%`); document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; } });
     }
 
     function renderPlaceholder(pageName) { document.getElementById('mainContent').innerHTML = `<div class="page-header"><h1 class="page-title">${pageName}</h1><p class="page-desc">Coming soon.</p></div><div class="card" style="padding:3rem; text-align:center;">🚧 Coming soon: ${pageName}</div>`; }
@@ -772,6 +1053,7 @@
         else if(moduleId === 'postEval') renderPostEvaluation();
         else if(moduleId === 'reports') renderReports();
         else if(moduleId === 'userManagement') renderUserManagement();
+        else if(moduleId === 'settings') renderSettings();
         else renderPlaceholder(moduleName);
     }
     
@@ -786,11 +1068,20 @@
     window.updateTraining = updateTraining;
     window.renderReports = renderReports;
     window.renderUserManagement = renderUserManagement;
+    window.renderSettings = renderSettings;
     window.openAddModal = openAddModal;
     window.openEditModal = openEditModal;
     window.saveUser = saveUser;
     window.deleteUser = deleteUser;
     window.closeModal = closeModal;
+    window.openPasswordModal = openPasswordModal;
+    window.closePasswordModal = closePasswordModal;
+    window.changePassword = changePassword;
+    window.updatePassingScore = updatePassingScore;
+    window.updateUpgradeScore = updateUpgradeScore;
+    window.toggleAutoAssign = toggleAutoAssign;
+    window.toggleNotifications = toggleNotifications;
+    window.exportAllData = exportAllData;
     
     initDashboard();
 </script>
