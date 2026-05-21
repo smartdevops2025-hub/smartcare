@@ -28,7 +28,6 @@
             width: 100%;
         }
 
-        /* ========= LEFT SIDEBAR ========= */
         .sidebar {
             width: 280px;
             background: linear-gradient(180deg, #0b3b4f 0%, #0f4a5e 100%);
@@ -41,7 +40,6 @@
             z-index: 100;
         }
 
-        /* Mobile sidebar toggle */
         .sidebar-toggle {
             display: none;
             position: fixed;
@@ -63,16 +61,8 @@
             border-bottom: 1px solid rgba(255,255,255,0.15);
         }
 
-        .sidebar-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .sidebar-header p {
-            font-size: 0.65rem;
-            opacity: 0.7;
-            margin-top: 0.3rem;
-        }
+        .sidebar-header h2 { font-size: 1.5rem; font-weight: 700; }
+        .sidebar-header p { font-size: 0.65rem; opacity: 0.7; margin-top: 0.3rem; }
 
         .user-info {
             padding: 0.8rem 1rem;
@@ -81,16 +71,8 @@
             border-radius: 0.8rem;
         }
 
-        .user-name {
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .user-role {
-            font-size: 0.65rem;
-            opacity: 0.7;
-            margin-top: 0.2rem;
-        }
+        .user-name { font-weight: 600; font-size: 0.85rem; }
+        .user-role { font-size: 0.65rem; opacity: 0.7; margin-top: 0.2rem; }
 
         .privilege-indicator {
             margin-top: 0.6rem;
@@ -124,38 +106,28 @@
             color: #e0f2fe;
         }
 
-        .nav-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
         .nav-item.active {
             background: rgba(255,255,255,0.2);
             border-left: 3px solid #7ab7c7;
             font-weight: 500;
         }
 
-        .nav-icon {
-            font-size: 1.1rem;
-            width: 24px;
-        }
+        .nav-icon { font-size: 1.1rem; width: 24px; }
 
         .logout-btn {
             margin: 0.8rem;
             padding: 0.6rem;
-            background: rgba(220, 80, 80, 0.2);
-            border: 1px solid rgba(220, 80, 80, 0.4);
+            background: rgba(220,80,80,0.2);
+            border: 1px solid rgba(220,80,80,0.4);
             border-radius: 0.6rem;
             text-align: center;
             cursor: pointer;
             font-size: 0.8rem;
-            transition: all 0.2s;
         }
 
-        .logout-btn:hover {
-            background: rgba(220, 80, 80, 0.4);
-        }
+        .logout-btn:hover { background: rgba(220,80,80,0.4); }
 
-        /* ========= MAIN CONTENT ========= */
         .main-content {
             flex: 1;
             overflow-y: auto;
@@ -163,23 +135,10 @@
             transition: margin-left 0.3s ease;
         }
 
-        .page-header {
-            margin-bottom: 1.5rem;
-        }
+        .page-header { margin-bottom: 1.5rem; }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: #0c4e6e; }
+        .page-desc { color: #4b5563; font-size: 0.8rem; margin-top: 0.2rem; }
 
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #0c4e6e;
-        }
-
-        .page-desc {
-            color: #4b5563;
-            font-size: 0.8rem;
-            margin-top: 0.2rem;
-        }
-
-        /* Dashboard Widgets */
         .dashboard-widgets {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -194,39 +153,10 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             transition: transform 0.2s;
         }
-
-        .widget:hover {
-            transform: translateY(-2px);
-        }
-
-        .widget-title {
-            font-size: 0.7rem;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .widget-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #0c4e6e;
-            margin: 0.3rem 0;
-        }
-
-        .widget-trend {
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .trend-up { color: #10b981; }
-        .trend-down { color: #ef4444; }
-
-        .widget-icon {
-            float: right;
-            font-size: 2rem;
-            opacity: 0.3;
-        }
+        .widget:hover { transform: translateY(-2px); }
+        .widget-title { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; }
+        .widget-value { font-size: 1.8rem; font-weight: 700; color: #0c4e6e; margin: 0.3rem 0; }
+        .widget-icon { float: right; font-size: 2rem; opacity: 0.3; }
 
         .welcome-screen {
             display: flex;
@@ -236,26 +166,8 @@
             min-height: 60vh;
             text-align: center;
         }
-
-        .welcome-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-title {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #0c4e6e;
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-text {
-            color: #4b5563;
-            font-size: 0.9rem;
-            max-width: 400px;
-            margin-bottom: 1.5rem;
-        }
-
+        .welcome-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .welcome-title { font-size: 1.6rem; font-weight: 600; color: #0c4e6e; }
         .instruction-card {
             background: #e0f2fe;
             padding: 0.8rem 1.5rem;
@@ -280,55 +192,13 @@
             padding: 1rem;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th { text-align: left; padding: 0.6rem 0.3rem; background: #f8fafc; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 0.6rem 0.3rem; border-bottom: 1px solid #eef2f6; }
 
-        th {
-            text-align: left;
-            padding: 0.6rem 0.3rem;
-            background: #f8fafc;
-            color: #1e293b;
-            font-weight: 600;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        td {
-            padding: 0.6rem 0.3rem;
-            border-bottom: 1px solid #eef2f6;
-        }
-
-        .status-completed {
-            background: #dcfce7;
-            color: #15803d;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-pending {
-            background: #fff3e3;
-            color: #b45309;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-inprogress {
-            background: #fef9c3;
-            color: #854d0e;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            display: inline-block;
-        }
+        .status-completed { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.65rem; display: inline-block; }
+        .status-pending { background: #fff3e3; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.65rem; display: inline-block; }
+        .status-inprogress { background: #fef9c3; color: #854d0e; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.65rem; display: inline-block; }
 
         .filter-bar {
             margin-bottom: 1rem;
@@ -337,13 +207,7 @@
             flex-wrap: wrap;
             align-items: center;
         }
-
-        .filter-bar input, .filter-bar select {
-            padding: 0.4rem 0.8rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-        }
+        .filter-bar input, .filter-bar select { padding: 0.4rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 2rem; font-size: 0.75rem; }
 
         .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .import-btn {
             color: white;
@@ -353,7 +217,6 @@
             cursor: pointer;
             font-size: 0.75rem;
         }
-
         .btn-small { background: #0f5b63; }
         .quiz-btn { background: #0f5b63; }
         .update-btn { background: #f59e0b; }
@@ -364,98 +227,17 @@
         .export-btn { background: #6b7280; }
         .import-btn { background: #8b5cf6; }
 
-        .btn-small:hover, .quiz-btn:hover { background: #094a50; }
-        .update-btn:hover { background: #d97706; }
-        .add-btn:hover { background: #059669; }
-        .edit-btn:hover { background: #2563eb; }
-        .delete-btn:hover { background: #dc2626; }
-        .save-btn:hover { background: #7c3aed; }
-        .export-btn:hover { background: #4b5563; }
-        .import-btn:hover { background: #7c3aed; }
-
-        .setting-group {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .setting-group h3 {
-            color: #0c4e6e;
-            margin-bottom: 0.8rem;
-            font-size: 1rem;
-        }
-        .setting-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .setting-label {
-            font-weight: 500;
-            color: #334155;
-            font-size: 0.85rem;
-        }
-        .setting-value {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-        .toggle-switch {
-            width: 44px;
-            height: 22px;
-            background: #cbd5e1;
-            border-radius: 40px;
-            cursor: pointer;
-            position: relative;
-            transition: 0.2s;
-        }
-        .toggle-switch.active {
-            background: #10b981;
-        }
-        .toggle-switch::after {
-            content: "";
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 3px;
-            transition: 0.2s;
-        }
-        .toggle-switch.active::after {
-            left: 23px;
-        }
-
         .quiz-question {
             background: #f8fafc;
             padding: 0.8rem;
             margin-bottom: 0.8rem;
             border-radius: 0.6rem;
         }
-
-        .quiz-question p {
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            font-size: 0.85rem;
-        }
-
-        .quiz-option {
-            margin: 0.2rem 0 0.2rem 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-        }
-
-        .quiz-option input {
-            width: auto;
-        }
-
+        .quiz-question p { font-weight: 600; margin-bottom: 0.4rem; font-size: 0.85rem; }
+        .quiz-option { margin: 0.2rem 0 0.2rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
         .score-display {
             font-size: 1rem;
             font-weight: 700;
-            margin-top: 0.8rem;
             padding: 0.8rem;
             background: #e0f2fe;
             border-radius: 0.8rem;
@@ -468,31 +250,16 @@
             gap: 0.8rem;
             margin-bottom: 1rem;
         }
-
         .stat-card {
             background: white;
             padding: 1rem;
             border-radius: 0.8rem;
             text-align: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
+        .stat-number { font-size: 1.8rem; font-weight: 700; color: #0c4e6e; }
+        .stat-label { font-size: 0.7rem; color: #6b7280; }
 
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #0c4e6e;
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            color: #6b7280;
-            margin-top: 0.2rem;
-        }
-
-        .chart-container {
-            max-width: 300px;
-            margin: 0 auto;
-        }
+        .chart-container { max-width: 300px; margin: 0 auto; }
 
         .modal {
             display: none;
@@ -511,48 +278,24 @@
             padding: 1.5rem;
             border-radius: 1rem;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
         }
-        .modal-content h3 {
-            margin-bottom: 0.8rem;
-            color: #0c4e6e;
-            font-size: 1.2rem;
-        }
-        .modal-content input, .modal-content select, .modal-content textarea {
+        .modal-content h3 { margin-bottom: 0.8rem; color: #0c4e6e; font-size: 1.2rem; }
+        .modal-content input, .modal-content select {
             width: 100%;
             padding: 0.6rem;
             margin-bottom: 0.8rem;
             border: 1px solid #cbd5e1;
             border-radius: 0.6rem;
-            font-size: 0.85rem;
         }
-        .modal-buttons {
-            display: flex;
-            gap: 0.8rem;
-            justify-content: flex-end;
-        }
+        .modal-buttons { display: flex; gap: 0.8rem; justify-content: flex-end; }
 
         .audit-log-entry {
             padding: 0.4rem;
             border-bottom: 1px solid #e2e8f0;
             font-size: 0.75rem;
         }
-        .audit-log-entry:hover {
-            background: #f8fafc;
-        }
 
-        /* Bulk Import Preview */
-        .import-preview {
-            max-height: 300px;
-            overflow-y: auto;
-            margin: 0.8rem 0;
-            font-size: 0.7rem;
-        }
-        .import-preview table {
-            font-size: 0.7rem;
-        }
-
-        /* ========= MOBILE RESPONSIVE ========= */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -563,56 +306,12 @@
                 transition: left 0.3s ease;
                 z-index: 200;
             }
-            .sidebar.open {
-                left: 0;
-            }
-            .sidebar-toggle {
-                display: block;
-            }
-            .main-content {
-                padding: 0.8rem;
-                margin-top: 3rem;
-            }
-            .dashboard-widgets {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.6rem;
-            }
-            .widget-value {
-                font-size: 1.3rem;
-            }
-            .page-title {
-                font-size: 1.2rem;
-            }
-            .filter-bar {
-                gap: 0.5rem;
-            }
-            .filter-bar input, .filter-bar select, .btn-small, .export-btn {
-                font-size: 0.7rem;
-                padding: 0.3rem 0.6rem;
-            }
-            th, td {
-                font-size: 0.7rem;
-                padding: 0.4rem 0.2rem;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .stat-number {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .dashboard-widgets {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .setting-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            .sidebar.open { left: 0; }
+            .sidebar-toggle { display: block; }
+            .main-content { padding: 0.8rem; margin-top: 3rem; }
+            .dashboard-widgets { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+            .widget-value { font-size: 1.3rem; }
+            .page-title { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -629,85 +328,20 @@
         <div class="logout-btn" onclick="logout()">← Logout</div>
     </div>
     <div class="main-content" id="mainContent">
-        <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-screen">
             <div class="welcome-icon">🫀⚕️</div>
             <div class="welcome-title">Welcome to SMARTCARE</div>
-            <div class="welcome-text">
-                Select any option from the left panel to get started.<br>
-                Your accessible modules are shown based on your privilege level.
-            </div>
-            <div class="instruction-card">
-                💡 Tip: Click on any menu item to view content
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Add/Edit User -->
-<div id="userModal" class="modal">
-    <div class="modal-content">
-        <h3 id="modalTitle">Add New Nurse</h3>
-        <input type="hidden" id="editId">
-        <input type="text" id="userName" placeholder="Full Name" required>
-        <input type="text" id="userEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
-        <select id="userDept">
-            <option value="ICU">ICU</option>
-            <option value="OT">OT</option>
-            <option value="Infection Control">Infection Control</option>
-        </select>
-        <select id="userPrivilege">
-            <option value="1">Level 1 (Trainee)</option>
-            <option value="2">Level 2 (Independent)</option>
-            <option value="3">Level 3 (Preceptor)</option>
-        </select>
-        <select id="userRole">
-            <option value="nurse">Nurse</option>
-            <option value="supervisor">Supervisor</option>
-            <option value="manager">Nurse Manager</option>
-        </select>
-        <input type="text" id="userPassword" placeholder="Password (default: nurse123)" value="nurse123">
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closeModal()">Cancel</button>
-            <button class="add-btn" onclick="saveUser()">Save</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Bulk Import -->
-<div id="importModal" class="modal">
-    <div class="modal-content">
-        <h3>📎 Bulk Import Nurses</h3>
-        <p style="font-size:0.75rem; margin-bottom:0.5rem;">Upload CSV/Excel file with columns: Name, EmpId, Department, Privilege, Role, Password</p>
-        <input type="file" id="importFile" accept=".csv,.xlsx,.xls">
-        <div id="importPreview" class="import-preview"></div>
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closeImportModal()">Cancel</button>
-            <button class="import-btn" onclick="processBulkImport()">Import Data</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Password Change -->
-<div id="passwordModal" class="modal">
-    <div class="modal-content">
-        <h3>Change Password</h3>
-        <input type="password" id="currentPwd" placeholder="Current Password">
-        <input type="password" id="newPwd" placeholder="New Password">
-        <input type="password" id="confirmPwd" placeholder="Confirm New Password">
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closePasswordModal()">Cancel</button>
-            <button class="save-btn" onclick="changePassword()">Update Password</button>
+            <div class="instruction-card">💡 Select an option from the menu</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== MOBILE SIDEBAR TOGGLE ==========
+    // ========== MOBILE SIDEBAR ==========
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('open');
     }
-
-    function closeSidebarOnMobile() {
+    function closeSidebar() {
         if (window.innerWidth <= 768) {
             document.getElementById('sidebar').classList.remove('open');
         }
@@ -715,675 +349,371 @@
 
     // ========== AUDIT LOG ==========
     let auditLog = [];
-
     function addAuditLog(action, details) {
-        const logEntry = {
-            timestamp: new Date().toISOString(),
-            user: currentUser?.name || "Unknown",
-            userId: currentUser?.id || "Unknown",
-            role: currentUser?.role || "Unknown",
-            action: action,
-            details: details
-        };
-        auditLog.unshift(logEntry);
+        auditLog.unshift({ timestamp: new Date().toISOString(), user: currentUser?.name, userId: currentUser?.id, role: currentUser?.role, action, details });
         if(auditLog.length > 1000) auditLog.pop();
         localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
     }
-
     const savedAudit = localStorage.getItem('smartcare_audit');
     if(savedAudit) auditLog = JSON.parse(savedAudit);
 
     // ========== USER SESSION ==========
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) window.location.href = 'index.html';
+    addAuditLog("LOGIN", "User logged in");
 
-    addAuditLog("LOGIN", "User logged into the system");
-
-    // ========== SYSTEM CONFIGURATION ==========
-    let systemConfig = {
-        passingScore: 70,
-        privilegeUpgradeScore: 85,
-        autoAssignPrivilege: true,
-        enableNotifications: true,
-        allowSelfRegistration: false
-    };
-
+    // ========== SYSTEM CONFIG ==========
+    let systemConfig = { passingScore: 70, privilegeUpgradeScore: 85, autoAssignPrivilege: true };
     const savedConfig = localStorage.getItem('smartcare_config');
-    if(savedConfig) systemConfig = JSON.parse(savedConfig);
+    if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
-    function saveSystemConfig() {
-        localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
-        addAuditLog("CONFIG_UPDATE", `System configuration updated`);
-    }
+    // ========== TRAINING MODULES FROM EXCEL ==========
+    // Based on the Excel file structure: ICU, OT, Infection Control sheets
+    const trainingModulesByDept = {
+        "ICU": [
+            "ICU Basic Life Support (BLS)",
+            "ICU Advanced Cardiac Life Support (ACLS)",
+            "ICU Ventilator Management",
+            "ICU Hemodynamic Monitoring",
+            "ICU Central Line Care",
+            "ICU Sedation and Analgesia Protocols",
+            "ICU Infection Control Bundle",
+            "ICU Rapid Response Team Activation",
+            "ICU End of Life Care",
+            "ICU Handoff Communication (SBAR)"
+        ],
+        "OT": [
+            "OT Surgical Scrub Techniques",
+            "OT Sterile Field Setup",
+            "OT Surgical Safety Checklist",
+            "OT Instrument Sterilization",
+            "OT Counts (Sponge, Needle, Instrument)",
+            "OT Waste Management",
+            "OT Anesthesia Equipment Handling",
+            "OT Emergency Protocols (Fire, Cardiac Arrest)",
+            "OT Pre-op Patient Verification",
+            "OT Post-op Instrument Care"
+        ],
+        "Infection Control": [
+            "Hand Hygiene Compliance (WHO 5 Moments)",
+            "Personal Protective Equipment (PPE) Use",
+            "Isolation Precautions (Contact, Droplet, Airborne)",
+            "Medical Waste Segregation & Disposal",
+            "Needlestick Injury Prevention & Management",
+            "Environmental Cleaning & Disinfection",
+            "Surveillance of Healthcare-Associated Infections (HAIs)",
+            "Antibiotic Stewardship Basics",
+            "Outbreak Management",
+            "Sterilization & High-Level Disinfection"
+        ]
+    };
 
     // ========== NURSES DATA ==========
     let nursesData = [
-        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse" },
-        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "OT", preEval: 88, postEval: 91, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-11-20", password: "nurse123", role: "nurse" },
-        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: 94, postEval: 96, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-08-10", password: "nurse123", role: "nurse" },
-        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse" },
-        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor" },
-        { id: 6, name: "Mary Thompson", empId: "MGR001", department: "ICU", preEval: 98, postEval: 99, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-01-10", password: "manager123", role: "manager" }
+        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [] },
+        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "OT", preEval: 88, postEval: 91, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: trainingModulesByDept.OT.slice(0, 8) },
+        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: 94, postEval: 96, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: trainingModulesByDept["Infection Control"] },
+        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [] },
+        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: trainingModulesByDept.ICU },
+        { id: 6, name: "Mary Thompson", empId: "MGR001", department: "ICU", preEval: 98, postEval: 99, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-01-10", password: "manager123", role: "manager", trainingModulesCompleted: trainingModulesByDept.ICU }
     ];
 
     function updateLoginUsers() {
-        let loginUsers = {
-            "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" }
-        };
-        nursesData.forEach(nurse => {
-            loginUsers[nurse.empId] = {
-                password: nurse.password || "nurse123",
-                role: nurse.role || "nurse",
-                name: nurse.name,
-                privilege: nurse.privilege,
-                department: nurse.department
-            };
-        });
+        let loginUsers = { "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" } };
+        nursesData.forEach(n => { loginUsers[n.empId] = { password: n.password, role: n.role, name: n.name, privilege: n.privilege, department: n.department }; });
         localStorage.setItem('smartcare_users', JSON.stringify(loginUsers));
-        addAuditLog("USERS_UPDATED", "User database synchronized");
     }
 
-    // ========== BULK IMPORT ==========
-    let pendingImportData = [];
-
-    function openImportModal() {
-        document.getElementById('importFile').value = '';
-        document.getElementById('importPreview').innerHTML = '';
-        pendingImportData = [];
-        document.getElementById('importModal').style.display = 'flex';
-    }
-
-    function closeImportModal() {
-        document.getElementById('importModal').style.display = 'none';
-    }
-
-    document.getElementById('importFile')?.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            const data = evt.target.result;
-            let workbook;
-            try {
-                workbook = XLSX.read(data, { type: 'binary' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet);
-                pendingImportData = rows.map(row => ({
-                    name: row.Name || row.name || '',
-                    empId: row.EmpId || row.empId || row.EmployeeID || '',
-                    department: row.Department || row.department || 'ICU',
-                    privilege: parseInt(row.Privilege || row.privilege || 1),
-                    role: row.Role || row.role || 'nurse',
-                    password: row.Password || row.password || 'nurse123'
-                })).filter(r => r.name && r.empId);
-                
-                let previewHtml = '<table><thead><tr><th>Name</th><th>Emp ID</th><th>Dept</th><th>Privilege</th><th>Role</th></tr></thead><tbody>';
-                pendingImportData.forEach(r => {
-                    previewHtml += `<tr><td>${r.name}</td><td>${r.empId}</td><td>${r.department}</td><td>${r.privilege}</td><td>${r.role}</td></tr>`;
-                });
-                previewHtml += '</tbody></table>';
-                document.getElementById('importPreview').innerHTML = `<p>✅ ${pendingImportData.length} records found. Review before importing:</p>${previewHtml}`;
-            } catch(err) {
-                document.getElementById('importPreview').innerHTML = '<p style="color:red;">Error reading file. Please check format.</p>';
-            }
-        };
-        reader.readAsBinaryString(file);
-    });
-
-    function processBulkImport() {
-        if(pendingImportData.length === 0) {
-            alert("No valid data to import. Please upload a file first.");
-            return;
-        }
-        
-        let imported = 0;
-        let skipped = 0;
-        const nextId = Math.max(...nursesData.map(n => n.id), 0) + 1;
-        
-        pendingImportData.forEach((item, idx) => {
-            const exists = nursesData.some(n => n.empId === item.empId);
-            if(!exists) {
-                nursesData.push({
-                    id: nextId + idx,
-                    name: item.name,
-                    empId: item.empId,
-                    department: item.department,
-                    privilege: Math.min(3, Math.max(1, item.privilege)),
-                    role: ['nurse', 'supervisor', 'manager'].includes(item.role) ? item.role : 'nurse',
-                    password: item.password,
-                    preEval: null,
-                    postEval: null,
-                    trainingStatus: "Pending",
-                    joiningDate: new Date().toISOString().split('T')[0]
-                });
-                imported++;
-            } else {
-                skipped++;
-            }
-        });
-        
-        updateLoginUsers();
-        addAuditLog("BULK_IMPORT", `Imported ${imported} nurses (${skipped} skipped due to duplicate EmpId)`);
-        alert(`✅ Import complete!\n\nImported: ${imported}\nSkipped (duplicate): ${skipped}`);
-        closeImportModal();
-        renderUserManagement();
-        renderDashboard();
-    }
-
-    // ========== DASHBOARD WIDGETS ==========
-    function renderDashboard() {
-        const totalNurses = nursesData.length;
-        const completed = nursesData.filter(n => n.trainingStatus === 'Completed').length;
-        const pending = nursesData.filter(n => n.trainingStatus === 'Pending').length;
-        const inProgress = nursesData.filter(n => n.trainingStatus === 'In Progress').length;
-        const avgPreEval = nursesData.filter(n => n.preEval).reduce((sum, n) => sum + n.preEval, 0) / (nursesData.filter(n => n.preEval).length || 1);
-        const avgPostEval = nursesData.filter(n => n.postEval).reduce((sum, n) => sum + n.postEval, 0) / (nursesData.filter(n => n.postEval).length || 1);
-        const level3Count = nursesData.filter(n => n.privilege === 3).length;
-        
-        let deptStats = {};
-        nursesData.forEach(n => {
-            if(!deptStats[n.department]) deptStats[n.department] = { total: 0, completed: 0 };
-            deptStats[n.department].total++;
-            if(n.trainingStatus === 'Completed') deptStats[n.department].completed++;
-        });
-        
-        let deptHtml = '<div class="stats-grid">';
-        for(let dept in deptStats) {
-            let percent = Math.round((deptStats[dept].completed / deptStats[dept].total) * 100);
-            deptHtml += `<div class="stat-card"><div class="stat-number">${percent}%</div><div class="stat-label">${dept}</div><small>${deptStats[dept].completed}/${deptStats[dept].total}</small></div>`;
-        }
-        deptHtml += '</div>';
-        
-        let html = `
-            <div class="page-header">
-                <h1 class="page-title">📊 Dashboard</h1>
-                <p class="page-desc">Real-time statistics and insights</p>
-            </div>
-            <div class="dashboard-widgets">
-                <div class="widget"><div class="widget-icon">👩‍⚕️</div><div class="widget-title">Total Nurses</div><div class="widget-value">${totalNurses}</div><div class="widget-trend"><span class="trend-up">↑</span> Active staff</div></div>
-                <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Training Completed</div><div class="widget-value">${completed}</div><div class="widget-trend">${Math.round((completed/totalNurses)*100)}% of total</div></div>
-                <div class="widget"><div class="widget-icon">🔄</div><div class="widget-title">In Progress</div><div class="widget-value">${inProgress}</div><div class="widget-trend">Pending: ${pending}</div></div>
-                <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Level 3 Preceptors</div><div class="widget-value">${level3Count}</div><div class="widget-trend">Advanced practitioners</div></div>
-                <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Pre-eval</div><div class="widget-value">${Math.round(avgPreEval)}%</div><div class="widget-trend ${avgPreEval >= 70 ? 'trend-up' : 'trend-down'}">${avgPreEval >= 70 ? '✓ Passing' : '⚠ Needs improvement'}</div></div>
-                <div class="widget"><div class="widget-icon">📈</div><div class="widget-title">Avg Post-eval</div><div class="widget-value">${Math.round(avgPostEval)}%</div><div class="widget-trend trend-up">↑ ${Math.round(avgPostEval - avgPreEval)}% improvement</div></div>
-            </div>
-            <div class="card"><h3 style="margin-bottom:0.8rem;">🏥 Department-wise Completion</h3>${deptHtml}</div>
-            <div class="card"><h3 style="margin-bottom:0.8rem;">📊 Training Status Distribution</h3><div class="chart-container"><canvas id="trainingChart"></canvas></div></div>
-            <div class="card"><h3 style="margin-bottom:0.8rem;">📈 Pre vs Post Evaluation</h3><div class="chart-container"><canvas id="evalChart"></canvas></div></div>
-        `;
-        
-        document.getElementById('mainContent').innerHTML = html;
-        
-        setTimeout(() => {
-            const ctx1 = document.getElementById('trainingChart')?.getContext('2d');
-            if(ctx1) new Chart(ctx1, { type: 'doughnut', data: { labels: ['Completed', 'In Progress', 'Pending'], datasets: [{ data: [completed, inProgress, pending], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }] } });
-            const ctx2 = document.getElementById('evalChart')?.getContext('2d');
-            if(ctx2) new Chart(ctx2, { type: 'bar', data: { labels: ['Pre-evaluation', 'Post-evaluation'], datasets: [{ label: 'Average Score (%)', data: [avgPreEval, avgPostEval], backgroundColor: ['#3b82f6', '#8b5cf6'] }] } });
-        }, 100);
-        
-        closeSidebarOnMobile();
-    }
-
-    // ========== TRAINING MODULES ==========
-    const trainingModules = [
-        "ICU Basic Life Support",
-        "ICU Ventilator Management",
-        "OT Sterilization Protocols",
-        "OT Surgical Safety Checklist",
-        "Infection Control Hand Hygiene",
-        "Infection Control Waste Management"
-    ];
-
-    // ========== PRE-EVALUATION QUIZZES ==========
+    // ========== QUIZZES ==========
     const quizzes = {
         "ICU": { title: "ICU Pre-evaluation", questions: [
             { text: "What is the normal range for adult heart rate?", options: ["40-60 bpm", "60-100 bpm", "100-140 bpm", "20-40 bpm"], correct: 1 },
-            { text: "Which of the following indicates sepsis?", options: ["Temperature >38°C or <36°C", "Heart rate <60 bpm", "Blood pressure >140/90", "Respiratory rate <12"], correct: 0 },
-            { text: "What is the first-line vasopressor in septic shock?", options: ["Dopamine", "Epinephrine", "Norepinephrine", "Phenylephrine"], correct: 2 },
-            { text: "Normal PaO2 range on ABG is:", options: ["35-45 mmHg", "50-60 mmHg", "75-100 mmHg", "100-120 mmHg"], correct: 2 },
-            { text: "Which sedation score is commonly used in ICU?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 }
+            { text: "Which of the following indicates sepsis?", options: ["Temp >38°C or <36°C", "Heart rate <60", "BP >140/90", "RR <12"], correct: 0 },
+            { text: "First-line vasopressor in septic shock?", options: ["Dopamine", "Epinephrine", "Norepinephrine", "Phenylephrine"], correct: 2 },
+            { text: "Normal PaO2 range on ABG?", options: ["35-45 mmHg", "50-60 mmHg", "75-100 mmHg", "100-120 mmHg"], correct: 2 },
+            { text: "Common ICU sedation score?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 }
         ]},
         "OT": { title: "OT Pre-evaluation", questions: [
-            { text: "What is the standard surgical hand scrub time?", options: ["1 minute", "2-5 minutes", "10 minutes", "15 minutes"], correct: 1 },
-            { text: "Which of these is a sterile field violation?", options: ["Turning back to sterile field", "Speaking quietly", "Wearing mask", "Using sterile gloves"], correct: 0 },
-            { text: "What is the correct order for donning PPE?", options: ["Gown, mask, gloves, goggles", "Gown, mask, goggles, gloves", "Gloves, gown, mask, goggles", "Mask, goggles, gown, gloves"], correct: 1 },
-            { text: "Surgical site infection risk is highest in which surgery?", options: ["Laparoscopic", "Clean", "Clean-contaminated", "Dirty/infected"], correct: 3 },
-            { text: "What is the ideal temperature range for OT?", options: ["16-18°C", "18-22°C", "22-25°C", "25-28°C"], correct: 1 }
+            { text: "Standard surgical hand scrub time?", options: ["1 min", "2-5 min", "10 min", "15 min"], correct: 1 },
+            { text: "Sterile field violation?", options: ["Turning back", "Speaking", "Wearing mask", "Sterile gloves"], correct: 0 },
+            { text: "Correct PPE donning order?", options: ["Gown,mask,gloves,goggles", "Gown,mask,goggles,gloves", "Gloves,gown,mask,goggles", "Mask,goggles,gown,gloves"], correct: 1 },
+            { text: "Highest SSI risk surgery?", options: ["Laparoscopic", "Clean", "Clean-contaminated", "Dirty/infected"], correct: 3 },
+            { text: "Ideal OT temperature?", options: ["16-18°C", "18-22°C", "22-25°C", "25-28°C"], correct: 1 }
         ]},
         "Infection Control": { title: "Infection Control Pre-evaluation", questions: [
-            { text: "What is the most effective way to prevent HAI?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE only"], correct: 1 },
-            { text: "How long should you rub hands during hand hygiene?", options: ["5 seconds", "10-15 seconds", "20-30 seconds", "60 seconds"], correct: 2 },
-            { text: "Which transmission-based precaution is used for TB?", options: ["Contact", "Droplet", "Airborne", "Standard"], correct: 2 },
-            { text: "What color bag is used for infectious waste?", options: ["Black", "Yellow", "Blue", "Red"], correct: 1 },
-            { text: "Needlestick injury first aid includes:", options: ["Wash with soap and water", "Squeeze to bleed", "Apply tourniquet", "Ignore if no blood"], correct: 0 }
+            { text: "Most effective HAI prevention?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE"], correct: 1 },
+            { text: "Hand hygiene duration?", options: ["5 sec", "10-15 sec", "20-30 sec", "60 sec"], correct: 2 },
+            { text: "TB precaution type?", options: ["Contact", "Droplet", "Airborne", "Standard"], correct: 2 },
+            { text: "Infectious waste bag color?", options: ["Black", "Yellow", "Blue", "Red"], correct: 1 },
+            { text: "Needlestick first aid?", options: ["Wash with soap", "Squeeze", "Tourniquet", "Ignore"], correct: 0 }
         ]}
     };
 
-    // ========== PRIVILEGE-BASED MENU ==========
+    // ========== MENU ==========
     const allMenuItems = [
-        { id: "dashboard", name: "📊 Dashboard", icon: "📊", roles: ["admin", "manager", "supervisor", "nurse_privilege_3", "nurse_privilege_2", "nurse"] },
-        { id: "tracker", name: "📋 Nurse Tracker", icon: "📋", roles: ["admin", "manager", "supervisor", "nurse_privilege_3"] },
-        { id: "preEval", name: "📝 Pre-evaluation", icon: "✍️", roles: ["admin", "manager", "nurse", "supervisor"] },
-        { id: "trainingStatus", name: "✅ Training Status", icon: "🎓", roles: ["admin", "manager", "supervisor"] },
-        { id: "postEval", name: "📈 Post-evaluation", icon: "📈", roles: ["admin", "manager", "nurse_privilege_2", "nurse_privilege_3", "supervisor"] },
-        { id: "reports", name: "📑 Reports", icon: "📄", roles: ["admin", "manager", "supervisor", "nurse_privilege_3"] },
-        { id: "auditLog", name: "📜 Audit Log", icon: "📋", roles: ["admin", "manager"] },
-        { id: "userManagement", name: "👥 User Management", icon: "👥", roles: ["admin", "manager"] },
+        { id: "dashboard", name: "📊 Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
+        { id: "tracker", name: "📋 Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor","nurse_privilege_3"] },
+        { id: "preEval", name: "📝 Pre-evaluation", icon: "✍️", roles: ["admin","manager","nurse","supervisor"] },
+        { id: "trainingStatus", name: "✅ Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
+        { id: "postEval", name: "📈 Post-evaluation", icon: "📈", roles: ["admin","manager","nurse_privilege_2","nurse_privilege_3","supervisor"] },
+        { id: "reports", name: "📑 Reports", icon: "📄", roles: ["admin","manager","supervisor","nurse_privilege_3"] },
+        { id: "auditLog", name: "📜 Audit Log", icon: "📋", roles: ["admin","manager"] },
+        { id: "userManagement", name: "👥 User Management", icon: "👥", roles: ["admin","manager"] },
         { id: "settings", name: "🔧 Settings", icon: "⚙️", roles: ["admin"] }
     ];
 
     function getMenuForUser(user) {
         if(user.role === "admin") return allMenuItems;
-        if(user.role === "manager") {
-            return allMenuItems.filter(item => 
-                item.roles.includes("manager") || item.roles.includes("admin")
-            );
+        if(user.role === "manager") return allMenuItems.filter(i => i.roles.includes("manager") || i.roles.includes("admin"));
+        if(user.role === "supervisor") return allMenuItems.filter(i => i.roles.includes("supervisor"));
+        if(user.role === "nurse") {
+            if(user.privilege >= 3) return allMenuItems.filter(i => i.roles.includes("nurse_privilege_3") || i.roles.includes("nurse"));
+            if(user.privilege >= 2) return allMenuItems.filter(i => i.roles.includes("nurse_privilege_2") || i.roles.includes("nurse"));
+            return allMenuItems.filter(i => i.roles.includes("nurse") && !i.roles.includes("nurse_privilege_2") && !i.roles.includes("nurse_privilege_3"));
         }
-        return allMenuItems.filter(item => {
-            if(user.role === "supervisor") return item.roles.includes("supervisor");
-            if(user.role === "nurse") {
-                if(user.privilege === 3) return item.roles.includes("nurse_privilege_3") || item.roles.includes("nurse");
-                if(user.privilege === 2) return item.roles.includes("nurse_privilege_2") || item.roles.includes("nurse");
-                return item.roles.includes("nurse") && !item.roles.includes("nurse_privilege_2") && !item.roles.includes("nurse_privilege_3");
-            }
-            return false;
-        });
+        return [];
     }
-
-    // ========== EXPORT FUNCTIONS ==========
-    function exportToExcel() {
-        const exportData = nursesData.map(n => ({
-            "Employee ID": n.empId,
-            "Name": n.name,
-            "Department": n.department,
-            "Pre-evaluation %": n.preEval || "Not taken",
-            "Post-evaluation %": n.postEval || "Not taken",
-            "Training Status": n.trainingStatus,
-            "Privilege Level": n.privilege === 1 ? "Level 1" : (n.privilege === 2 ? "Level 2" : "Level 3"),
-            "Joining Date": n.joiningDate,
-            "Role": n.role || "nurse"
-        }));
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Nurses Data");
-        XLSX.writeFile(wb, `smartcare_export_${new Date().toISOString().split('T')[0]}.xlsx`);
-        addAuditLog("EXPORT_EXCEL", "Exported nurse data to Excel");
-        alert("✅ Excel file downloaded successfully!");
-    }
-
-    async function exportToPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('landscape');
-        const tableData = nursesData.map(n => [n.empId, n.name, n.department, n.preEval ? n.preEval + '%' : '—', n.postEval ? n.postEval + '%' : '—', n.trainingStatus, n.privilege === 1 ? "Level 1" : (n.privilege === 2 ? "Level 2" : "Level 3"), n.joiningDate]);
-        doc.autoTable({ head: [['Emp ID', 'Name', 'Department', 'Pre-eval', 'Post-eval', 'Training Status', 'Privilege', 'Joining Date']], body: tableData, theme: 'striped', headStyles: { fillColor: [11, 59, 79] }, margin: { top: 20 } });
-        doc.setFontSize(18);
-        doc.text("SMARTCARE - Nurse Induction Report", 14, 15);
-        doc.setFontSize(10);
-        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 25);
-        doc.save(`smartcare_report_${new Date().toISOString().split('T')[0]}.pdf`);
-        addAuditLog("EXPORT_PDF", "Exported nurse data to PDF");
-        alert("✅ PDF file downloaded successfully!");
-    }
-
-    // ========== AUDIT LOG PAGE ==========
-    function renderAuditLog() {
-        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Track all user activities and system changes</p></div><div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search by user or action" onkeyup="renderAuditLog()"><button class="export-btn" onclick="exportAuditLog()">📎 Export Audit Log (CSV)</button><button class="delete-btn" onclick="clearAuditLog()">🗑️ Clear Audit Log</button></div><div class="tracker-card"><div id="auditList">`;
-        const searchTerm = document.getElementById('auditSearch')?.value.toLowerCase() || '';
-        let filtered = auditLog.filter(log => log.user.toLowerCase().includes(searchTerm) || log.action.toLowerCase().includes(searchTerm) || log.details.toLowerCase().includes(searchTerm));
-        filtered.forEach(log => { html += `<div class="audit-log-entry"><strong>${new Date(log.timestamp).toLocaleString()}</strong> | <span style="color:#0f5b63;">${log.user}</span> (${log.role}) | <span style="font-weight:600;">${log.action}</span> | ${log.details}</div>`; });
-        if(filtered.length === 0) html += `<p style="padding:1rem; text-align:center;">No audit logs found.</p>`;
-        html += `<p style="margin-top:1rem; font-size:0.7rem;">Total: ${filtered.length} entries</p></div></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        closeSidebarOnMobile();
-    }
-
-    function exportAuditLog() {
-        const exportData = auditLog.map(log => ({ "Timestamp": log.timestamp, "User": log.user, "User ID": log.userId, "Role": log.role, "Action": log.action, "Details": log.details }));
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Audit Log");
-        XLSX.writeFile(wb, `smartcare_audit_${new Date().toISOString().split('T')[0]}.xlsx`);
-        addAuditLog("EXPORT_AUDIT", "Exported audit log to Excel");
-        alert("✅ Audit log exported successfully!");
-    }
-
-    function clearAuditLog() {
-        if(confirm("Are you sure you want to clear all audit logs?")) {
-            auditLog = [];
-            localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
-            addAuditLog("AUDIT_CLEAR", "Audit log was cleared");
-            renderAuditLog();
-            alert("✅ Audit log cleared");
-        }
-    }
-
-    // ========== SETTINGS PAGE ==========
-    function renderSettings() {
-        let html = `<div class="page-header"><h1 class="page-title">🔧 System Settings</h1><p class="page-desc">Configure system preferences and manage your account</p></div><div class="card"><div class="setting-group"><h3>👤 Account Settings</h3><div class="setting-row"><span class="setting-label">Change Password</span><button class="edit-btn" onclick="openPasswordModal()">Change Password</button></div><div class="setting-row"><span class="setting-label">Name</span><span class="setting-value">${currentUser.name}</span></div><div class="setting-row"><span class="setting-label">Employee ID</span><span class="setting-value">${currentUser.id}</span></div><div class="setting-row"><span class="setting-label">Role</span><span class="setting-value">${currentUser.role.toUpperCase()}</span></div></div><div class="setting-group"><h3>⚙️ Evaluation Settings</h3><div class="setting-row"><span class="setting-label">Passing Score for Pre-evaluation (%)</span><input type="number" id="passingScore" value="${systemConfig.passingScore}" min="0" max="100" style="width:80px; padding:0.3rem;"><button class="save-btn" onclick="updatePassingScore()">Save</button></div><div class="setting-row"><span class="setting-label">Privilege Upgrade Score (%)</span><input type="number" id="upgradeScore" value="${systemConfig.privilegeUpgradeScore}" min="0" max="100" style="width:80px; padding:0.3rem;"><button class="save-btn" onclick="updateUpgradeScore()">Save</button></div><div class="setting-row"><span class="setting-label">Auto-assign Privilege Level</span><div class="toggle-switch ${systemConfig.autoAssignPrivilege ? 'active' : ''}" onclick="toggleAutoAssign()"></div></div></div><div class="setting-group"><h3>📊 Export Data</h3><div class="setting-row"><span class="setting-label">Export to Excel</span><button class="export-btn" onclick="exportToExcel()">Export Excel</button></div><div class="setting-row"><span class="setting-label">Export to PDF</span><button class="export-btn" onclick="exportToPDF()">Export PDF</button></div></div></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        closeSidebarOnMobile();
-    }
-
-    // ========== USER MANAGEMENT ==========
-    function renderUserManagement() {
-        let html = `<div class="page-header"><h1 class="page-title">👥 User Management</h1><p class="page-desc">Add, edit, or remove nurse accounts</p></div><div class="filter-bar"><button class="add-btn" onclick="openAddModal()">+ Add New User</button><button class="import-btn" onclick="openImportModal()">📎 Bulk Import (CSV/Excel)</button><input type="text" id="searchUser" placeholder="🔍 Search by name or ID" onkeyup="renderUserManagement()"><button class="export-btn" onclick="exportToExcel()">📎 Export Excel</button><button class="export-btn" onclick="exportToPDF()">📄 Export PDF</button></div><div class="tracker-card"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Privilege</th><th>Role</th><th>Training Status</th><th>Actions</th></tr></thead><tbody>`;
-        const searchTerm = document.getElementById('searchUser')?.value.toLowerCase() || '';
-        let filtered = nursesData.filter(n => n.name.toLowerCase().includes(searchTerm) || n.empId.toLowerCase().includes(searchTerm));
-        filtered.forEach(n => {
-            let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3');
-            let roleText = n.role === 'manager' ? '👔 Nurse Manager' : (n.role === 'supervisor' ? '👩‍🏫 Supervisor' : '👩‍⚕️ Nurse');
-            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>');
-            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${privilegeText}</td><td>${roleText}</td><td>${statusBadge}</td><td><button class="edit-btn" onclick="openEditModal(${n.id})">✏️ Edit</button> <button class="delete-btn" onclick="deleteUser(${n.id})">🗑️ Delete</button></td></tr>`;
-        });
-        html += `</tbody></table><p style="margin-top:0.8rem;">Total: ${filtered.length} users</p></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        closeSidebarOnMobile();
-    }
-
-    function openAddModal() {
-        document.getElementById('modalTitle').innerText = "Add New User";
-        document.getElementById('editId').value = "";
-        document.getElementById('userName').value = "";
-        document.getElementById('userEmpId').value = "";
-        document.getElementById('userDept').value = "ICU";
-        document.getElementById('userPrivilege').value = "1";
-        document.getElementById('userRole').value = "nurse";
-        document.getElementById('userPassword').value = "nurse123";
-        document.getElementById('userModal').style.display = "flex";
-    }
-
-    function openEditModal(id) {
-        const nurse = nursesData.find(n => n.id === id);
-        if(nurse) {
-            document.getElementById('modalTitle').innerText = "Edit User";
-            document.getElementById('editId').value = nurse.id;
-            document.getElementById('userName').value = nurse.name;
-            document.getElementById('userEmpId').value = nurse.empId;
-            document.getElementById('userDept').value = nurse.department;
-            document.getElementById('userPrivilege').value = nurse.privilege;
-            document.getElementById('userRole').value = nurse.role || "nurse";
-            document.getElementById('userPassword').value = nurse.password || "nurse123";
-            document.getElementById('userModal').style.display = "flex";
-        }
-    }
-
-    function saveUser() {
-        const id = document.getElementById('editId').value;
-        const name = document.getElementById('userName').value.trim();
-        const empId = document.getElementById('userEmpId').value.trim();
-        const department = document.getElementById('userDept').value;
-        const privilege = parseInt(document.getElementById('userPrivilege').value);
-        const role = document.getElementById('userRole').value;
-        const password = document.getElementById('userPassword').value.trim();
-        if(!name || !empId) { alert("Please fill all fields"); return; }
-        if(id) {
-            const index = nursesData.findIndex(n => n.id == id);
-            if(index !== -1) {
-                nursesData[index] = { ...nursesData[index], name, empId, department, privilege, password, role };
-                addAuditLog("USER_EDITED", `Edited user: ${name} (${empId})`);
-                alert(`✅ User ${name} updated successfully`);
-            }
-        } else {
-            const newId = Math.max(...nursesData.map(n => n.id), 0) + 1;
-            nursesData.push({ id: newId, name, empId, department, privilege, role, preEval: null, postEval: null, trainingStatus: "Pending", joiningDate: new Date().toISOString().split('T')[0], password: password });
-            addAuditLog("USER_ADDED", `Added new user: ${name} (${empId}) as ${role}`);
-            alert(`✅ User ${name} added successfully`);
-        }
-        updateLoginUsers();
-        closeModal();
-        renderUserManagement();
-    }
-
-    function deleteUser(id) {
-        const nurse = nursesData.find(n => n.id === id);
-        if(confirm(`Are you sure you want to delete ${nurse?.name}?`)) {
-            nursesData = nursesData.filter(n => n.id !== id);
-            updateLoginUsers();
-            addAuditLog("USER_DELETED", `Deleted user: ${nurse?.name} (${nurse?.empId})`);
-            alert(`✅ User deleted successfully`);
-            renderUserManagement();
-        }
-    }
-
-    function closeModal() { document.getElementById('userModal').style.display = "none"; }
 
     // ========== TRAINING STATUS UPDATER ==========
     function renderTrainingStatusUpdater() {
-        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status Updater</h1><p class="page-desc">Update nurse training completion status and module progress</p></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchTrain" placeholder="🔍 Search by name or ID" onkeyup="renderTrainingStatusUpdater()"><select id="filterDeptTrain" onchange="renderTrainingStatusUpdater()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select></div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval</th><th>Training Status</th><th>Update Status</th><th>Modules Completed</th></tr></thead><tbody>`;
+        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status Updater</h1><p class="page-desc">Mark individual training modules as complete for each nurse</p></div><div class="filter-bar"><input type="text" id="searchTrain" placeholder="🔍 Search nurse" onkeyup="renderTrainingStatusUpdater()"><select id="filterDeptTrain" onchange="renderTrainingStatusUpdater()"><option value="all">All Depts</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select></div>`;
+        
         const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
         const searchTerm = document.getElementById('searchTrain')?.value.toLowerCase() || '';
-        let filtered = nursesData.filter(nurse => (filterDept === 'all' || nurse.department === filterDept) && (nurse.name.toLowerCase().includes(searchTerm) || nurse.empId.toLowerCase().includes(searchTerm)));
+        let filtered = nursesData.filter(n => (filterDept === 'all' || n.department === filterDept) && (n.name.toLowerCase().includes(searchTerm) || n.empId.toLowerCase().includes(searchTerm)));
+        
         filtered.forEach(nurse => {
-            let statusOptions = `<select id="status_${nurse.empId}"><option value="Pending" ${nurse.trainingStatus === 'Pending' ? 'selected' : ''}>⏳ Pending</option><option value="In Progress" ${nurse.trainingStatus === 'In Progress' ? 'selected' : ''}>🔄 In Progress</option><option value="Completed" ${nurse.trainingStatus === 'Completed' ? 'selected' : ''}>✅ Completed</option></select>`;
-            let modulesHtml = `<select id="modules_${nurse.empId}" style="width:150px;">${trainingModules.map(m => `<option value="${m}">${m}</option>`).join('')}</select>`;
-            html += `<tr><td>${nurse.empId}</td><td><strong>${nurse.name}</strong></td><td>${nurse.department}</td><td>${nurse.preEval ? nurse.preEval+'%' : '—'}</td><td id="status_display_${nurse.empId}">${nurse.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (nurse.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>')}</td><td>${statusOptions}</td><td>${modulesHtml} <button class="update-btn" onclick="updateTraining('${nurse.empId}')">✓ Update</button></td></tr>`;
+            const modules = trainingModulesByDept[nurse.department] || trainingModulesByDept.ICU;
+            let modulesHtml = `<div style="margin-bottom:1rem; border:1px solid #e2e8f0; border-radius:0.8rem; padding:0.8rem;">`;
+            modulesHtml += `<h4 style="margin-bottom:0.5rem;">👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department}</h4>`;
+            modulesHtml += `<div style="display:flex; flex-wrap:wrap; gap:0.5rem;">`;
+            modules.forEach(module => {
+                const isCompleted = nurse.trainingModulesCompleted?.includes(module);
+                modulesHtml += `<button class="${isCompleted ? 'status-completed' : 'update-btn'}" style="padding:0.3rem 0.8rem; font-size:0.7rem;" onclick="toggleModuleCompletion('${nurse.empId}', '${module.replace(/'/g, "\\'")}')">
+                    ${isCompleted ? '✅' : '⬜'} ${module.substring(0, 30)}
+                </button>`;
+            });
+            modulesHtml += `</div><div style="margin-top:0.5rem; font-size:0.7rem;">Completed: ${nurse.trainingModulesCompleted?.length || 0}/${modules.length}</div></div>`;
+            html += modulesHtml;
+        });
+        
+        html += `<div class="card"><button class="save-btn" onclick="updateOverallTrainingStatus()">Update Overall Training Status</button></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function toggleModuleCompletion(empId, moduleName) {
+        const nurse = nursesData.find(n => n.empId === empId);
+        if(nurse) {
+            if(!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
+            const index = nurse.trainingModulesCompleted.indexOf(moduleName);
+            if(index === -1) {
+                nurse.trainingModulesCompleted.push(moduleName);
+                addAuditLog("MODULE_COMPLETED", `${nurse.name} completed module: ${moduleName}`);
+            } else {
+                nurse.trainingModulesCompleted.splice(index, 1);
+                addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked module: ${moduleName}`);
+            }
+            renderTrainingStatusUpdater();
+        }
+    }
+
+    function updateOverallTrainingStatus() {
+        nursesData.forEach(nurse => {
+            const modules = trainingModulesByDept[nurse.department] || trainingModulesByDept.ICU;
+            const completedCount = nurse.trainingModulesCompleted?.length || 0;
+            const totalCount = modules.length;
+            if(completedCount === totalCount) {
+                nurse.trainingStatus = "Completed";
+            } else if(completedCount > 0) {
+                nurse.trainingStatus = "In Progress";
+            } else {
+                nurse.trainingStatus = "Pending";
+            }
+        });
+        updateLoginUsers();
+        addAuditLog("TRAINING_BULK_UPDATE", "Overall training status updated for all nurses");
+        alert("✅ Training status updated for all nurses based on module completion!");
+        renderTrainingStatusUpdater();
+    }
+
+    // ========== PRE-EVALUATION ==========
+    function renderPreEvaluation() {
+        const quiz = quizzes[currentUser.department];
+        if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No pre-evaluation for your department.</p></div>`; return; }
+        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}%</p></div><div class="card"><form id="preEvalForm">`;
+        quiz.questions.forEach((q, idx) => {
+            html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
+            q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; });
+            html += `</div>`;
+        });
+        html += `<button type="submit" class="quiz-btn">Submit Pre-evaluation</button></form></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        document.getElementById('preEvalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            quiz.questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if(selected && parseInt(selected.value) === q.correct) score++;
+            });
+            const percentage = Math.round((score / quiz.questions.length) * 100);
+            const passed = percentage >= systemConfig.passingScore;
+            alert(`Score: ${percentage}% - ${passed ? 'PASSED ✓' : 'FAILED ✗'}`);
+            const nurse = nursesData.find(n => n.empId === currentUser.id);
+            if(nurse) {
+                nurse.preEval = percentage;
+                if(passed && nurse.trainingStatus === 'Pending') nurse.trainingStatus = "In Progress";
+                addAuditLog("PRE_EVAL", `${currentUser.name} scored ${percentage}%`);
+            }
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation: ${percentage}%</div><button class="quiz-btn" onclick="navigateTo('dashboard','Dashboard')">Go to Dashboard</button></div>`;
+        });
+        closeSidebar();
+    }
+
+    // ========== POST-EVALUATION ==========
+    function renderPostEvaluation() {
+        const quiz = quizzes[currentUser.department];
+        if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No post-evaluation.</p></div>`; return; }
+        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        if(!nurse?.preEval) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Complete Pre-evaluation first.</p><button class="quiz-btn" onclick="navigateTo('preEval','Pre-evaluation')">Go to Pre-evaluation</button></div>`; return; }
+        let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Upgrade score: ${systemConfig.privilegeUpgradeScore}%</p></div><div class="card"><form id="postEvalForm">`;
+        quiz.questions.forEach((q, idx) => {
+            html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
+            q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; });
+            html += `</div>`;
+        });
+        html += `<button type="submit" class="quiz-btn">Submit Post-evaluation</button></form></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        document.getElementById('postEvalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            quiz.questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if(selected && parseInt(selected.value) === q.correct) score++;
+            });
+            const percentage = Math.round((score / quiz.questions.length) * 100);
+            if(nurse) {
+                nurse.postEval = percentage;
+                if(systemConfig.autoAssignPrivilege && percentage >= systemConfig.privilegeUpgradeScore && nurse.privilege < 3) {
+                    nurse.privilege++;
+                    addAuditLog("PRIVILEGE_UPGRADE", `${currentUser.name} upgraded to Level ${nurse.privilege}`);
+                    alert(`🎉 Privilege upgraded to Level ${nurse.privilege}!`);
+                    updateSidebarPrivilege();
+                }
+                nurse.trainingStatus = "Completed";
+                addAuditLog("POST_EVAL", `${currentUser.name} scored ${percentage}%`);
+                alert(`Post-evaluation: ${percentage}%`);
+            }
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation: ${percentage}%</div><button class="quiz-btn" onclick="navigateTo('dashboard','Dashboard')">Go to Dashboard</button></div>`;
+        });
+        closeSidebar();
+    }
+
+    // ========== DASHBOARD ==========
+    function renderDashboard() {
+        const total = nursesData.length;
+        const completed = nursesData.filter(n => n.trainingStatus === 'Completed').length;
+        const inProgress = nursesData.filter(n => n.trainingStatus === 'In Progress').length;
+        const pending = nursesData.filter(n => n.trainingStatus === 'Pending').length;
+        const avgPre = nursesData.filter(n => n.preEval).reduce((s,n)=>s+n.preEval,0)/(nursesData.filter(n=>n.preEval).length||1);
+        const avgPost = nursesData.filter(n => n.postEval).reduce((s,n)=>s+n.postEval,0)/(nursesData.filter(n=>n.postEval).length||1);
+        
+        let deptStats = {};
+        nursesData.forEach(n => {
+            if(!deptStats[n.department]) deptStats[n.department] = { total:0, completed:0 };
+            deptStats[n.department].total++;
+            if(n.trainingStatus === 'Completed') deptStats[n.department].completed++;
+        });
+        
+        let html = `<div class="page-header"><h1 class="page-title">📊 Dashboard</h1></div>
+        <div class="dashboard-widgets">
+            <div class="widget"><div class="widget-icon">👩‍⚕️</div><div class="widget-title">Total Nurses</div><div class="widget-value">${total}</div></div>
+            <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Completed</div><div class="widget-value">${completed}</div></div>
+            <div class="widget"><div class="widget-icon">🔄</div><div class="widget-title">In Progress</div><div class="widget-value">${inProgress}</div></div>
+            <div class="widget"><div class="widget-icon">⏳</div><div class="widget-title">Pending</div><div class="widget-value">${pending}</div></div>
+            <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Pre-eval</div><div class="widget-value">${Math.round(avgPre)}%</div></div>
+            <div class="widget"><div class="widget-icon">📈</div><div class="widget-title">Avg Post-eval</div><div class="widget-value">${Math.round(avgPost)}%</div></div>
+        </div>
+        <div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total}</small></div>`).join('')}</div>
+        <div class="card"><canvas id="trainingChart"></canvas></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        setTimeout(() => {
+            const ctx = document.getElementById('trainingChart')?.getContext('2d');
+            if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Completed','In Progress','Pending'], datasets: [{ data: [completed,inProgress,pending], backgroundColor: ['#10b981','#f59e0b','#ef4444'] }] } });
+        }, 100);
+        closeSidebar();
+    }
+
+    // ========== TRACKER ==========
+    function renderTrackerSheet() {
+        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Tracker</h1></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search" onkeyup="renderTrackerSheet()"><select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select></div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Pre%</th><th>Post%</th><th>Modules Done</th><th>Status</th><th>Privilege</th></tr></thead><tbody>`;
+        const filter = document.getElementById('filterDept')?.value || 'all';
+        const search = document.getElementById('searchName')?.value.toLowerCase() || '';
+        nursesData.filter(n => (filter==='all'||n.department===filter) && (n.name.toLowerCase().includes(search)||n.empId.toLowerCase().includes(search))).forEach(n => {
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const totalModules = (trainingModulesByDept[n.department]||trainingModulesByDept.ICU).length;
+            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.preEval||'—'}%</td><td>${n.postEval||'—'}%</td><td>${modulesDone}/${totalModules}</td><td>${n.trainingStatus}</td><td>${n.privilege===1?'⭐ L1':n.privilege===2?'⭐⭐ L2':'⭐⭐⭐ L3'}</td></tr>`;
         });
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
-        closeSidebarOnMobile();
+        closeSidebar();
     }
 
-    function updateTraining(empId) {
-        const statusSelect = document.getElementById(`status_${empId}`);
-        const moduleSelect = document.getElementById(`modules_${empId}`);
-        const newStatus = statusSelect.value;
-        const completedModule = moduleSelect.value;
-        const nurse = nursesData.find(n => n.empId === empId);
-        if(nurse) {
-            const oldStatus = nurse.trainingStatus;
-            nurse.trainingStatus = newStatus;
-            addAuditLog("TRAINING_UPDATED", `Updated ${nurse.name} training from ${oldStatus} to ${newStatus}. Module: ${completedModule}`);
-            alert(`✅ ${nurse.name}: Training updated to ${newStatus}\n📚 Module: ${completedModule}`);
-            renderTrainingStatusUpdater();
-            updateSidebarPrivilege();
-        }
-    }
-
-    // ========== REPORTS WITH CHARTS ==========
-    function renderReports() {
-        const totalNurses = nursesData.length;
-        const completedCount = nursesData.filter(n => n.trainingStatus === 'Completed').length;
-        const pendingCount = nursesData.filter(n => n.trainingStatus === 'Pending').length;
-        const inProgressCount = nursesData.filter(n => n.trainingStatus === 'In Progress').length;
-        const avgPreEval = nursesData.filter(n => n.preEval).reduce((sum, n) => sum + n.preEval, 0) / (nursesData.filter(n => n.preEval).length || 1);
-        const avgPostEval = nursesData.filter(n => n.postEval).reduce((sum, n) => sum + n.postEval, 0) / (nursesData.filter(n => n.postEval).length || 1);
-        let deptStats = {};
-        nursesData.forEach(n => { if(!deptStats[n.department]) deptStats[n.department] = { total: 0, completed: 0 }; deptStats[n.department].total++; if(n.trainingStatus === 'Completed') deptStats[n.department].completed++; });
-        let deptHtml = '<div class="stats-grid">';
-        for(let dept in deptStats) { let percent = Math.round((deptStats[dept].completed / deptStats[dept].total) * 100); deptHtml += `<div class="stat-card"><div class="stat-number">${percent}%</div><div class="stat-label">${dept} Completion</div><small>${deptStats[dept].completed}/${deptStats[dept].total} nurses</small></div>`; }
-        deptHtml += '</div>';
-        let html = `<div class="page-header"><h1 class="page-title">📑 Reports & Analytics</h1><p class="page-desc">Induction progress, evaluation trends, and department insights</p><div class="filter-bar"><button class="export-btn" onclick="exportToExcel()">📎 Export to Excel</button><button class="export-btn" onclick="exportToPDF()">📄 Export to PDF</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-number">${totalNurses}</div><div class="stat-label">Total Nurses</div></div><div class="stat-card"><div class="stat-number">${completedCount}</div><div class="stat-label">Training Completed</div></div><div class="stat-card"><div class="stat-number">${pendingCount + inProgressCount}</div><div class="stat-label">In Progress/Pending</div></div><div class="stat-card"><div class="stat-number">${Math.round(avgPreEval)}%</div><div class="stat-label">Avg Pre-eval Score</div></div><div class="stat-card"><div class="stat-number">${Math.round(avgPostEval)}%</div><div class="stat-label">Avg Post-eval Score</div></div><div class="stat-card"><div class="stat-number">${Math.round(avgPostEval - avgPreEval)}%</div><div class="stat-label">Improvement</div></div></div><div class="card"><h3>🏥 Department-wise Completion</h3>${deptHtml}</div><div class="card"><h3>📊 Training Status Distribution</h3><div class="chart-container"><canvas id="trainingChart"></canvas></div></div><div class="card"><h3>📈 Pre vs Post Evaluation Comparison</h3><div class="chart-container"><canvas id="evalChart"></canvas></div></div>`;
+    function renderReports() { renderDashboard(); }
+    function renderAuditLog() { 
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1></div><div class="tracker-card">`;
+        auditLog.slice(0,50).forEach(log => { html += `<div class="audit-log-entry">${new Date(log.timestamp).toLocaleString()} | ${log.user} | ${log.action} | ${log.details}</div>`; });
+        html += `</div>`;
         document.getElementById('mainContent').innerHTML = html;
-        setTimeout(() => {
-            const ctx1 = document.getElementById('trainingChart')?.getContext('2d');
-            if(ctx1) new Chart(ctx1, { type: 'doughnut', data: { labels: ['Completed', 'In Progress', 'Pending'], datasets: [{ data: [completedCount, inProgressCount, pendingCount], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }] } });
-            const ctx2 = document.getElementById('evalChart')?.getContext('2d');
-            if(ctx2) new Chart(ctx2, { type: 'bar', data: { labels: ['Pre-evaluation', 'Post-evaluation'], datasets: [{ label: 'Average Score (%)', data: [avgPreEval, avgPostEval], backgroundColor: ['#3b82f6', '#8b5cf6'] }] } });
-        }, 100);
-        closeSidebarOnMobile();
+        closeSidebar();
     }
-
-    // ========== RENDER FUNCTIONS ==========
-    function showWelcomeScreen() { 
-        document.getElementById('mainContent').innerHTML = `<div class="welcome-screen"><div class="welcome-icon">🫀⚕️</div><div class="welcome-title">Welcome to SMARTCARE</div><div class="welcome-text">Select any option from the left panel to get started.<br>Your accessible modules are shown based on your privilege level.</div><div class="instruction-card">💡 Tip: Click on any menu item to view content</div></div>`;
-        closeSidebarOnMobile();
-    }
-
-    function renderTrackerSheet() {
-        const filterDept = document.getElementById('filterDept')?.value || 'all';
-        const searchTerm = document.getElementById('searchName')?.value.toLowerCase() || '';
-        let filtered = nursesData.filter(nurse => (filterDept === 'all' || nurse.department === filterDept) && (nurse.name.toLowerCase().includes(searchTerm) || nurse.empId.toLowerCase().includes(searchTerm)));
-        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Tracker Sheet</h1><p class="page-desc">Track induction progress, training status & privilege levels</p></div><div class="tracker-card"><div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search by name or ID" onkeyup="renderTrackerSheet()"><select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select><button class="btn-small" onclick="exportToExcel()">📎 Export Excel</button><button class="btn-small" onclick="exportToPDF()">📄 Export PDF</button></div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Pre-eval %</th><th>Post-eval %</th><th>Training Status</th><th>Privilege Level</th><th>Joining Date</th></tr></thead><tbody>`;
-        filtered.forEach(n => { let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>'); let privilegeText = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3'); html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.preEval ? n.preEval+'%' : '—'}</td><td>${n.postEval ? n.postEval+'%' : '—'}</td><td>${statusBadge}</td><td>${privilegeText}</td><td>${n.joiningDate}</td></tr>`; });
-        html += `</tbody></table><p style="margin-top:0.8rem;">Showing ${filtered.length} nurses</p></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        closeSidebarOnMobile();
-    }
-
-    function renderPreEvaluation() {
-        const quiz = quizzes[currentUser.department];
-        if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No pre-evaluation available for your department.</p></div>`; return; }
-        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}%</p></div><div class="card"><form id="preEvalForm">`;
-        quiz.questions.forEach((q, idx) => { html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`; q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; }); html += `</div>`; });
-        html += `<button type="submit" class="quiz-btn">Submit Pre-evaluation</button></form></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        document.getElementById('preEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); alert(`Score: ${percentage}% - ${percentage >= systemConfig.passingScore ? 'PASSED ✓' : 'FAILED ✗'}`); const nurseRecord = nursesData.find(n => n.empId === currentUser.id); if(nurseRecord) { nurseRecord.preEval = percentage; if(percentage >= systemConfig.passingScore && nurseRecord.trainingStatus === 'Pending') nurseRecord.trainingStatus = "In Progress"; addAuditLog("PRE_EVAL", `${currentUser.name} completed pre-evaluation with score ${percentage}%`); } document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="renderPreEvaluation()">Retake</button> <button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; });
-        closeSidebarOnMobile();
-    }
-
-    function renderPostEvaluation() {
-        const quiz = quizzes[currentUser.department];
-        if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No post-evaluation available.</p></div>`; return; }
-        const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
-        if(!nurseRecord || !nurseRecord.preEval) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Complete Pre-evaluation first.</p><br><button class="quiz-btn" onclick="navigateTo('preEval','Pre-evaluation')">Go to Pre-evaluation</button></div>`; return; }
-        let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Upgrade score: ${systemConfig.privilegeUpgradeScore}%</p></div><div class="card"><form id="postEvalForm">`;
-        quiz.questions.forEach((q, idx) => { html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`; q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; }); html += `</div>`; });
-        html += `<button type="submit" class="quiz-btn">Submit Post-evaluation</button></form></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        document.getElementById('postEvalForm').addEventListener('submit', function(e) { e.preventDefault(); let score = 0; quiz.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; }); const percentage = Math.round((score / quiz.questions.length) * 100); if(nurseRecord) { nurseRecord.postEval = percentage; if(systemConfig.autoAssignPrivilege && percentage >= systemConfig.privilegeUpgradeScore && nurseRecord.privilege < 3) { const oldPrivilege = nurseRecord.privilege; nurseRecord.privilege++; addAuditLog("PRIVILEGE_UPGRADE", `${currentUser.name} upgraded from Level ${oldPrivilege} to Level ${nurseRecord.privilege} (Post-eval: ${percentage}%)`); alert(`🎉 Privilege upgraded to Level ${nurseRecord.privilege}!`); updateSidebarPrivilege(); } nurseRecord.trainingStatus = "Completed"; addAuditLog("POST_EVAL", `${currentUser.name} completed post-evaluation with score ${percentage}%`); alert(`Post-evaluation score: ${percentage}%`); document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation completed! Score: ${percentage}%</div><br><button class="quiz-btn" onclick="navigateTo('tracker','Nurse Tracker')">Go to Tracker</button></div>`; } });
-        closeSidebarOnMobile();
-    }
-
-    function renderPlaceholder(pageName) { 
-        document.getElementById('mainContent').innerHTML = `<div class="page-header"><h1 class="page-title">${pageName}</h1><p class="page-desc">Coming soon.</p></div><div class="card" style="padding:3rem; text-align:center;">🚧 Coming soon: ${pageName}</div>`;
-        closeSidebarOnMobile();
-    }
+    function renderUserManagement() { document.getElementById('mainContent').innerHTML = `<div class="card"><p>User Management - Coming Soon</p></div>`; closeSidebar(); }
+    function renderSettings() { document.getElementById('mainContent').innerHTML = `<div class="card"><p>Settings - Coming Soon</p></div>`; closeSidebar(); }
 
     function updateSidebarPrivilege() {
-        let privilegeClass = '', privilegeText = '';
-        if(currentUser.role === 'admin') { privilegeClass = 'privilege-admin'; privilegeText = '👑 ADMIN — Full Access'; }
-        else if(currentUser.role === 'manager') { privilegeClass = 'privilege-manager'; privilegeText = '👔 NURSE MANAGER — Full Operations'; }
-        else if(currentUser.role === 'supervisor') { privilegeClass = 'privilege-supervisor'; privilegeText = '👩‍🏫 SUPERVISOR — Department Oversight'; }
-        else { const updatedNurse = nursesData.find(n => n.empId === currentUser.id); const currentPrivilege = updatedNurse ? updatedNurse.privilege : currentUser.privilege; if(currentPrivilege === 1) { privilegeClass = 'privilege-l1'; privilegeText = '⭐ LEVEL 1 — Trainee'; } else if(currentPrivilege === 2) { privilegeClass = 'privilege-l2'; privilegeText = '⭐⭐ LEVEL 2 — Independent Nurse'; } else { privilegeClass = 'privilege-l3'; privilegeText = '⭐⭐⭐ LEVEL 3 — Preceptor'; } currentUser.privilege = currentPrivilege; }
-        document.getElementById('userInfo').innerHTML = `<div class="user-name">👤 ${currentUser.name}</div><div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div><div class="privilege-indicator ${privilegeClass}">${privilegeText}</div>`;
-    }
-
-    function updatePassingScore() {
-        const newScore = parseInt(document.getElementById('passingScore').value);
-        if(!isNaN(newScore) && newScore >= 0 && newScore <= 100) {
-            systemConfig.passingScore = newScore;
-            saveSystemConfig();
-            addAuditLog("CONFIG_CHANGE", `Passing score changed to ${newScore}%`);
-            alert(`✅ Passing score updated to ${newScore}%`);
-        } else { alert("❌ Please enter a valid score between 0 and 100"); }
-    }
-
-    function updateUpgradeScore() {
-        const newScore = parseInt(document.getElementById('upgradeScore').value);
-        if(!isNaN(newScore) && newScore >= 0 && newScore <= 100) {
-            systemConfig.privilegeUpgradeScore = newScore;
-            saveSystemConfig();
-            addAuditLog("CONFIG_CHANGE", `Privilege upgrade score changed to ${newScore}%`);
-            alert(`✅ Privilege upgrade score updated to ${newScore}%`);
-        } else { alert("❌ Please enter a valid score between 0 and 100"); }
-    }
-
-    function toggleAutoAssign() {
-        systemConfig.autoAssignPrivilege = !systemConfig.autoAssignPrivilege;
-        saveSystemConfig();
-        addAuditLog("CONFIG_CHANGE", `Auto-assign privilege set to ${systemConfig.autoAssignPrivilege}`);
-        renderSettings();
-    }
-
-    function openPasswordModal() {
-        document.getElementById('currentPwd').value = "";
-        document.getElementById('newPwd').value = "";
-        document.getElementById('confirmPwd').value = "";
-        document.getElementById('passwordModal').style.display = "flex";
-    }
-
-    function closePasswordModal() { document.getElementById('passwordModal').style.display = "none"; }
-
-    function changePassword() {
-        const currentPwd = document.getElementById('currentPwd').value;
-        const newPwd = document.getElementById('newPwd').value;
-        const confirmPwd = document.getElementById('confirmPwd').value;
-        if(currentUser.role === 'admin') {
-            if(currentPwd !== "Admin@2025") { alert("❌ Current password is incorrect"); return; }
-        } else {
-            const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
-            if(!nurseRecord || nurseRecord.password !== currentPwd) { alert("❌ Current password is incorrect"); return; }
-        }
-        if(newPwd.length < 4) { alert("❌ Password must be at least 4 characters"); return; }
-        if(newPwd !== confirmPwd) { alert("❌ New passwords do not match"); return; }
-        if(currentUser.role === 'admin') {
-            addAuditLog("PASSWORD_CHANGE", "Admin password changed");
-            alert("✅ Password changed successfully! Please login again.");
-            localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
-        } else {
-            const nurseRecord = nursesData.find(n => n.empId === currentUser.id);
-            if(nurseRecord) {
-                nurseRecord.password = newPwd;
-                updateLoginUsers();
-                addAuditLog("PASSWORD_CHANGE", `${currentUser.name} changed their password`);
-                alert("✅ Password changed successfully!");
-                closePasswordModal();
-            }
-        }
+        let cls = '', txt = '';
+        if(currentUser.role === 'admin') { cls = 'privilege-admin'; txt = '👑 ADMIN'; }
+        else if(currentUser.role === 'manager') { cls = 'privilege-manager'; txt = '👔 NURSE MANAGER'; }
+        else if(currentUser.role === 'supervisor') { cls = 'privilege-supervisor'; txt = '👩‍🏫 SUPERVISOR'; }
+        else { txt = currentUser.privilege === 1 ? '⭐ Level 1' : (currentUser.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3'); cls = currentUser.privilege === 1 ? 'privilege-l1' : (currentUser.privilege === 2 ? 'privilege-l2' : 'privilege-l3'); }
+        document.getElementById('userInfo').innerHTML = `<div class="user-name">👤 ${currentUser.name}</div><div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div><div class="privilege-indicator ${cls}">${txt}</div>`;
     }
 
     function initDashboard() {
         updateSidebarPrivilege();
-        const menuItems = getMenuForUser(currentUser);
-        let menuHtml = '';
-        menuItems.forEach(item => { menuHtml += `<div class="nav-item" onclick="navigateTo('${item.id}', '${item.name}')"><span class="nav-icon">${item.icon}</span> <span>${item.name}</span></div>`; });
-        document.getElementById('navMenu').innerHTML = menuHtml;
-        showWelcomeScreen();
+        const menu = getMenuForUser(currentUser);
+        document.getElementById('navMenu').innerHTML = menu.map(i => `<div class="nav-item" onclick="navigateTo('${i.id}')"><span class="nav-icon">${i.icon}</span> ${i.name}</div>`).join('');
+        navigateTo('dashboard');
     }
-    
-    function navigateTo(moduleId, moduleName) {
+
+    function navigateTo(moduleId) {
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        if(event && event.target) { const activeItem = event.target.closest('.nav-item'); if(activeItem) activeItem.classList.add('active'); }
+        if(event?.target) event.target.closest('.nav-item')?.classList.add('active');
         if(moduleId === 'dashboard') renderDashboard();
         else if(moduleId === 'tracker') renderTrackerSheet();
         else if(moduleId === 'preEval') renderPreEvaluation();
         else if(moduleId === 'trainingStatus') renderTrainingStatusUpdater();
         else if(moduleId === 'postEval') renderPostEvaluation();
         else if(moduleId === 'reports') renderReports();
-        else if(moduleId === 'userManagement') renderUserManagement();
         else if(moduleId === 'auditLog') renderAuditLog();
+        else if(moduleId === 'userManagement') renderUserManagement();
         else if(moduleId === 'settings') renderSettings();
-        else renderPlaceholder(moduleName);
-        closeSidebarOnMobile();
+        closeSidebar();
     }
-    
-    function logout() { 
-        addAuditLog("LOGOUT", `${currentUser.name} logged out`);
-        localStorage.removeItem('currentUser'); 
-        window.location.href = 'index.html'; 
-    }
-    
+
+    function logout() { addAuditLog("LOGOUT","User logged out"); localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
+
     window.toggleSidebar = toggleSidebar;
-    window.renderDashboard = renderDashboard;
     window.navigateTo = navigateTo;
     window.logout = logout;
     window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
-    window.updateTraining = updateTraining;
-    window.renderReports = renderReports;
-    window.renderUserManagement = renderUserManagement;
-    window.renderSettings = renderSettings;
-    window.renderAuditLog = renderAuditLog;
-    window.openAddModal = openAddModal;
-    window.openEditModal = openEditModal;
-    window.saveUser = saveUser;
-    window.deleteUser = deleteUser;
-    window.closeModal = closeModal;
-    window.openPasswordModal = openPasswordModal;
-    window.closePasswordModal = closePasswordModal;
-    window.changePassword = changePassword;
-    window.updatePassingScore = updatePassingScore;
-    window.updateUpgradeScore = updateUpgradeScore;
-    window.toggleAutoAssign = toggleAutoAssign;
-    window.exportToExcel = exportToExcel;
-    window.exportToPDF = exportToPDF;
-    window.exportAuditLog = exportAuditLog;
-    window.clearAuditLog = clearAuditLog;
-    window.openImportModal = openImportModal;
-    window.closeImportModal = closeImportModal;
-    window.processBulkImport = processBulkImport;
-    
+    window.toggleModuleCompletion = toggleModuleCompletion;
+    window.updateOverallTrainingStatus = updateOverallTrainingStatus;
+    window.renderTrackerSheet = renderTrackerSheet;
+    window.renderPreEvaluation = renderPreEvaluation;
+    window.renderPostEvaluation = renderPostEvaluation;
+    window.renderDashboard = renderDashboard;
+
     initDashboard();
 </script>
 </body>
