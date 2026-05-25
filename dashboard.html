@@ -154,9 +154,7 @@
         .widget-title { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; }
         .widget-value { font-size: 1.8rem; font-weight: 700; color: #0c4e6e; margin: 0.3rem 0; }
         .widget-icon { float: right; font-size: 2rem; opacity: 0.3; }
-        .widget-trend { font-size: 0.7rem; display: flex; align-items: center; gap: 0.3rem; }
         .trend-up { color: #10b981; }
-        .trend-down { color: #ef4444; }
 
         .welcome-screen {
             display: flex;
@@ -193,9 +191,9 @@
             padding: 1rem;
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        th { text-align: left; padding: 0.6rem 0.3rem; background: #f8fafc; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
-        td { padding: 0.6rem 0.3rem; border-bottom: 1px solid #eef2f6; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th { text-align: left; padding: 0.5rem 0.3rem; background: #f8fafc; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 0.5rem 0.3rem; border-bottom: 1px solid #eef2f6; }
 
         .status-completed { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.65rem; display: inline-block; }
         .status-pending { background: #fff3e3; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.65rem; display: inline-block; }
@@ -210,7 +208,7 @@
         }
         .filter-bar input, .filter-bar select { padding: 0.4rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 2rem; font-size: 0.75rem; }
 
-        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn {
+        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .promote-btn {
             color: white;
             border: none;
             padding: 0.4rem 1rem;
@@ -226,6 +224,19 @@
         .delete-btn { background: #ef4444; }
         .save-btn { background: #8b5cf6; }
         .export-btn { background: #6b7280; }
+        .promote-btn { background: #8b5cf6; }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .role-admin { background: #ef4444; color: white; }
+        .role-manager { background: #8b5cf6; color: white; }
+        .role-supervisor { background: #f59e0b; color: white; }
+        .role-nurse { background: #3b82f6; color: white; }
 
         .quiz-question {
             background: #f8fafc;
@@ -235,6 +246,7 @@
         }
         .quiz-question p { font-weight: 600; margin-bottom: 0.4rem; font-size: 0.85rem; }
         .quiz-option { margin: 0.2rem 0 0.2rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+        .quiz-option input { width: auto; }
         .score-display {
             font-size: 1rem;
             font-weight: 700;
@@ -255,6 +267,7 @@
             padding: 1rem;
             border-radius: 0.8rem;
             text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .stat-number { font-size: 1.6rem; font-weight: 700; color: #0c4e6e; }
         .stat-label { font-size: 0.7rem; color: #6b7280; }
@@ -281,7 +294,7 @@
             max-width: 500px;
         }
         .modal-content h3 { margin-bottom: 0.8rem; color: #0c4e6e; font-size: 1.2rem; }
-        .modal-content input, .modal-content select {
+        .modal-content select {
             width: 100%;
             padding: 0.6rem;
             margin-bottom: 0.8rem;
@@ -301,6 +314,8 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
         }
         .module-chip {
             background: #e2e8f0;
@@ -316,6 +331,28 @@
         }
         .module-chip:hover {
             transform: scale(1.02);
+        }
+
+        .category-group {
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.8rem;
+            overflow: hidden;
+        }
+        .category-header {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+        .category-content {
+            padding: 0.5rem;
+            display: none;
+        }
+        .category-content.open {
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -363,6 +400,23 @@
     </div>
 </div>
 
+<!-- Modal for Role Change -->
+<div id="roleModal" class="modal">
+    <div class="modal-content">
+        <h3 id="roleModalTitle">Change Role</h3>
+        <p id="roleModalNurse" style="margin-bottom: 0.5rem;"></p>
+        <select id="newRoleSelect">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeRoleModal()">Cancel</button>
+            <button class="promote-btn" onclick="confirmRoleChange()">Confirm Change</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ========== MOBILE SIDEBAR ==========
     function toggleSidebar() {
@@ -403,59 +457,467 @@
         privilegeUpgradeScore: 85, 
         privilegeDowngradeScore: 60,
         autoAssignPrivilege: true,
-        inactivityDaysThreshold: 30
+        inactivityDaysThreshold: 30,
+        quizQuestionsCount: 20
     };
     const savedConfig = localStorage.getItem('smartcare_config');
     if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
-    // ========== TRAINING MODULES BY DEPARTMENT ==========
+    // ========== COMPLETE TRAINING MODULES FROM YOUR EXCEL ==========
     const trainingModulesByDept = {
-        "ICU": [
-            "ICU Basic Life Support (BLS)",
-            "ICU Advanced Cardiac Life Support (ACLS)",
-            "ICU Ventilator Management",
-            "ICU Hemodynamic Monitoring",
-            "ICU Central Line Care",
-            "ICU Sedation and Analgesia Protocols",
-            "ICU Infection Control Bundle",
-            "ICU Rapid Response Team Activation",
-            "ICU End of Life Care",
-            "ICU Handoff Communication (SBAR)"
-        ],
-        "OT": [
-            "OT Surgical Scrub Techniques",
-            "OT Sterile Field Setup",
-            "OT Surgical Safety Checklist",
-            "OT Instrument Sterilization",
-            "OT Counts (Sponge, Needle, Instrument)",
-            "OT Waste Management",
-            "OT Anesthesia Equipment Handling",
-            "OT Emergency Protocols (Fire, Cardiac Arrest)",
-            "OT Pre-op Patient Verification",
-            "OT Post-op Instrument Care"
-        ],
-        "Infection Control": [
-            "Hand Hygiene Compliance (WHO 5 Moments)",
-            "Personal Protective Equipment (PPE) Use",
-            "Isolation Precautions (Contact, Droplet, Airborne)",
-            "Medical Waste Segregation & Disposal",
-            "Needlestick Injury Prevention & Management",
-            "Environmental Cleaning & Disinfection",
-            "Surveillance of Healthcare-Associated Infections (HAIs)",
-            "Antibiotic Stewardship Basics",
-            "Outbreak Management",
-            "Sterilization & High-Level Disinfection"
-        ]
+        "Labour Room": {
+            "Environmental Hygiene": [
+                "Arrangement of Bed, Locker, Equipments etc.",
+                "Storeroom Items storage of medicines, consumables and CSSD items to be properly organized",
+                "Refrigerator cleaning protocol",
+                "Observe Surface Cleaning in each shift and also as required"
+            ],
+            "Provide Physical Care": [
+                "Ensure patient comfort and hygiene",
+                "Special needs and care for vulnerable patient",
+                "Provide general pre-op/post-op care",
+                "Manage patient during transport",
+                "Provider alternative communication method"
+            ],
+            "Clinical Skills of LR Performance": [
+                "Criteria of admission",
+                "Criteria of Discharge",
+                "Quick check assessment",
+                "Layout & zoning (clean, sterile, septic areas)",
+                "Equipment checklist",
+                "Management of PPH",
+                "Delivery tray",
+                "Neonatal resuscitation unit",
+                "Emergency drugs",
+                "Stages of labour",
+                "Biomedical waste management",
+                "Infection prevention protocols",
+                "Ensuring maternal & neonatal safety",
+                "Maintaining documentation & audit compliance",
+                "Handling emergencies effectively",
+                "Strengthen clinical expertise in obstetrics",
+                "Improve decision-making in emergencies",
+                "Ensure protocol-based care (WHO / NABH)",
+                "Develop leadership & team coordination",
+                "Enhance documentation & medico-legal safety"
+            ],
+            "Medication Management": [
+                "Identify the patient by seeing name & ID before doing any procedure",
+                "Indent / Return medication procedures",
+                "Storage of medicine",
+                "Safe administer of medication (Oral, IV, IM, S/L, Hypodermal & Rectal)",
+                "Restricted Antibiotic",
+                "Adverse drug Recall Policy",
+                "Knows & follow verbal order / self medication policy",
+                "Narcotic medication process",
+                "High Risk / High Alert medicine",
+                "Drug Calculation",
+                "Identify, report & documents adverse drug reaction"
+            ],
+            "Infection Control Procedures": [
+                "Correctly explain standard precautions",
+                "Identify procedure for segregation",
+                "Monitoring of sterilization and disinfection",
+                "Device care single use/multiple use",
+                "Management of spills",
+                "Waste disposable procedures",
+                "Infection control practice device related care",
+                "Nosocomial infection surveillance data reporting"
+            ],
+            "Collaborate With Other Health Care Team Members": [
+                "Follow up on the total care process including proper handing & taking over",
+                "Appropriate use of communication channel (Hierarchy)"
+            ],
+            "Document Medical & Nursing Management": [
+                "Explain pantograph",
+                "Quality Indicator",
+                "Patient education on antenatal care",
+                "BLS Training"
+            ],
+            "Promote Professional Development": [
+                "Maintain current hospital practice",
+                "Promote quality improvement",
+                "Participate in continuing education",
+                "Follow/work as & when allocated by the seniors",
+                "Infection control training program",
+                "BLS Training",
+                "Preparing and supporting staff to serve as preceptor for new staff",
+                "Critical care experience in basic nursing educational program"
+            ],
+            "Manage Technical Support": [
+                "Selection of appropriate equipment and supplies",
+                "Operation of relevant equipment of the unit",
+                "Identify unexpected findings"
+            ],
+            "Advocate Patient And Family Needs": [
+                "Maintain patients rights",
+                "Assess and fulfil cultural and spiritual needs",
+                "Provide patient & family education & emotional support",
+                "Ensure safe use Equipment's",
+                "Participate in end of life care"
+            ],
+            "Others": [
+                "Punctuality",
+                "Discipline",
+                "No absenteeism (Specially during night)",
+                "Responsibility of Inventory control",
+                "Respect to colleagues (Intra / Internal Department)",
+                "Helps during Crisis Management",
+                "Aware of all types of Code"
+            ]
+        },
+        "Emergency Department": {
+            "Environmental Hygiene": [
+                "Arrangement of Bed, Locker, Equipments etc.",
+                "Storeroom Items storage of medicines, consumables and CSSD items",
+                "Refrigerator cleaning protocol",
+                "Observe Surface Cleaning in each shift"
+            ],
+            "Provide Physical Care": [
+                "Ensure patient comfort and hygiene",
+                "Special needs and care for vulnerable patient",
+                "Provide general pre-op/post-op care",
+                "Manage patient during transport",
+                "Provider alternative communication method",
+                "Pain Assessment"
+            ],
+            "Clinical Skills in ER Ward": [
+                "Admission Protocol", "Discharge Protocol", "Transfer Protocol", "Initial Assessment",
+                "I/V Cannulation , I/V, I/M Injection", "CBG Monitoring", "Use of Different types of Collar",
+                "Different types of bandaging", "How to assist in applying POP", "Transportation of a trauma patient",
+                "Airway Management", "Monitor and Defibrillator settings", "Traction(splints)", "Ryles Tube Insertion",
+                "Managing Chest drainage and complications", "Arranging dressing trolley", "Crash cart checking",
+                "How to do ECG and basic ECG graph", "Blood Sample collection", "Urinary Catheter Care",
+                "Suctioning", "Wound care", "Emergency care of the trauma patient", "CPR",
+                "Enteral feeds and feeding tubes", "To follow the blood transfusion protocol", "Ensure Patient safety",
+                "Pleural / Pericardial fluid aspiration", "Preoperative Care", "Death Protocol (Brought dead)"
+            ],
+            "Medication Management": [
+                "Identify patient by name & ID before procedure", "Indent / Return medication procedures",
+                "Storage of medicine", "Safe administer of medication", "Restricted Antibiotic",
+                "Adverse drug Recall Policy", "Verbal order / self medication policy", "Narcotic medication process",
+                "High Risk / High Alert medicine", "Drug Calculation", "Identify & report adverse drug reaction"
+            ],
+            "Infection Control Procedures": [
+                "Standard precautions", "Segregation procedure", "Sterilization monitoring",
+                "Device care", "Spills management", "Waste disposal", "Device related care",
+                "Nosocomial infection surveillance"
+            ],
+            "Collaborate With Other Health Care Team Members": [
+                "Total care process follow up", "Communication channel use"
+            ],
+            "Document Medical & Nursing Management": [
+                "Nursing Care Plan", "Quality Indicator", "Unitbase Class"
+            ],
+            "Promote Professional Development": [
+                "Current hospital practice", "Quality improvement", "Continuing education",
+                "Follow senior allocation", "Infection control training", "BLS Training",
+                "Preceptor preparation", "Critical care experience"
+            ],
+            "Manage Technical Support": [
+                "Equipment selection", "Equipment operation", "Unexpected findings identification"
+            ],
+            "Advocate Patient And Family Needs": [
+                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
+                "Safe restraint use", "End of life care"
+            ],
+            "Others": [
+                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
+                "Respect to colleagues", "Crisis management", "Code awareness"
+            ]
+        },
+        "ICU": {
+            "Environmental Hygiene": [
+                "Arrangement of Bed, Locker, Equipments etc.",
+                "Storeroom Items storage",
+                "Refrigerator cleaning protocol",
+                "Surface Cleaning observation"
+            ],
+            "Provide Physical Care": [
+                "Patient comfort and hygiene",
+                "Vulnerable patient care",
+                "Patient transport management",
+                "Alternative communication"
+            ],
+            "Clinical Skills of Performance for CTVS-ICU patient": [
+                "Criteria of admission", "Criteria of Discharge", "Assessment",
+                "Pre operative Care", "Post operative care", "Monitoring drainage and Intake-Output",
+                "Care of PA catheter and Monitoring", "Interpret ECG readings", "Managing Chest drainage",
+                "Central line Bundle care", "Arrythmia management", "Assist in IABP insertion and care",
+                "Assist in ICD insertion and care", "Assist in intubation/extubation", "Assist in reexploration",
+                "Managing patient on Mechanical Ventilation/Bi-pap", "Effective use of Defibrillator",
+                "Master in suctioning", "Wound care and Pressure ulcer prevention", "Assist in TPI",
+                "CPR", "Enteral feeds", "Blood transfusion protocol", "Ensure Patient safety",
+                "Pleural/Pericardial fluid aspiration", "Major Dressing", "End of life care"
+            ],
+            "Medication Management": [
+                "Patient identification", "Indent/Return procedures", "Medicine storage",
+                "Safe medication administration", "Restricted Antibiotic", "Adverse drug Recall",
+                "Verbal order policy", "Narcotic medication", "High Risk medicine", "Drug Calculation",
+                "ADR identification and reporting"
+            ],
+            "Infection Control Procedures": [
+                "Standard precautions", "Segregation", "Sterilization monitoring",
+                "Device care", "Spills management", "Waste disposal", "Device related care",
+                "Nosocomial infection surveillance"
+            ],
+            "Collaborate With Other Health Care Team Members": [
+                "Total care process follow up", "Communication channel"
+            ],
+            "Document Medical & Nursing Management": [
+                "ICU Chart", "Quality Indicator", "Unitbase Class", "BLS Training"
+            ],
+            "Promote Professional Development": [
+                "Current practice", "Quality improvement", "Continuing education",
+                "Senior allocation follow", "Infection control training", "BLS Training",
+                "Preceptor preparation", "Critical care experience"
+            ],
+            "Manage Technical Support": [
+                "Equipment selection", "Equipment operation", "Unexpected findings"
+            ],
+            "Advocate Patient And Family Needs": [
+                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
+                "Safe restraint use", "End of life care"
+            ],
+            "Others": [
+                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
+                "Respect to colleagues", "Crisis management", "Code awareness"
+            ]
+        },
+        "Infection Control": {
+            "Environmental Hygiene": [
+                "Arrangement of Bed, Locker, Equipments",
+                "Storeroom Items storage",
+                "Refrigerator cleaning protocol",
+                "Surface Cleaning observation"
+            ],
+            "Provide Physical Care": [
+                "Patient comfort and hygiene",
+                "Vulnerable patient care",
+                "Pre-op/post-op care",
+                "Patient transport",
+                "Alternative communication",
+                "Pain Assessment"
+            ],
+            "Clinical Skills of Ward Performance": [
+                "Admission Protocol", "Discharge Protocol", "Transfer Protocol", "Initial Assessment",
+                "I/V Cannulation", "CBG Monitoring", "Intake-Output chart", "Chest drainage management",
+                "Dressing trolley", "Crash cart checking", "ECG", "Blood Sample collection",
+                "Urinary Catheter Care", "Suctioning", "Wound care", "Emergency trauma care",
+                "CPR", "Enteral feeds", "Blood transfusion protocol", "Patient safety",
+                "Fluid aspiration", "Preoperative Care", "Postoperative Care", "Death Protocol"
+            ],
+            "Medication Management": [
+                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
+                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
+                "High Risk medicine", "Drug Calculation", "ADR reporting"
+            ],
+            "Infection Control Procedures": [
+                "Standard precautions", "Segregation", "Sterilization monitoring",
+                "Device care", "Spills management", "Waste disposal", "Device related care",
+                "Nosocomial infection surveillance"
+            ],
+            "Collaborate With Other Health Care Team Members": [
+                "Total care process", "Communication channel"
+            ],
+            "Document Medical & Nursing Management": [
+                "Nursing Care Plan", "Quality Indicator", "Unitbase Class"
+            ],
+            "Promote Professional Development": [
+                "Current practice", "Quality improvement", "Continuing education",
+                "Senior allocation", "Infection control training", "BLS Training",
+                "Preceptor preparation", "Critical care experience"
+            ],
+            "Manage Technical Support": [
+                "Equipment selection", "Equipment operation", "Unexpected findings"
+            ],
+            "Advocate Patient And Family Needs": [
+                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
+                "Safe restraint use", "End of life care"
+            ],
+            "Others": [
+                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
+                "Respect to colleagues", "Crisis management", "Code awareness"
+            ]
+        },
+        "Critical Care": {
+            "Environmental Hygiene": [
+                "Arrangement of Bed, Locker, Equipments",
+                "Storeroom Items storage",
+                "Refrigerator cleaning protocol",
+                "Surface Cleaning observation"
+            ],
+            "Provide Physical Care": [
+                "Patient comfort and hygiene",
+                "Vulnerable patient care",
+                "Pre-op/post-op care",
+                "Patient transport",
+                "Alternative communication"
+            ],
+            "Clinical Skills of CCU Performance": [
+                "Admission criteria", "Discharge criteria", "Quick check assessment",
+                "ABG interpretation", "ECG interpretation", "Chest drainage management",
+                "Central line care", "Intubation/extubation assist", "Mechanical Ventilation/Bi-pap",
+                "Defibrillator use", "Suctioning", "Wound care", "Emergency trauma care",
+                "CPR", "Enteral feeds", "Blood transfusion protocol", "Patient safety",
+                "Fluid aspiration", "Major Dressing", "End of life care"
+            ],
+            "Medication Management": [
+                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
+                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
+                "High Risk medicine", "Drug Calculation", "ADR reporting"
+            ],
+            "Infection Control Procedures": [
+                "Standard precautions", "Segregation", "Sterilization monitoring",
+                "Device care", "Spills management", "Waste disposal", "Device related care",
+                "Nosocomial infection surveillance"
+            ],
+            "Collaborate With Other Health Care Team Members": [
+                "Total care process", "Communication channel"
+            ],
+            "Document Medical & Nursing Management": [
+                "ICU Chart", "Quality Indicator", "Unitbase Class", "BLS Training"
+            ],
+            "Promote Professional Development": [
+                "Current practice", "Quality improvement", "Continuing education",
+                "Senior allocation", "Infection control training", "BLS Training",
+                "Preceptor preparation", "Critical care experience"
+            ],
+            "Manage Technical Support": [
+                "Equipment selection", "Equipment operation", "Unexpected findings"
+            ],
+            "Advocate Patient And Family Needs": [
+                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
+                "Safe restraint use", "End of life care"
+            ],
+            "Others": [
+                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
+                "Respect to colleagues", "Crisis management", "Code awareness"
+            ]
+        },
+        "Ward": {
+            "Environmental Hygiene": [
+                "Arrangement of Bed, Locker, Equipments",
+                "Storeroom Items storage",
+                "Refrigerator cleaning protocol",
+                "Surface Cleaning observation"
+            ],
+            "Provide Physical Care": [
+                "Patient comfort and hygiene", "Vulnerable patient care", "Pre-op/post-op care",
+                "Patient transport", "Alternative communication", "Pain Assessment"
+            ],
+            "Clinical Skills of Ward Performance": [
+                "Admission Protocol", "Discharge Protocol", "Transfer Protocol", "Initial Assessment",
+                "I/V Cannulation", "CBG Monitoring", "Intake-Output chart", "Chest drainage management",
+                "Dressing trolley", "Crash cart checking", "ECG", "Blood Sample collection",
+                "Urinary Catheter Care", "Suctioning", "Wound care", "Emergency trauma care",
+                "CPR", "Enteral feeds", "Blood transfusion protocol", "Patient safety",
+                "Fluid aspiration", "Preoperative Care", "Postoperative Care", "Death Protocol"
+            ],
+            "Medication Management": [
+                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
+                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
+                "High Risk medicine", "Drug Calculation", "ADR reporting"
+            ],
+            "Infection Control Procedures": [
+                "Standard precautions", "Segregation", "Sterilization monitoring",
+                "Device care", "Spills management", "Waste disposal", "Device related care",
+                "Nosocomial infection surveillance"
+            ],
+            "Collaborate With Other Health Care Team Members": [
+                "Total care process", "Communication channel"
+            ],
+            "Document Medical & Nursing Management": [
+                "Nursing Care Plan", "Quality Indicator", "Unitbase Class"
+            ],
+            "Promote Professional Development": [
+                "Current practice", "Quality improvement", "Continuing education",
+                "Senior allocation", "Infection control training", "BLS Training",
+                "Preceptor preparation", "Critical care experience"
+            ],
+            "Manage Technical Support": [
+                "Equipment selection", "Equipment operation", "Unexpected findings"
+            ],
+            "Advocate Patient And Family Needs": [
+                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
+                "Safe restraint use", "End of life care"
+            ],
+            "Others": [
+                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
+                "Respect to colleagues", "Crisis management", "Code awareness"
+            ]
+        }
     };
+
+    // ========== Generate Quiz Questions from Training Modules ==========
+    function generateQuizQuestions(department, count = 20) {
+        const deptModules = trainingModulesByDept[department];
+        if (!deptModules) return [];
+        
+        // Flatten all training items into a list of potential questions
+        let allItems = [];
+        for (const [category, items] of Object.entries(deptModules)) {
+            items.forEach(item => {
+                allItems.push({
+                    category: category,
+                    text: item,
+                    // Generate a plausible correct answer from the item itself
+                    correctAnswer: item.includes("protocol") || item.includes("policy") ? "Follow established protocol" :
+                                  item.includes("identify") ? "Verify patient identification" :
+                                  item.includes("safety") ? "Ensure patient safety measures" :
+                                  item.includes("document") ? "Complete documentation accurately" :
+                                  item.includes("care") ? "Provide appropriate patient care" :
+                                  "Demonstrate competency in " + item.toLowerCase()
+                });
+            });
+        }
+        
+        // Shuffle and take first 'count' items
+        const shuffled = [...allItems];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        return shuffled.slice(0, count).map((item, idx) => ({
+            id: idx,
+            text: `Regarding "${item.text}": What is the correct nursing action?`,
+            category: item.category,
+            options: [
+                item.correctAnswer,
+                "Ignore unless specifically instructed",
+                "Delegate to another staff member",
+                "Document without action"
+            ],
+            correct: 0
+        }));
+    }
+
+    // Store generated quizzes per nurse per attempt
+    let nurseQuizzes = JSON.parse(localStorage.getItem('smartcare_quizzes') || '{}');
+
+    function getOrCreateQuiz(nurseId, department) {
+        const key = `${nurseId}_${department}`;
+        if (!nurseQuizzes[key] || nurseQuizzes[key].completed) {
+            nurseQuizzes[key] = {
+                questions: generateQuizQuestions(department, systemConfig.quizQuestionsCount),
+                completed: false,
+                score: null,
+                startedAt: new Date().toISOString()
+            };
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+        }
+        return nurseQuizzes[key];
+    }
 
     // ========== NURSES DATA ==========
     let nursesData = [
-        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-01-15" },
-        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "OT", preEval: 88, postEval: 91, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: trainingModulesByDept.OT.slice(0, 8), lastActivity: "2025-02-01" },
-        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: 94, postEval: 96, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: trainingModulesByDept["Infection Control"], lastActivity: "2025-02-10" },
-        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01" },
-        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: 95, postEval: 98, trainingStatus: "Completed", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: trainingModulesByDept.ICU, lastActivity: "2025-02-10" },
-        { id: 6, name: "Mary Thompson", empId: "MGR001", department: "ICU", preEval: 98, postEval: 99, trainingStatus: "Completed", privilege: 3, joiningDate: "2024-01-10", password: "manager123", role: "manager", trainingModulesCompleted: trainingModulesByDept.ICU, lastActivity: "2025-02-10" }
+        { id: 1, name: "Sarah Johnson", empId: "NURSE101", department: "Labour Room", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-01-15", quizScore: null },
+        { id: 2, name: "Michael Chen", empId: "NURSE102", department: "Emergency Department", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null },
+        { id: 3, name: "Emma Davis", empId: "NURSE103", department: "Infection Control", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null },
+        { id: 4, name: "Priya Sharma", empId: "NURSE104", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null },
+        { id: 5, name: "James Wilson", empId: "SUP001", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null },
+        { id: 6, name: "Mary Thompson", empId: "MGR001", department: "ICU", preEval: null, postEval: null, trainingStatus: "Pending", privilege: 3, joiningDate: "2024-01-10", password: "manager123", role: "manager", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null }
     ];
 
     function updateLoginUsers() {
@@ -464,49 +926,99 @@
         localStorage.setItem('smartcare_users', JSON.stringify(loginUsers));
     }
 
-    // ========== COMPETENCY & PRIVILEGE ENGINE ==========
+    // ========== ROLE MANAGEMENT ==========
+    let selectedNurseForRoleChange = null;
+
+    function renderRoleManagement() {
+        let html = `<div class="page-header"><h1 class="page-title">👔 Role Management</h1><p class="page-desc">Promote or demote nurses to Supervisor or Nurse Manager roles</p></div>
+        <div class="filter-bar"><input type="text" id="searchRole" placeholder="🔍 Search" onkeyup="renderRoleManagement()">
+        <select id="filterDeptRole" onchange="renderRoleManagement()"><option value="all">All Depts</option><option value="Labour Room">Labour Room</option><option value="Emergency Department">Emergency Dept</option><option value="ICU">ICU</option><option value="Infection Control">Infection Control</option><option value="Critical Care">Critical Care</option><option value="Ward">Ward</option></select>
+        <select id="filterCurrentRole" onchange="renderRoleManagement()"><option value="all">All Roles</option><option value="nurse">Nurse</option><option value="supervisor">Supervisor</option><option value="manager">Nurse Manager</option></select></div>
+        <div class="tracker-card"><tr><thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Current Role</th><th>Privilege</th><th>Training</th><th>Action</th></tr></thead><tbody>`;
+        
+        const search = document.getElementById('searchRole')?.value.toLowerCase() || '';
+        const filterDept = document.getElementById('filterDeptRole')?.value || 'all';
+        const filterRole = document.getElementById('filterCurrentRole')?.value || 'all';
+        let filtered = nursesData.filter(n => n.empId !== 'ADMIN999' && (filterDept === 'all' || n.department === filterDept) && (filterRole === 'all' || n.role === filterRole) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
+        
+        filtered.forEach(n => {
+            let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
+            let modules = getAllModulesCount(n.department);
+            let completedCount = n.trainingModulesCompleted?.length || 0;
+            let percent = Math.round((completedCount/modules.total)*100);
+            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${roleBadge}</td><td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td><td>${percent}%</td><td><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button></td></tr>`;
+        });
+        html += `</tbody></table><p>Total: ${filtered.length} staff</p></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function openRoleModal(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            selectedNurseForRoleChange = nurse;
+            document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
+            document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
+            document.getElementById('newRoleSelect').value = nurse.role;
+            document.getElementById('roleModal').style.display = 'flex';
+        }
+    }
+
+    function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; selectedNurseForRoleChange = null; }
+
+    function confirmRoleChange() {
+        if (!selectedNurseForRoleChange) return;
+        const newRole = document.getElementById('newRoleSelect').value;
+        const oldRole = selectedNurseForRoleChange.role;
+        if (oldRole === newRole) { alert("No change selected."); closeRoleModal(); return; }
+        if (confirm(`Change ${selectedNurseForRoleChange.name} from ${oldRole.toUpperCase()} to ${newRole.toUpperCase()}?`)) {
+            selectedNurseForRoleChange.role = newRole;
+            if (newRole === 'manager') selectedNurseForRoleChange.privilege = 3;
+            else if (newRole === 'supervisor') selectedNurseForRoleChange.privilege = Math.max(2, selectedNurseForRoleChange.privilege);
+            updateLoginUsers();
+            addAuditLog("ROLE_CHANGE", `${selectedNurseForRoleChange.name} changed from ${oldRole} to ${newRole}`);
+            alert(`✅ ${selectedNurseForRoleChange.name} is now a ${newRole.toUpperCase()}!`);
+            if (currentUser.id === selectedNurseForRoleChange.empId) {
+                currentUser.role = newRole;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateSidebarPrivilege();
+                const menu = getMenuForUser(currentUser);
+                document.getElementById('navMenu').innerHTML = menu.map(i => `<div class="nav-item" onclick="navigateTo('${i.id}')"><span class="nav-icon">${i.icon}</span> ${i.name}</div>`).join('');
+            }
+            closeRoleModal();
+            renderRoleManagement();
+        }
+    }
+
+    // ========== HELPER FUNCTIONS ==========
+    function getAllModulesCount(department) {
+        const deptModules = trainingModulesByDept[department];
+        if (!deptModules) return { total: 0, categories: [] };
+        let total = 0;
+        let categories = [];
+        for (const [cat, items] of Object.entries(deptModules)) {
+            categories.push({ name: cat, count: items.length, items: items });
+            total += items.length;
+        }
+        return { total, categories };
+    }
+
+    // ========== COMPETENCY ENGINE ==========
     function recalculatePrivilege(nurse) {
-        if (!systemConfig.autoAssignPrivilege) return nurse.privilege;
-        if (nurse.role !== 'nurse') return nurse.privilege; // Admin/Manager/Supervisor not auto-adjusted
-        
+        if (!systemConfig.autoAssignPrivilege || nurse.role !== 'nurse') return nurse.privilege;
         let newPrivilege = nurse.privilege;
-        const modules = trainingModulesByDept[nurse.department] || trainingModulesByDept.ICU;
-        const completedModules = nurse.trainingModulesCompleted?.length || 0;
-        const allModulesCompleted = completedModules === modules.length;
-        
-        // Check inactivity
+        const modules = getAllModulesCount(nurse.department);
+        const completedCount = nurse.trainingModulesCompleted?.length || 0;
+        const allModulesCompleted = completedCount === modules.total;
         const lastActivity = new Date(nurse.lastActivity || nurse.joiningDate);
         const daysInactive = Math.floor((new Date() - lastActivity) / (1000 * 60 * 60 * 24));
         
-        // Rule 1: Inactivity downgrade
-        if (daysInactive > systemConfig.inactivityDaysThreshold && newPrivilege > 1) {
-            newPrivilege--;
-            addAuditLog("PRIVILEGE_DOWNGRADE", `${nurse.name} downgraded to Level ${newPrivilege} due to ${daysInactive} days of inactivity`);
+        if (daysInactive > systemConfig.inactivityDaysThreshold && newPrivilege > 1) newPrivilege--;
+        if (nurse.quizScore) {
+            if (nurse.quizScore >= systemConfig.privilegeUpgradeScore && newPrivilege < 3) newPrivilege++;
+            else if (nurse.quizScore < systemConfig.privilegeDowngradeScore && newPrivilege > 1) newPrivilege--;
         }
-        
-        // Rule 2: Post-evaluation upgrade/downgrade
-        if (nurse.postEval) {
-            if (nurse.postEval >= systemConfig.privilegeUpgradeScore && newPrivilege < 3) {
-                newPrivilege++;
-                addAuditLog("PRIVILEGE_UPGRADE", `${nurse.name} upgraded to Level ${newPrivilege} (Post-eval: ${nurse.postEval}%)`);
-            } else if (nurse.postEval < systemConfig.privilegeDowngradeScore && newPrivilege > 1) {
-                newPrivilege--;
-                addAuditLog("PRIVILEGE_DOWNGRADE", `${nurse.name} downgraded to Level ${newPrivilege} (Post-eval: ${nurse.postEval}%)`);
-            }
-        }
-        
-        // Rule 3: Training completion bonus
-        if (allModulesCompleted && newPrivilege < 2 && nurse.preEval >= systemConfig.passingScore) {
-            newPrivilege = 2;
-            addAuditLog("PRIVILEGE_UPGRADE", `${nurse.name} upgraded to Level 2 (All training completed)`);
-        }
-        
-        // Rule 4: Pre-evaluation unlocks training but doesn't upgrade privilege directly
-        if (nurse.preEval && nurse.preEval >= systemConfig.passingScore && nurse.trainingStatus === 'Pending') {
-            nurse.trainingStatus = 'In Progress';
-            addAuditLog("TRAINING_UNLOCKED", `${nurse.name} unlocked training modules (Pre-eval: ${nurse.preEval}%)`);
-        }
-        
+        if (allModulesCompleted && newPrivilege < 2) newPrivilege = 2;
         return Math.min(3, Math.max(1, newPrivilege));
     }
     
@@ -515,133 +1027,92 @@
         nursesData.forEach(nurse => {
             const oldPrivilege = nurse.privilege;
             const newPrivilege = recalculatePrivilege(nurse);
-            if (oldPrivilege !== newPrivilege) {
-                nurse.privilege = newPrivilege;
-                changes++;
-            }
-            // Update training status based on module completion
-            const modules = trainingModulesByDept[nurse.department] || trainingModulesByDept.ICU;
+            if (oldPrivilege !== newPrivilege) { nurse.privilege = newPrivilege; changes++; }
+            const modules = getAllModulesCount(nurse.department);
             const completedCount = nurse.trainingModulesCompleted?.length || 0;
-            if (completedCount === modules.length && nurse.trainingStatus !== 'Completed') {
-                nurse.trainingStatus = 'Completed';
-                addAuditLog("TRAINING_COMPLETED", `${nurse.name} completed all training modules`);
-            } else if (completedCount > 0 && nurse.trainingStatus === 'Pending') {
-                nurse.trainingStatus = 'In Progress';
-            }
+            if (completedCount === modules.total && nurse.trainingStatus !== 'Completed') nurse.trainingStatus = 'Completed';
+            else if (completedCount > 0 && nurse.trainingStatus === 'Pending') nurse.trainingStatus = 'In Progress';
         });
         updateLoginUsers();
-        if (changes > 0) {
-            addAuditLog("PRIVILEGE_BATCH_UPDATE", `Updated privileges for ${changes} nurses`);
-        }
         return changes;
-    }
-
-    // ========== QUIZZES ==========
-    const quizzes = {
-        "ICU": { title: "ICU Pre-evaluation", questions: [
-            { text: "What is the normal range for adult heart rate?", options: ["40-60 bpm", "60-100 bpm", "100-140 bpm", "20-40 bpm"], correct: 1 },
-            { text: "Which of the following indicates sepsis?", options: ["Temp >38°C or <36°C", "Heart rate <60", "BP >140/90", "RR <12"], correct: 0 },
-            { text: "First-line vasopressor in septic shock?", options: ["Dopamine", "Epinephrine", "Norepinephrine", "Phenylephrine"], correct: 2 },
-            { text: "Normal PaO2 range on ABG?", options: ["35-45 mmHg", "50-60 mmHg", "75-100 mmHg", "100-120 mmHg"], correct: 2 },
-            { text: "Common ICU sedation score?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 }
-        ]},
-        "OT": { title: "OT Pre-evaluation", questions: [
-            { text: "Standard surgical hand scrub time?", options: ["1 min", "2-5 min", "10 min", "15 min"], correct: 1 },
-            { text: "Sterile field violation?", options: ["Turning back", "Speaking", "Wearing mask", "Sterile gloves"], correct: 0 },
-            { text: "Correct PPE donning order?", options: ["Gown,mask,gloves,goggles", "Gown,mask,goggles,gloves", "Gloves,gown,mask,goggles", "Mask,goggles,gown,gloves"], correct: 1 },
-            { text: "Highest SSI risk surgery?", options: ["Laparoscopic", "Clean", "Clean-contaminated", "Dirty/infected"], correct: 3 },
-            { text: "Ideal OT temperature?", options: ["16-18°C", "18-22°C", "22-25°C", "25-28°C"], correct: 1 }
-        ]},
-        "Infection Control": { title: "Infection Control Pre-evaluation", questions: [
-            { text: "Most effective HAI prevention?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE"], correct: 1 },
-            { text: "Hand hygiene duration?", options: ["5 sec", "10-15 sec", "20-30 sec", "60 sec"], correct: 2 },
-            { text: "TB precaution type?", options: ["Contact", "Droplet", "Airborne", "Standard"], correct: 2 },
-            { text: "Infectious waste bag color?", options: ["Black", "Yellow", "Blue", "Red"], correct: 1 },
-            { text: "Needlestick first aid?", options: ["Wash with soap", "Squeeze", "Tourniquet", "Ignore"], correct: 0 }
-        ]}
-    };
-
-    // ========== MENU (Privilege-Based) ==========
-    const allMenuItems = [
-        { id: "dashboard", name: "📊 Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
-        { id: "tracker", name: "📋 Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor","nurse_privilege_3"] },
-        { id: "preEval", name: "📝 Pre-evaluation", icon: "✍️", roles: ["admin","manager","nurse","supervisor"] },
-        { id: "trainingStatus", name: "✅ Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
-        { id: "postEval", name: "📈 Post-evaluation", icon: "📈", roles: ["admin","manager","nurse_privilege_2","nurse_privilege_3","supervisor"] },
-        { id: "reports", name: "📑 Reports", icon: "📄", roles: ["admin","manager","supervisor","nurse_privilege_3"] },
-        { id: "auditLog", name: "📜 Audit Log", icon: "📋", roles: ["admin","manager"] },
-        { id: "userManagement", name: "👥 User Management", icon: "👥", roles: ["admin","manager"] },
-        { id: "settings", name: "🔧 Settings", icon: "⚙️", roles: ["admin"] }
-    ];
-
-    function getMenuForUser(user) {
-        if(user.role === "admin") return allMenuItems;
-        if(user.role === "manager") return allMenuItems.filter(i => i.roles.includes("manager") || i.roles.includes("admin"));
-        if(user.role === "supervisor") return allMenuItems.filter(i => i.roles.includes("supervisor"));
-        if(user.role === "nurse") {
-            if(user.privilege >= 3) return allMenuItems.filter(i => i.roles.includes("nurse_privilege_3") || i.roles.includes("nurse"));
-            if(user.privilege >= 2) return allMenuItems.filter(i => i.roles.includes("nurse_privilege_2") || i.roles.includes("nurse"));
-            return allMenuItems.filter(i => i.roles.includes("nurse") && !i.roles.includes("nurse_privilege_2") && !i.roles.includes("nurse_privilege_3"));
-        }
-        return [];
     }
 
     // ========== TRAINING STATUS UPDATER ==========
     function renderTrainingStatusUpdater() {
-        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status Updater</h1><p class="page-desc">Click on modules to mark complete/incomplete. Privileges update automatically.</p></div>
+        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status</h1><p class="page-desc">Click on any training item to mark as complete/incomplete (Supervisors only)</p></div>
         <div class="filter-bar"><input type="text" id="searchTrain" placeholder="🔍 Search nurse" onkeyup="renderTrainingStatusUpdater()">
-        <select id="filterDeptTrain" onchange="renderTrainingStatusUpdater()"><option value="all">All Depts</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select>
-        <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate All Privileges</button></div>`;
+        <select id="filterDeptTrain" onchange="renderTrainingStatusUpdater()"><option value="all">All Depts</option><option value="Labour Room">Labour Room</option><option value="Emergency Department">Emergency Dept</option><option value="ICU">ICU</option><option value="Infection Control">Infection Control</option><option value="Critical Care">Critical Care</option><option value="Ward">Ward</option></select>
+        <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate Competency</button></div>`;
         
         const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
-        const searchTerm = document.getElementById('searchTrain')?.value.toLowerCase() || '';
-        let filtered = nursesData.filter(n => (filterDept === 'all' || n.department === filterDept) && (n.name.toLowerCase().includes(searchTerm) || n.empId.toLowerCase().includes(searchTerm)));
+        const search = document.getElementById('searchTrain')?.value.toLowerCase() || '';
+        let filtered = nursesData.filter(n => (filterDept === 'all' || n.department === filterDept) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
         
         filtered.forEach(nurse => {
-            const modules = trainingModulesByDept[nurse.department] || trainingModulesByDept.ICU;
+            const modules = getAllModulesCount(nurse.department);
             const completedSet = new Set(nurse.trainingModulesCompleted || []);
             let modulesHtml = `<div style="margin-bottom:1.5rem; border:1px solid #e2e8f0; border-radius:0.8rem; padding:0.8rem;">
-                <h4 style="margin-bottom:0.5rem;">👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department} 
-                <span style="float:right; font-size:0.7rem;">Privilege: ${nurse.privilege === 1 ? '⭐ Level 1' : (nurse.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3')}</span></h4>
-                <div class="module-grid">`;
+                <h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department} 
+                <span style="float:right;">Competency: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</span></h4>
+                <div style="margin-bottom:0.5rem;">Progress: ${completedSet.size}/${modules.total} items completed (${Math.round(completedSet.size/modules.total*100)}%)</div>`;
             
-            modules.forEach(module => {
-                const isCompleted = completedSet.has(module);
-                modulesHtml += `<div class="module-chip ${isCompleted ? 'completed' : ''}" onclick="toggleModuleCompletion('${nurse.empId}', '${module.replace(/'/g, "\\'")}')">
-                    ${isCompleted ? '✅' : '📘'} ${module.substring(0, 35)}${module.length > 35 ? '...' : ''}
-                </div>`;
+            // Display modules by category with collapsible sections
+            modules.categories.forEach(cat => {
+                const catCompleted = cat.items.filter(item => completedSet.has(item)).length;
+                modulesHtml += `<div class="category-group">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        📁 ${cat.name} (${catCompleted}/${cat.count})
+                        <span>▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="module-grid">`;
+                cat.items.forEach(item => {
+                    const isCompleted = completedSet.has(item);
+                    modulesHtml += `<div class="module-chip ${isCompleted ? 'completed' : ''}" onclick="toggleModuleCompletion('${nurse.empId}', '${item.replace(/'/g, "\\'")}')">
+                        ${isCompleted ? '✅' : '📘'} ${item}
+                    </div>`;
+                });
+                modulesHtml += `</div></div></div>`;
             });
             
-            const completedCount = completedSet.size;
-            const percentComplete = Math.round((completedCount / modules.length) * 100);
-            modulesHtml += `</div><div style="margin-top:0.8rem; font-size:0.7rem;">Progress: ${completedCount}/${modules.length} (${percentComplete}%)</div></div>`;
+            modulesHtml += `<div style="margin-top:0.8rem;"><button class="btn-small" onclick="markAllModules('${nurse.empId}', true)">✅ Mark All Complete</button> 
+            <button class="btn-small" onclick="markAllModules('${nurse.empId}', false)">⬜ Mark All Incomplete</button></div></div>`;
             html += modulesHtml;
         });
         
-        html += `<div class="card"><button class="add-btn" onclick="updateOverallTrainingStatus()">📊 Update Overall Training Status & Privileges</button></div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
 
+    function toggleCategory(header) {
+        const content = header.nextElementSibling;
+        content.classList.toggle('open');
+        const arrow = header.querySelector('span');
+        if (arrow) arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+
     function toggleModuleCompletion(empId, moduleName) {
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            alert("Only Admin, Nurse Manager, and Supervisors can update training status.");
+            return;
+        }
         const nurse = nursesData.find(n => n.empId === empId);
         if(nurse) {
             if(!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
             const index = nurse.trainingModulesCompleted.indexOf(moduleName);
             if(index === -1) {
                 nurse.trainingModulesCompleted.push(moduleName);
-                addAuditLog("MODULE_COMPLETED", `${nurse.name} completed module: ${moduleName}`);
+                addAuditLog("MODULE_COMPLETED", `${nurse.name} completed: ${moduleName}`);
             } else {
                 nurse.trainingModulesCompleted.splice(index, 1);
-                addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked module: ${moduleName}`);
+                addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked: ${moduleName}`);
             }
             nurse.lastActivity = new Date().toISOString().split('T')[0];
-            // Recalculate this nurse's privilege
             const oldPrivilege = nurse.privilege;
             const newPrivilege = recalculatePrivilege(nurse);
             if (oldPrivilege !== newPrivilege) {
                 nurse.privilege = newPrivilege;
-                addAuditLog("PRIVILEGE_CHANGE", `${nurse.name} privilege changed from Level ${oldPrivilege} to Level ${newPrivilege}`);
+                addAuditLog("PRIVILEGE_AUTO_UPDATE", `${nurse.name} competency changed from Level ${oldPrivilege} to Level ${newPrivilege}`);
             }
             updateLoginUsers();
             renderTrainingStatusUpdater();
@@ -649,270 +1120,300 @@
         }
     }
 
-    function updateOverallTrainingStatus() {
-        updateAllPrivileges();
-        addAuditLog("TRAINING_BULK_UPDATE", "Overall training status and privileges updated for all nurses");
-        alert("✅ Training status and privileges updated for all nurses!");
-        renderTrainingStatusUpdater();
-        if (window.location.hash === '#trainingStatus') renderTrainingStatusUpdater();
-    }
-
-    function runPrivilegeRecalculation() {
-        const changes = updateAllPrivileges();
-        alert(`✅ Privilege recalculation complete!\n\n${changes} nurses had privilege changes.\n\nRules applied:\n• Pre-eval ≥${systemConfig.passingScore}% unlocks training\n• Post-eval ≥${systemConfig.privilegeUpgradeScore}% → Upgrade\n• Post-eval <${systemConfig.privilegeDowngradeScore}% → Downgrade\n• ${systemConfig.inactivityDaysThreshold}+ days inactive → Downgrade\n• All training completed → Eligible for Level 2`);
-        renderTrainingStatusUpdater();
-        if (currentUser.role === 'nurse') updateSidebarPrivilege();
-    }
-
-    // ========== PRE-EVALUATION ==========
-    function renderPreEvaluation() {
-        const quiz = quizzes[currentUser.department];
-        if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No pre-evaluation for your department.</p></div>`; return; }
-        const existingEval = nursesData.find(n => n.empId === currentUser.id)?.preEval;
-        if (existingEval) {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ You have already completed pre-evaluation with score: ${existingEval}%</div>
-            <button class="quiz-btn" onclick="renderPreEvaluation()" style="margin-top:1rem;">Retake Assessment</button></div>`;
+    function markAllModules(empId, complete) {
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            alert("Only Admin, Nurse Manager, and Supervisors can update training status.");
             return;
         }
-        
-        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}% — Required to unlock training modules</p></div><div class="card"><form id="preEvalForm">`;
-        quiz.questions.forEach((q, idx) => {
-            html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
-            q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; });
-            html += `</div>`;
-        });
-        html += `<button type="submit" class="quiz-btn">Submit Pre-evaluation</button></form></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        
-        document.getElementById('preEvalForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let score = 0;
-            quiz.questions.forEach((q, idx) => {
-                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
-                if(selected && parseInt(selected.value) === q.correct) score++;
-            });
-            const percentage = Math.round((score / quiz.questions.length) * 100);
-            const passed = percentage >= systemConfig.passingScore;
-            alert(`Score: ${percentage}% - ${passed ? 'PASSED ✓' : 'FAILED ✗ (Need ' + systemConfig.passingScore + '% to unlock training)'}`);
-            
-            const nurse = nursesData.find(n => n.empId === currentUser.id);
-            if(nurse) {
-                nurse.preEval = percentage;
-                nurse.lastActivity = new Date().toISOString().split('T')[0];
-                if(passed && nurse.trainingStatus === 'Pending') {
-                    nurse.trainingStatus = "In Progress";
-                    addAuditLog("PRE_EVAL_PASS", `${currentUser.name} passed pre-evaluation with ${percentage}% - Training unlocked`);
-                } else if (!passed) {
-                    addAuditLog("PRE_EVAL_FAIL", `${currentUser.name} failed pre-evaluation with ${percentage}%`);
-                }
-                updateLoginUsers();
+        const nurse = nursesData.find(n => n.empId === empId);
+        if(nurse) {
+            const modules = getAllModulesCount(nurse.department);
+            let allItems = [];
+            modules.categories.forEach(cat => allItems.push(...cat.items));
+            if (complete) {
+                nurse.trainingModulesCompleted = [...allItems];
+                addAuditLog("ALL_MODULES_COMPLETED", `${nurse.name} marked all ${allItems.length} modules complete`);
+            } else {
+                nurse.trainingModulesCompleted = [];
+                addAuditLog("ALL_MODULES_INCOMPLETE", `${nurse.name} marked all modules incomplete`);
             }
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Pre-evaluation: ${percentage}% — ${passed ? 'Training Modules Unlocked! ✅' : 'Please retake to unlock training'}</div>
-            ${passed ? '<button class="quiz-btn" onclick="navigateTo(\'trainingStatus\')">Start Training Modules</button>' : '<button class="quiz-btn" onclick="renderPreEvaluation()">Retake Assessment</button>'}</div>`;
-        });
-        closeSidebar();
+            nurse.lastActivity = new Date().toISOString().split('T')[0];
+            const newPrivilege = recalculatePrivilege(nurse);
+            nurse.privilege = newPrivilege;
+            updateLoginUsers();
+            renderTrainingStatusUpdater();
+            if (currentUser.empId === empId) updateSidebarPrivilege();
+            alert(`✅ ${complete ? 'Marked all modules complete' : 'Marked all modules incomplete'} for ${nurse.name}`);
+        }
     }
 
-    // ========== POST-EVALUATION ==========
-    function renderPostEvaluation() {
-        const quiz = quizzes[currentUser.department];
-        if (!quiz) { document.getElementById('mainContent').innerHTML = `<div class="card"><p>No post-evaluation.</p></div>`; return; }
+    function runPrivilegeRecalculation() { 
+        const changes = updateAllPrivileges(); 
+        alert(`✅ Competency recalculation complete!\n\n${changes} nurses had privilege changes.\n\nRules applied:\n• Training completion ≥80% unlocks Level 2\n• Quiz score ≥85% → Upgrade\n• Quiz score <60% → Downgrade\n• ${systemConfig.inactivityDaysThreshold}+ days inactive → Downgrade`);
+        renderTrainingStatusUpdater(); 
+        if (currentUser.role === 'nurse') updateSidebarPrivilege(); 
+    }
+
+    // ========== QUIZ PAGE ==========
+    function renderQuiz() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
-        if(!nurse?.preEval) { 
-            document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Complete Pre-evaluation first to unlock training modules, then complete all training before post-evaluation.</p>
-            <button class="quiz-btn" onclick="navigateTo('preEval')">Go to Pre-evaluation</button></div>`; 
+        if (!nurse) { alert("Nurse record not found"); return; }
+        
+        const quizData = getOrCreateQuiz(currentUser.id, nurse.department);
+        
+        if (quizData.completed && nurse.quizScore) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Quiz Completed! Score: ${nurse.quizScore}%</div>
+            <p>Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
+            <button class="quiz-btn" onclick="resetQuiz()" style="margin-top:1rem;">Retake Quiz</button>
+            <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
-        const modules = trainingModulesByDept[currentUser.department] || trainingModulesByDept.ICU;
-        const completedCount = nurse.trainingModulesCompleted?.length || 0;
-        if (completedCount < modules.length) {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ You must complete all ${modules.length} training modules before taking post-evaluation.</p>
-            <p>Completed: ${completedCount}/${modules.length}</p>
-            <button class="quiz-btn" onclick="navigateTo('trainingStatus')">Go to Training Modules</button></div>`;
-            return;
-        }
+        let html = `<div class="page-header"><h1 class="page-title">📝 Competency Assessment Quiz</h1>
+        <p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade privilege</p></div>
+        <div class="card"><form id="quizForm">`;
         
-        if (nurse.postEval) {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation completed: ${nurse.postEval}%</div>
-            <p>Current Privilege Level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
-            <button class="quiz-btn" onclick="renderPostEvaluation()" style="margin-top:1rem;">Retake Assessment</button></div>`;
-            return;
-        }
-        
-        let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1>
-        <p class="page-desc">Score ≥${systemConfig.privilegeUpgradeScore}% → Upgrade Privilege | Score <${systemConfig.privilegeDowngradeScore}% → Downgrade Privilege</p></div>
-        <div class="card"><form id="postEvalForm">`;
-        quiz.questions.forEach((q, idx) => {
+        quizData.questions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
-            q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; });
+            q.options.forEach((opt, optIdx) => {
+                html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`;
+            });
             html += `</div>`;
         });
-        html += `<button type="submit" class="quiz-btn">Submit Post-evaluation</button></form></div>`;
+        
+        html += `<button type="submit" class="quiz-btn">Submit Quiz</button></form></div>`;
         document.getElementById('mainContent').innerHTML = html;
         
-        document.getElementById('postEvalForm').addEventListener('submit', function(e) {
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let score = 0;
-            quiz.questions.forEach((q, idx) => {
+            quizData.questions.forEach((q, idx) => {
                 const selected = document.querySelector(`input[name="q${idx}"]:checked`);
                 if(selected && parseInt(selected.value) === q.correct) score++;
             });
-            const percentage = Math.round((score / quiz.questions.length) * 100);
+            const percentage = Math.round((score / quizData.questions.length) * 100);
+            quizData.completed = true;
+            quizData.score = percentage;
+            nurse.quizScore = percentage;
+            nurse.lastActivity = new Date().toISOString().split('T')[0];
             
-            if(nurse) {
-                nurse.postEval = percentage;
-                nurse.lastActivity = new Date().toISOString().split('T')[0];
-                const oldPrivilege = nurse.privilege;
-                const newPrivilege = recalculatePrivilege(nurse);
-                nurse.privilege = newPrivilege;
-                nurse.trainingStatus = "Completed";
-                updateLoginUsers();
-                
-                let message = `Post-evaluation: ${percentage}%\n\n`;
-                if (percentage >= systemConfig.privilegeUpgradeScore && newPrivilege > oldPrivilege) {
-                    message += `🎉 CONGRATULATIONS! Privilege upgraded from Level ${oldPrivilege} to Level ${newPrivilege}!`;
-                } else if (percentage < systemConfig.privilegeDowngradeScore && newPrivilege < oldPrivilege) {
-                    message += `⚠️ Privilege downgraded from Level ${oldPrivilege} to Level ${newPrivilege}. Please review training materials.`;
-                } else {
-                    message += `Privilege remains Level ${newPrivilege}.`;
-                }
-                alert(message);
-                addAuditLog("POST_EVAL", `${currentUser.name} scored ${percentage}% - Privilege: Level ${oldPrivilege} → Level ${newPrivilege}`);
-                
-                document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📈 Post-evaluation: ${percentage}%</div>
-                <p style="margin-top:0.8rem;">Your privilege level is now: ${newPrivilege === 1 ? '⭐ Level 1 (Trainee)' : (newPrivilege === 2 ? '⭐⭐ Level 2 (Independent Nurse)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
-                <button class="quiz-btn" onclick="navigateTo('dashboard')" style="margin-top:1rem;">Go to Dashboard</button></div>`;
-                updateSidebarPrivilege();
+            const oldPrivilege = nurse.privilege;
+            const newPrivilege = recalculatePrivilege(nurse);
+            nurse.privilege = newPrivilege;
+            
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            updateLoginUsers();
+            addAuditLog("QUIZ_COMPLETED", `${currentUser.name} scored ${percentage}% - Privilege: ${oldPrivilege}→${newPrivilege}`);
+            
+            let message = `Quiz Score: ${percentage}%\n\n`;
+            if (percentage >= systemConfig.privilegeUpgradeScore && newPrivilege > oldPrivilege) {
+                message += `🎉 CONGRATULATIONS! You have been upgraded to Level ${newPrivilege}!`;
+            } else if (percentage < systemConfig.privilegeDowngradeScore && newPrivilege < oldPrivilege) {
+                message += `⚠️ Your competency level has been downgraded to Level ${newPrivilege}. Please review training materials.`;
+            } else {
+                message += `Your competency level remains Level ${newPrivilege}.`;
             }
+            alert(message);
+            updateSidebarPrivilege();
+            
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Quiz Score: ${percentage}%</div>
+            <p>Your competency level: ${newPrivilege === 1 ? '⭐ Level 1 (Trainee)' : (newPrivilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
+            <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
         });
         closeSidebar();
+    }
+
+    function resetQuiz() {
+        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        if (nurse) {
+            const key = `${currentUser.id}_${nurse.department}`;
+            delete nurseQuizzes[key];
+            nurse.quizScore = null;
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            updateLoginUsers();
+            renderQuiz();
+        }
     }
 
     // ========== DASHBOARD ==========
     function renderDashboard() {
         updateAllPrivileges();
-        const total = nursesData.filter(n => n.role === 'nurse').length;
-        const completed = nursesData.filter(n => n.role === 'nurse' && n.trainingStatus === 'Completed').length;
-        const inProgress = nursesData.filter(n => n.role === 'nurse' && n.trainingStatus === 'In Progress').length;
-        const pending = nursesData.filter(n => n.role === 'nurse' && n.trainingStatus === 'Pending').length;
-        const level1 = nursesData.filter(n => n.role === 'nurse' && n.privilege === 1).length;
-        const level2 = nursesData.filter(n => n.role === 'nurse' && n.privilege === 2).length;
-        const level3 = nursesData.filter(n => n.role === 'nurse' && n.privilege === 3).length;
-        const avgPre = nursesData.filter(n => n.preEval).reduce((s,n)=>s+n.preEval,0)/(nursesData.filter(n=>n.preEval).length||1);
-        const avgPost = nursesData.filter(n => n.postEval).reduce((s,n)=>s+n.postEval,0)/(nursesData.filter(n=>n.postEval).length||1);
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const total = nurses.length;
+        const completed = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        const inProgress = nurses.filter(n => n.trainingStatus === 'In Progress').length;
+        const pending = nurses.filter(n => n.trainingStatus === 'Pending').length;
+        const level1 = nurses.filter(n => n.privilege === 1).length;
+        const level2 = nurses.filter(n => n.privilege === 2).length;
+        const level3 = nurses.filter(n => n.privilege === 3).length;
+        const avgQuiz = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
         
         let deptStats = {};
-        nursesData.filter(n => n.role === 'nurse').forEach(n => {
-            if(!deptStats[n.department]) deptStats[n.department] = { total:0, completed:0 };
+        nurses.forEach(n => { if(!deptStats[n.department]) deptStats[n.department] = { total:0, completed:0, totalItems:0, completedItems:0 };
             deptStats[n.department].total++;
             if(n.trainingStatus === 'Completed') deptStats[n.department].completed++;
+            const modules = getAllModulesCount(n.department);
+            deptStats[n.department].totalItems += modules.total;
+            deptStats[n.department].completedItems += n.trainingModulesCompleted?.length || 0;
         });
         
-        let html = `<div class="page-header"><h1 class="page-title">📊 Competency Dashboard</h1><p class="page-desc">Real-time privilege levels and training progress</p></div>
+        let html = `<div class="page-header"><h1 class="page-title">📊 Competency Dashboard</h1><p class="page-desc">Real-time training progress and privilege levels</p></div>
         <div class="dashboard-widgets">
             <div class="widget"><div class="widget-icon">👩‍⚕️</div><div class="widget-title">Total Nurses</div><div class="widget-value">${total}</div></div>
-            <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Training Completed</div><div class="widget-value">${completed}</div><div class="widget-trend">${Math.round(completed/total*100||0)}% complete</div></div>
+            <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Training Completed</div><div class="widget-value">${completed}</div></div>
             <div class="widget"><div class="widget-icon">🔄</div><div class="widget-title">In Progress</div><div class="widget-value">${inProgress}</div></div>
-            <div class="widget"><div class="widget-icon">⏳</div><div class="widget-title">Pending</div><div class="widget-value">${pending}</div></div>
             <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Level 1 (Trainee)</div><div class="widget-value">${level1}</div></div>
-            <div class="widget"><div class="widget-icon">⭐⭐</div><div class="widget-title">Level 2 (Independent)</div><div class="widget-value">${level2}</div></div>
+            <div class="widget"><div class="widget-icon">⭐⭐</div><div class="widget-title">Level 2 (Indep)</div><div class="widget-value">${level2}</div></div>
             <div class="widget"><div class="widget-icon">⭐⭐⭐</div><div class="widget-title">Level 3 (Preceptor)</div><div class="widget-value">${level3}</div></div>
-            <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Pre-eval</div><div class="widget-value">${Math.round(avgPre)}%</div></div>
-            <div class="widget"><div class="widget-icon">📈</div><div class="widget-title">Avg Post-eval</div><div class="widget-value">${Math.round(avgPost)}%</div><div class="widget-trend trend-up">↑ ${Math.round(avgPost - avgPre)}%</div></div>
+            <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Quiz Score</div><div class="widget-value">${Math.round(avgQuiz)}%</div></div>
         </div>
-        <div class="card"><h3 style="margin-bottom:0.8rem;">🏥 Department-wise Training Completion</h3><div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100||0)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total}</small></div>`).join('')}</div></div>
-        <div class="card"><h3 style="margin-bottom:0.8rem;">📊 Privilege Level Distribution</h3><div class="chart-container"><canvas id="privilegeChart"></canvas></div></div>`;
+        <div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100||0)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total} nurses</small><br><small>Training: ${Math.round(data.completedItems/data.totalItems*100||0)}%</small></div>`).join('')}</div>
+        <div class="card"><h3>📊 Privilege Distribution</h3><div class="chart-container"><canvas id="privilegeChart"></canvas></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
-        setTimeout(() => {
-            const ctx = document.getElementById('privilegeChart')?.getContext('2d');
-            if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Level 1 (Trainee)', 'Level 2 (Independent)', 'Level 3 (Preceptor)'], datasets: [{ data: [level1, level2, level3], backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'] }] } });
-        }, 100);
+        setTimeout(() => { const ctx = document.getElementById('privilegeChart')?.getContext('2d'); if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Level 1 (Trainee)', 'Level 2 (Independent)', 'Level 3 (Preceptor)'], datasets: [{ data: [level1, level2, level3], backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'] }] } }); }, 100);
         closeSidebar();
     }
 
     // ========== TRACKER ==========
     function renderTrackerSheet() {
-        updateAllPrivileges();
-        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Competency Tracker</h1><p class="page-desc">Track privilege levels, evaluation scores, and training progress</p></div>
-        <div class="tracker-card"><div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search" onkeyup="renderTrackerSheet()">
-        <select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All Departments</option><option value="ICU">ICU</option><option value="OT">OT</option><option value="Infection Control">Infection Control</option></select>
+        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Competency Tracker</h1><p class="page-desc">Track all nurses' training progress and competency levels</p></div>
+        <div class="filter-bar"><input type="text" id="searchName" placeholder="🔍 Search" onkeyup="renderTrackerSheet()">
+        <select id="filterDept" onchange="renderTrackerSheet()"><option value="all">All Depts</option><option value="Labour Room">Labour Room</option><option value="Emergency Department">Emergency Dept</option><option value="ICU">ICU</option><option value="Infection Control">Infection Control</option><option value="Critical Care">Critical Care</option><option value="Ward">Ward</option></select>
         <select id="filterPrivilege" onchange="renderTrackerSheet()"><option value="all">All Privileges</option><option value="1">Level 1 (Trainee)</option><option value="2">Level 2 (Independent)</option><option value="3">Level 3 (Preceptor)</option></select></div>
-        <table><thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Pre%</th><th>Post%</th><th>Modules Done</th><th>Status</th><th>Privilege</th><th>Last Activity</th></tr></thead><tbody>`;
+        <div class="tracker-card"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Quiz %</th><th>Modules Done</th><th>Total Modules</th><th>Progress</th><th>Status</th><th>Competency</th></tr></thead><tbody>`;
         
         const filterDept = document.getElementById('filterDept')?.value || 'all';
         const filterPriv = document.getElementById('filterPrivilege')?.value || 'all';
         const search = document.getElementById('searchName')?.value.toLowerCase() || '';
         
         nursesData.filter(n => n.role === 'nurse').filter(n => (filterDept === 'all' || n.department === filterDept) && (filterPriv === 'all' || n.privilege == filterPriv) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))).forEach(n => {
-            const modules = trainingModulesByDept[n.department] || trainingModulesByDept.ICU;
+            const modules = getAllModulesCount(n.department);
             const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = Math.round((modulesDone/modules.total)*100);
             let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>');
-            let privilegeBadge = n.privilege === 1 ? '⭐ Level 1' : (n.privilege === 2 ? '⭐⭐ Level 2' : '⭐⭐⭐ Level 3');
-            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.preEval||'—'}%</td><td>${n.postEval||'—'}%</td><td>${modulesDone}/${modules.length}</td><td>${statusBadge}</td><td>${privilegeBadge}</td><td>${n.lastActivity || n.joiningDate}</td></tr>`;
+            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.quizScore || '—'}%</td><td>${modulesDone}</td><td>${modules.total}</td><td><div style="background:#e2e8f0; border-radius:10px; width:100px;"><div style="background:#10b981; width:${percent}%; height:8px; border-radius:10px;"></div></div>${percent}%</td><td>${statusBadge}</td><td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td></tr>`;
         });
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
 
-    function renderReports() { renderDashboard(); }
-    function renderAuditLog() { 
-        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions and privilege changes</p></div><div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search" onkeyup="renderAuditLog()"></div><div class="tracker-card">`;
-        const search = document.getElementById('auditSearch')?.value.toLowerCase() || '';
-        auditLog.filter(log => log.user.toLowerCase().includes(search) || log.action.toLowerCase().includes(search) || log.details.toLowerCase().includes(search)).slice(0, 100).forEach(log => { 
-            html += `<div class="audit-log-entry">${new Date(log.timestamp).toLocaleString()} | <strong>${log.user}</strong> (${log.role}) | ${log.action} | ${log.details}</div>`; 
+    // ========== REPORTS ==========
+    function renderReports() {
+        let csvData = "Emp ID,Name,Department,Quiz Score,Modules Completed,Total Modules,Progress %,Training Status,Competency Level\n";
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = Math.round((modulesDone/modules.total)*100);
+            csvData += `"${n.empId}","${n.name}","${n.department}","${n.quizScore || '—'}","${modulesDone}","${modules.total}","${percent}","${n.trainingStatus}","${n.privilege === 1 ? 'Level 1 Trainee' : (n.privilege === 2 ? 'Level 2 Independent' : 'Level 3 Preceptor')}"\n`;
         });
+        
+        let html = `<div class="page-header"><h1 class="page-title">📑 Reports & Analytics</h1><p class="page-desc">Export competency data and view analytics</p></div>
+        <div class="filter-bar"><button class="export-btn" onclick="exportToCSV()">📎 Export to CSV</button><button class="export-btn" onclick="exportToPDFReport()">📄 Export to PDF</button></div>
+        <div class="tracker-card"><h3>📋 Nurse Competency Data</h3>
+        <table><thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Quiz%</th><th>Modules</th><th>Progress</th><th>Status</th><th>Competency</th></tr></thead><tbody>`;
+        
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = Math.round((modulesDone/modules.total)*100);
+            html += `<tr><td>${n.empId}</td><td>${n.name}</td><td>${n.department}</td><td>${n.quizScore || '—'}%</td><td>${modulesDone}/${modules.total}</td><td>${percent}%</td><td>${n.trainingStatus}</td><td>${n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')}</td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function exportToCSV() {
+        let csv = "Emp ID,Name,Department,Quiz Score,Modules Completed,Total Modules,Progress %,Training Status,Competency Level\n";
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = Math.round((modulesDone/modules.total)*100);
+            csv += `"${n.empId}","${n.name}","${n.department}","${n.quizScore || '—'}","${modulesDone}","${modules.total}","${percent}","${n.trainingStatus}","${n.privilege === 1 ? 'Level 1 Trainee' : (n.privilege === 2 ? 'Level 2 Independent' : 'Level 3 Preceptor')}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_competency_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("EXPORT_CSV", "Exported competency report to CSV");
+        alert("✅ CSV exported!");
+    }
+
+    function exportToPDFReport() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape');
+        const tableData = nursesData.filter(n => n.role === 'nurse').map(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = Math.round((modulesDone/modules.total)*100);
+            return [n.empId, n.name, n.department, n.quizScore ? n.quizScore+'%' : '—', `${modulesDone}/${modules.total}`, `${percent}%`, n.trainingStatus, n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')];
+        });
+        doc.autoTable({ head: [['Emp ID', 'Name', 'Dept', 'Quiz%', 'Modules', 'Progress', 'Status', 'Competency']], body: tableData, theme: 'striped', headStyles: { fillColor: [11, 59, 79] }, margin: { top: 20 } });
+        doc.setFontSize(16);
+        doc.text("SMARTCARE - Nurse Competency Report", 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 25);
+        doc.save(`smartcare_competency_${new Date().toISOString().split('T')[0]}.pdf`);
+        addAuditLog("EXPORT_PDF", "Exported competency report to PDF");
+        alert("✅ PDF exported!");
+    }
+
+    function renderAuditLog() { 
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions and competency changes</p></div><div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search" onkeyup="renderAuditLog()"></div><div class="tracker-card">`;
+        const search = document.getElementById('auditSearch')?.value.toLowerCase() || '';
+        auditLog.filter(l => l.user.toLowerCase().includes(search) || l.action.toLowerCase().includes(search) || l.details.toLowerCase().includes(search)).slice(0, 100).forEach(l => { html += `<div class="audit-log-entry">${new Date(l.timestamp).toLocaleString()} | <strong>${l.user}</strong> (${l.role}) | ${l.action} | ${l.details}</div>`; });
         html += `</div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
-    
-    function renderUserManagement() { 
-        document.getElementById('mainContent').innerHTML = `<div class="card"><p>User Management - Will be implemented in next update</p><p>Contact Admin for user management.</p></div>`; 
-        closeSidebar(); 
-    }
-    
+
     function renderSettings() { 
-        document.getElementById('mainContent').innerHTML = `<div class="card"><h3>System Configuration</h3>
-        <div class="setting-group"><label>Passing Score (%): </label><input type="number" id="passingScore" value="${systemConfig.passingScore}" style="width:80px;">
-        <button onclick="updateSetting('passingScore')">Save</button></div>
-        <div class="setting-group"><label>Privilege Upgrade Score (%): </label><input type="number" id="upgradeScore" value="${systemConfig.privilegeUpgradeScore}" style="width:80px;">
-        <button onclick="updateSetting('upgradeScore')">Save</button></div>
-        <div class="setting-group"><label>Privilege Downgrade Score (%): </label><input type="number" id="downgradeScore" value="${systemConfig.privilegeDowngradeScore}" style="width:80px;">
-        <button onclick="updateSetting('downgradeScore')">Save</button></div>
-        <div class="setting-group"><label>Inactivity Days Threshold: </label><input type="number" id="inactivityDays" value="${systemConfig.inactivityDaysThreshold}" style="width:80px;">
-        <button onclick="updateSetting('inactivityDays')">Save</button></div>
-        <div class="setting-group"><label>Auto-assign Privilege: </label>
-        <input type="checkbox" id="autoAssign" ${systemConfig.autoAssignPrivilege ? 'checked' : ''} onchange="updateSetting('autoAssign')"></div>
-        <button class="save-btn" onclick="runPrivilegeRecalculation()">Recalculate All Privileges</button>
-        </div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card"><h3>⚙️ System Settings</h3>
+        <div class="setting-group"><label>Passing Score for Quiz (%): </label><input type="number" id="ps" value="${systemConfig.privilegeUpgradeScore}"><button onclick="updateSetting('privilegeUpgradeScore',document.getElementById('ps').value)">Save</button></div>
+        <div class="setting-group"><label>Downgrade Score (%): </label><input type="number" id="ds" value="${systemConfig.privilegeDowngradeScore}"><button onclick="updateSetting('privilegeDowngradeScore',document.getElementById('ds').value)">Save</button></div>
+        <div class="setting-group"><label>Inactivity Days Threshold: </label><input type="number" id="id" value="${systemConfig.inactivityDaysThreshold}"><button onclick="updateSetting('inactivityDaysThreshold',document.getElementById('id').value)">Save</button></div>
+        <div class="setting-group"><label>Number of Quiz Questions: </label><input type="number" id="qq" value="${systemConfig.quizQuestionsCount}"><button onclick="updateSetting('quizQuestionsCount',document.getElementById('qq').value)">Save</button></div>
+        <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate All Competencies</button>
+        <button class="export-btn" onclick="exportToCSV()">📎 Export Competency Data</button></div>`;
         closeSidebar();
     }
-    
-    function updateSetting(setting) {
-        if (setting === 'passingScore') systemConfig.passingScore = parseInt(document.getElementById('passingScore').value);
-        else if (setting === 'upgradeScore') systemConfig.privilegeUpgradeScore = parseInt(document.getElementById('upgradeScore').value);
-        else if (setting === 'downgradeScore') systemConfig.privilegeDowngradeScore = parseInt(document.getElementById('downgradeScore').value);
-        else if (setting === 'inactivityDays') systemConfig.inactivityDaysThreshold = parseInt(document.getElementById('inactivityDays').value);
-        else if (setting === 'autoAssign') systemConfig.autoAssignPrivilege = document.getElementById('autoAssign').checked;
-        localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
-        addAuditLog("CONFIG_CHANGE", `Updated ${setting} to ${systemConfig[setting]}`);
-        alert(`✅ ${setting} updated to ${systemConfig[setting]}`);
-        renderSettings();
+
+    function updateSetting(key, value) { systemConfig[key] = parseInt(value); localStorage.setItem('smartcare_config', JSON.stringify(systemConfig)); addAuditLog("CONFIG_CHANGE", `${key} → ${value}`); alert(`✅ ${key} updated to ${value}`); renderSettings(); }
+
+    // ========== MENU ==========
+    const allMenuItems = [
+        { id: "dashboard", name: "Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
+        { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
+        { id: "trainingStatus", name: "Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
+        { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["nurse"] },
+        { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
+        { id: "roleManagement", name: "Role Management", icon: "👔", roles: ["admin","manager"] },
+        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin","manager"] },
+        { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }
+    ];
+
+    function getMenuForUser(user) {
+        if(user.role === "admin") return allMenuItems;
+        if(user.role === "manager") return allMenuItems.filter(i => i.roles.includes("manager"));
+        if(user.role === "supervisor") return allMenuItems.filter(i => i.roles.includes("supervisor"));
+        if(user.role === "nurse") return allMenuItems.filter(i => i.roles.includes("nurse"));
+        return [];
     }
 
     function updateSidebarPrivilege() {
         let cls = '', txt = '';
-        if(currentUser.role === 'admin') { cls = 'privilege-admin'; txt = '👑 ADMIN — Full Access'; }
-        else if(currentUser.role === 'manager') { cls = 'privilege-manager'; txt = '👔 NURSE MANAGER — Full Operations'; }
-        else if(currentUser.role === 'supervisor') { cls = 'privilege-supervisor'; txt = '👩‍🏫 SUPERVISOR — Department Oversight'; }
-        else {
+        if(currentUser.role === 'admin') { cls = 'privilege-admin'; txt = '👑 ADMIN'; }
+        else if(currentUser.role === 'manager') { cls = 'privilege-manager'; txt = '👔 NURSE MANAGER'; }
+        else if(currentUser.role === 'supervisor') { cls = 'privilege-supervisor'; txt = '👩‍🏫 SUPERVISOR'; }
+        else { 
             const nurse = nursesData.find(n => n.empId === currentUser.id);
             const priv = nurse ? nurse.privilege : currentUser.privilege;
-            if(priv === 1) { cls = 'privilege-l1'; txt = '⭐ LEVEL 1 — Trainee (Induction in Progress)'; }
-            else if(priv === 2) { cls = 'privilege-l2'; txt = '⭐⭐ LEVEL 2 — Independent Nurse'; }
-            else { cls = 'privilege-l3'; txt = '⭐⭐⭐ LEVEL 3 — Preceptor'; }
+            txt = priv === 1 ? '⭐ Level 1 (Trainee)' : (priv === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
+            cls = priv === 1 ? 'privilege-l1' : (priv === 2 ? 'privilege-l2' : 'privilege-l3');
             currentUser.privilege = priv;
         }
         document.getElementById('userInfo').innerHTML = `<div class="user-name">👤 ${currentUser.name}</div><div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div><div class="privilege-indicator ${cls}">${txt}</div>`;
@@ -931,31 +1432,35 @@
         if(event?.target) event.target.closest('.nav-item')?.classList.add('active');
         if(moduleId === 'dashboard') renderDashboard();
         else if(moduleId === 'tracker') renderTrackerSheet();
-        else if(moduleId === 'preEval') renderPreEvaluation();
         else if(moduleId === 'trainingStatus') renderTrainingStatusUpdater();
-        else if(moduleId === 'postEval') renderPostEvaluation();
+        else if(moduleId === 'quiz') renderQuiz();
         else if(moduleId === 'reports') renderReports();
+        else if(moduleId === 'roleManagement') renderRoleManagement();
         else if(moduleId === 'auditLog') renderAuditLog();
-        else if(moduleId === 'userManagement') renderUserManagement();
         else if(moduleId === 'settings') renderSettings();
         closeSidebar();
     }
 
     function logout() { addAuditLog("LOGOUT","User logged out"); localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
 
+    // Global functions
     window.toggleSidebar = toggleSidebar;
     window.navigateTo = navigateTo;
     window.logout = logout;
     window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
     window.toggleModuleCompletion = toggleModuleCompletion;
-    window.updateOverallTrainingStatus = updateOverallTrainingStatus;
+    window.toggleCategory = toggleCategory;
+    window.markAllModules = markAllModules;
     window.runPrivilegeRecalculation = runPrivilegeRecalculation;
-    window.renderTrackerSheet = renderTrackerSheet;
-    window.renderPreEvaluation = renderPreEvaluation;
-    window.renderPostEvaluation = renderPostEvaluation;
-    window.renderDashboard = renderDashboard;
+    window.renderRoleManagement = renderRoleManagement;
+    window.openRoleModal = openRoleModal;
+    window.closeRoleModal = closeRoleModal;
+    window.confirmRoleChange = confirmRoleChange;
     window.updateSetting = updateSetting;
-    window.renderSettings = renderSettings;
+    window.exportToCSV = exportToCSV;
+    window.exportToPDFReport = exportToPDFReport;
+    window.renderQuiz = renderQuiz;
+    window.resetQuiz = resetQuiz;
 
     initDashboard();
 </script>
