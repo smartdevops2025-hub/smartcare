@@ -6,7 +6,7 @@
     <title>SMARTCARE — Nurse Induction Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* [Keep all existing styles from previous version - same as before] */
+        /* [All previous styles remain the same - keeping them for brevity] */
         * {
             margin: 0;
             padding: 0;
@@ -381,7 +381,7 @@
             color: var(--text-primary);
         }
         .modal-content h3 { margin-bottom: 0.8rem; color: var(--text-primary); font-size: 1.2rem; }
-        .modal-content select, .modal-content input {
+        .modal-content input, .modal-content select {
             width: 100%;
             padding: 0.6rem;
             margin-bottom: 0.8rem;
@@ -570,6 +570,40 @@
     </div>
 </div>
 
+<!-- Modal for Add/Edit Nurse -->
+<div id="nurseModal" class="modal">
+    <div class="modal-content">
+        <h3 id="nurseModalTitle">Add New Nurse</h3>
+        <input type="hidden" id="editNurseId">
+        <input type="text" id="nurseName" placeholder="Full Name" required>
+        <input type="text" id="nurseEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
+        <select id="nurseDept">
+            <option value="ICU">ICU</option>
+            <option value="OT">OT</option>
+            <option value="Infection Control">Infection Control</option>
+            <option value="Labour Room">Labour Room</option>
+            <option value="Emergency Department">Emergency Department</option>
+            <option value="Critical Care">Critical Care</option>
+            <option value="Ward">Ward</option>
+        </select>
+        <select id="nursePrivilege">
+            <option value="1">Level 1 (Trainee)</option>
+            <option value="2">Level 2 (Independent)</option>
+            <option value="3">Level 3 (Preceptor)</option>
+        </select>
+        <select id="nurseRole">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <input type="text" id="nursePassword" placeholder="Password" value="nurse123">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeNurseModal()">Cancel</button>
+            <button class="add-btn" onclick="saveNurse()">Save Nurse</button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal for Role Change -->
 <div id="roleModal" class="modal">
     <div class="modal-content">
@@ -674,6 +708,12 @@
         if (e.ctrlKey && e.key === 'r') { e.preventDefault(); navigateTo('reports'); showNotification('Reports (Ctrl+R)', 'info'); }
         if (e.ctrlKey && e.key === 's') { e.preventDefault(); exportFullBackup(); showNotification('Backup exported (Ctrl+S)', 'info'); }
         if (e.ctrlKey && e.key === 'b') { e.preventDefault(); openBulkTrainingModal(); showNotification('Bulk Training (Ctrl+B)', 'info'); }
+        if (e.ctrlKey && e.key === 'n') { e.preventDefault(); 
+            if (currentUser.role === 'admin' || currentUser.role === 'manager' || currentUser.role === 'supervisor') {
+                openAddNurseModal();
+                showNotification('Add New Nurse (Ctrl+N)', 'info');
+            }
+        }
     });
 
     // ========== AUTO-SAVE & BACKUP ==========
@@ -965,9 +1005,133 @@
         return { total, categories };
     }
 
+    // ========== NURSE MANAGEMENT (Add/Edit/Delete) ==========
+    function openAddNurseModal() {
+        document.getElementById('nurseModalTitle').innerText = "Add New Nurse";
+        document.getElementById('editNurseId').value = "";
+        document.getElementById('nurseName').value = "";
+        document.getElementById('nurseEmpId').value = "";
+        document.getElementById('nurseDept').value = "ICU";
+        document.getElementById('nursePrivilege').value = "1";
+        document.getElementById('nurseRole').value = "nurse";
+        document.getElementById('nursePassword').value = "nurse123";
+        document.getElementById('nurseModal').style.display = 'flex';
+    }
+
+    function openEditNurseModal(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            document.getElementById('nurseModalTitle').innerText = `Edit Nurse: ${nurse.name}`;
+            document.getElementById('editNurseId').value = nurse.id;
+            document.getElementById('nurseName').value = nurse.name;
+            document.getElementById('nurseEmpId').value = nurse.empId;
+            document.getElementById('nurseDept').value = nurse.department;
+            document.getElementById('nursePrivilege').value = nurse.privilege;
+            document.getElementById('nurseRole').value = nurse.role || "nurse";
+            document.getElementById('nursePassword').value = nurse.password || "nurse123";
+            document.getElementById('nurseModal').style.display = 'flex';
+        }
+    }
+
+    function closeNurseModal() {
+        document.getElementById('nurseModal').style.display = 'none';
+    }
+
+    function saveNurse() {
+        const id = document.getElementById('editNurseId').value;
+        const name = document.getElementById('nurseName').value.trim();
+        const empId = document.getElementById('nurseEmpId').value.trim().toUpperCase();
+        const department = document.getElementById('nurseDept').value;
+        const privilege = parseInt(document.getElementById('nursePrivilege').value);
+        const role = document.getElementById('nurseRole').value;
+        const password = document.getElementById('nursePassword').value.trim();
+        
+        if (!name || !empId) {
+            showNotification('Please fill Name and Employee ID', 'error');
+            return;
+        }
+        
+        // Check for duplicate EmpId
+        const existingNurse = nursesData.find(n => n.empId === empId && n.id != id);
+        if (existingNurse) {
+            showNotification(`Employee ID ${empId} already exists!`, 'error');
+            return;
+        }
+        
+        if (id) {
+            // Edit existing
+            const index = nursesData.findIndex(n => n.id == id);
+            if (index !== -1) {
+                const oldRole = nursesData[index].role;
+                nursesData[index] = { 
+                    ...nursesData[index], 
+                    name, empId, department, privilege, 
+                    role: role, 
+                    password: password 
+                };
+                addAuditLog("NURSE_EDITED", `${currentUser.name} edited nurse: ${name} (${empId}) | Role: ${oldRole} → ${role}`);
+                showNotification(`✅ Nurse ${name} updated successfully`, 'success');
+            }
+        } else {
+            // Add new
+            const newId = Math.max(...nursesData.map(n => n.id), 0) + 1;
+            nursesData.push({
+                id: newId, 
+                name, 
+                empId, 
+                department, 
+                privilege, 
+                role: role,
+                password: password,
+                preEval: null, 
+                postEval: null, 
+                trainingStatus: "Pending",
+                joiningDate: new Date().toISOString().split('T')[0],
+                trainingModulesCompleted: [],
+                lastActivity: new Date().toISOString().split('T')[0],
+                quizScore: null
+            });
+            addAuditLog("NURSE_ADDED", `${currentUser.name} added new nurse: ${name} (${empId}) | Role: ${role}`);
+            showNotification(`✅ New nurse ${name} added successfully!`, 'success');
+        }
+        
+        updateLoginUsers();
+        closeNurseModal();
+        
+        // Refresh the current view
+        if (document.getElementById('userManagement') && document.getElementById('userManagement').style.display !== 'none') {
+            renderUserManagement();
+        }
+        if (document.getElementById('trainingStatus') && document.getElementById('trainingStatus').style.display !== 'none') {
+            renderTrainingStatusUpdater();
+        }
+        renderDashboard();
+    }
+
+    function deleteNurse(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (!nurse) return;
+        
+        if (nurse.role === 'admin') {
+            showNotification('Cannot delete Admin account', 'error');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to delete ${nurse.name} (${nurse.empId})? This action cannot be undone.`)) {
+            nursesData = nursesData.filter(n => n.id !== nurseId);
+            updateLoginUsers();
+            addAuditLog("NURSE_DELETED", `${currentUser.name} deleted nurse: ${nurse.name} (${nurse.empId})`);
+            showNotification(`✅ Nurse ${nurse.name} deleted`, 'success');
+            
+            // Refresh views
+            renderUserManagement();
+            renderDashboard();
+            renderTrainingStatusUpdater();
+        }
+    }
+
     // ========== COMPETENCY ENGINE ==========
     function recalculatePrivilege(nurse) {
-        // Admins don't get privilege changes from quiz
         if (currentUser?.role === 'admin') return nurse.privilege;
         if (!systemConfig.autoAssignPrivilege || nurse.role !== 'nurse') return nurse.privilege;
         let newPrivilege = nurse.privilege;
@@ -1098,6 +1262,7 @@
                 <option value="Critical Care">Critical Care</option>
                 <option value="Ward">Ward</option>
             </select>
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
             <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate Competency</button>
             <button class="backup-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
             <button class="export-btn" onclick="exportFullBackup()">💾 Backup System</button>
@@ -1176,6 +1341,7 @@
             html += `<div style="margin-top:1rem; display:flex; gap:0.5rem;">
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', true, event)">✅ Mark All Complete</button>
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', false, event)">⬜ Mark All Incomplete</button>
+                        ${(currentUser.role === 'admin' || currentUser.role === 'manager' || currentUser.role === 'supervisor') ? `<button class="edit-btn" onclick="openEditNurseModal(${nurse.id})">✏️ Edit Nurse</button>` : ''}
                     </div>
                 </div>
             </div>`;
@@ -1326,9 +1492,8 @@
         if (currentUser.role === 'nurse') updateSidebarPrivilege(); 
     }
 
-    // ========== COMPETENCY QUIZ (Admin can test, Nurses take for competency) ==========
+    // ========== COMPETENCY QUIZ ==========
     function renderQuiz() {
-        // Check if user is Admin or Nurse
         if (currentUser.role !== 'admin' && currentUser.role !== 'nurse') {
             document.getElementById('mainContent').innerHTML = `<div class="card">
                 <div class="score-display">🔒 Quiz Access Restricted</div>
@@ -1339,16 +1504,13 @@
             return;
         }
         
-        // For Admin: Create a temporary nurse record if needed for testing
         let nurse;
         let isAdminMode = false;
         
         if (currentUser.role === 'admin') {
-            // Check if admin exists in nursesData, if not, create a temporary one for testing
             nurse = nursesData.find(n => n.empId === currentUser.id);
             if (!nurse) {
                 isAdminMode = true;
-                // Create a temporary nurse record for admin testing
                 nurse = {
                     id: 999,
                     name: currentUser.name,
@@ -1376,7 +1538,6 @@
         
         const quizData = getOrCreateQuiz(currentUser.id, nurse.department);
         
-        // Show different message for Admin vs Nurse
         const isAdmin = currentUser.role === 'admin';
         const adminNote = isAdmin ? '<p style="background: #fef9c3; padding: 0.5rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #854d0e;">🔧 <strong>Admin Test Mode:</strong> Your quiz score will NOT affect any nurse\'s privilege level. This is for testing purposes only.</p>' : '';
         
@@ -1426,7 +1587,6 @@
             quizData.score = percentage;
             
             if (!isAdmin) {
-                // Only update nurse's actual score if not admin
                 nurse.quizScore = percentage;
                 nurse.lastActivity = new Date().toISOString().split('T')[0];
                 
@@ -1450,7 +1610,6 @@
                 alert(message);
                 updateSidebarPrivilege();
             } else {
-                // Admin test mode - no privilege changes
                 addAuditLog("ADMIN_QUIZ_TEST", `Admin ${currentUser.name} tested quiz and scored ${percentage}%`);
                 alert(`📊 Admin Test Quiz Score: ${percentage}%\n\nThis score does NOT affect any nurse's privilege level.`);
                 showNotification(`Admin Quiz Score: ${percentage}% (Test Mode)`, 'info');
@@ -1478,7 +1637,6 @@
             showNotification('Quiz reset. You can retake the assessment.', 'info');
             renderQuiz();
         } else if (currentUser.role === 'admin') {
-            // For admin, just clear the quiz data
             const key = `${currentUser.id}_ICU`;
             delete nurseQuizzes[key];
             localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
@@ -1548,13 +1706,14 @@
                 <option value="2">Level 2 (Independent)</option>
                 <option value="3">Level 3 (Preceptor)</option>
             </select>
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
             <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
         </div>
         <div class="tracker-card">
             <table>
                 <thead>
                     <tr>
-                        <th>Emp ID</th><th>Name</th><th>Department</th><th>Quiz %</th><th>Modules Done</th><th>Total</th><th>Progress</th><th>Status</th><th>Competency</th>
+                        <th>Emp ID</th><th>Name</th><th>Department</th><th>Quiz %</th><th>Modules Done</th><th>Total</th><th>Progress</th><th>Status</th><th>Competency</th><th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -1583,11 +1742,118 @@
                 <td><div style="background:#e2e8f0; border-radius:10px; width:100px;"><div style="background:#10b981; width:${percent}%; height:8px; border-radius:10px;"></div></div>${percent}%</td>
                 <td>${statusBadge}</td>
                 <td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td>
+                <td><button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button> <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button></td>
             </tr>`;
         });
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
+    }
+
+    // ========== USER MANAGEMENT (Role Management) ==========
+    function renderUserManagement() {
+        let html = `<div class="page-header"><h1 class="page-title">👔 User Management</h1><p class="page-desc">Manage nurse accounts, roles, and permissions</p></div>
+        <div class="filter-bar">
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New User</button>
+            <button class="import-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
+            <input type="text" id="searchUser" placeholder="🔍 Search by name or ID" onkeyup="renderUserManagement()">
+            <select id="filterDeptUser" onchange="renderUserManagement()">
+                <option value="all">All Departments</option>
+                <option value="Labour Room">Labour Room</option>
+                <option value="Emergency Department">Emergency Dept</option>
+                <option value="ICU">ICU</option>
+                <option value="Infection Control">Infection Control</option>
+                <option value="Critical Care">Critical Care</option>
+                <option value="Ward">Ward</option>
+            </select>
+            <select id="filterRoleUser" onchange="renderUserManagement()">
+                <option value="all">All Roles</option>
+                <option value="nurse">👩‍⚕️ Nurse</option>
+                <option value="supervisor">👩‍🏫 Supervisor</option>
+                <option value="manager">👔 Nurse Manager</option>
+            </select>
+            <button class="export-btn" onclick="exportToCSV()">📎 Export CSV</button>
+        </div>
+        <div class="tracker-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Emp ID</th><th>Name</th><th>Department</th><th>Role</th><th>Privilege</th><th>Training %</th><th>Quiz %</th><th>Status</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        
+        const search = document.getElementById('searchUser')?.value.toLowerCase() || '';
+        const filterDept = document.getElementById('filterDeptUser')?.value || 'all';
+        const filterRole = document.getElementById('filterRoleUser')?.value || 'all';
+        
+        let filtered = nursesData.filter(n => n.empId !== 'ADMIN999' && 
+            (filterDept === 'all' || n.department === filterDept) && 
+            (filterRole === 'all' || n.role === filterRole) && 
+            (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
+        
+        filtered.forEach(n => {
+            let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
+            let modules = getAllModulesCount(n.department);
+            let trainingPercent = modules.total > 0 ? Math.round(((n.trainingModulesCompleted?.length || 0)/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
+            
+            html += `<tr>
+                <td>${n.empId}</td>
+                <td><strong>${n.name}</strong></td>
+                <td>${n.department}</td>
+                <td>${roleBadge}</td>
+                <td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td>
+                <td>${trainingPercent}%</td><td>${n.quizScore || '—'}%</td><td>${statusBadge}</td>
+                <td><button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button> 
+                    <button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button>
+                    <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button></td>
+            </tr>`;
+        });
+        
+        html += `</tbody><tr><p style="margin-top:0.8rem;">Total: ${filtered.length} users</p></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    // ========== ROLE CHANGE MODAL ==========
+    let selectedNurseForRoleChange = null;
+
+    function openRoleModal(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            selectedNurseForRoleChange = nurse;
+            document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
+            document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
+            document.getElementById('newRoleSelect').value = nurse.role;
+            document.getElementById('roleModal').style.display = 'flex';
+        }
+    }
+
+    function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; selectedNurseForRoleChange = null; }
+
+    function confirmRoleChange() {
+        if (!selectedNurseForRoleChange) return;
+        const newRole = document.getElementById('newRoleSelect').value;
+        const oldRole = selectedNurseForRoleChange.role;
+        if (oldRole === newRole) { alert("No change selected."); closeRoleModal(); return; }
+        if (confirm(`Change ${selectedNurseForRoleChange.name} from ${oldRole.toUpperCase()} to ${newRole.toUpperCase()}?`)) {
+            selectedNurseForRoleChange.role = newRole;
+            if (newRole === 'manager') selectedNurseForRoleChange.privilege = 3;
+            else if (newRole === 'supervisor') selectedNurseForRoleChange.privilege = Math.max(2, selectedNurseForRoleChange.privilege);
+            updateLoginUsers();
+            addAuditLog("ROLE_CHANGE", `${selectedNurseForRoleChange.name} changed from ${oldRole} to ${newRole}`);
+            showNotification(`${selectedNurseForRoleChange.name} is now a ${newRole.toUpperCase()}!`, 'success');
+            if (currentUser.id === selectedNurseForRoleChange.empId) {
+                currentUser.role = newRole;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateSidebarPrivilege();
+                const menu = getMenuForUser(currentUser);
+                document.getElementById('navMenu').innerHTML = menu.map(i => `<div class="nav-item" onclick="navigateTo('${i.id}')"><span class="nav-icon">${i.icon}</span> ${i.name}</div>`).join('');
+            }
+            closeRoleModal();
+            renderUserManagement();
+        }
     }
 
     // ========== REPORTS ==========
@@ -1613,12 +1879,11 @@
                 <td>${n.department}</td>
                 <td>${n.quizScore || '—'}%</td>
                 <td>${modulesDone}/${modules.total}</td>
-                <td>${percent}%</td>
-                <td>${n.trainingStatus}</td>
+                <td>${percent}%</td><td>${n.trainingStatus}</td>
                 <td>${n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')}</td>
             </tr>`;
         });
-        html += `</tbody></table></div>`;
+        html += `</tbody><tr></div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
@@ -1698,97 +1963,6 @@
         showNotification('Weekly report generated and downloaded!', 'success');
     }
 
-    // ========== ROLE MANAGEMENT ==========
-    function renderRoleManagement() {
-        let html = `<div class="page-header"><h1 class="page-title">👔 Role Management</h1><p class="page-desc">Promote or demote nurses to Supervisor or Nurse Manager roles</p></div>
-        <div class="filter-bar">
-            <input type="text" id="searchRole" placeholder="🔍 Search" onkeyup="renderRoleManagement()">
-            <select id="filterDeptRole" onchange="renderRoleManagement()">
-                <option value="all">All Departments</option>
-                <option value="Labour Room">Labour Room</option>
-                <option value="Emergency Department">Emergency Dept</option>
-                <option value="ICU">ICU</option>
-                <option value="Infection Control">Infection Control</option>
-                <option value="Critical Care">Critical Care</option>
-                <option value="Ward">Ward</option>
-            </select>
-            <select id="filterCurrentRole" onchange="renderRoleManagement()">
-                <option value="all">All Roles</option>
-                <option value="nurse">👩‍⚕️ Nurse</option>
-                <option value="supervisor">👩‍🏫 Supervisor</option>
-                <option value="manager">👔 Nurse Manager</option>
-            </select>
-        </div>
-        <div class="tracker-card">
-            <table>
-                <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Current Role</th><th>Privilege</th><th>Training</th><th>Action</th></td></thead>
-                <tbody>`;
-        
-        const search = document.getElementById('searchRole')?.value.toLowerCase() || '';
-        const filterDept = document.getElementById('filterDeptRole')?.value || 'all';
-        const filterRole = document.getElementById('filterCurrentRole')?.value || 'all';
-        
-        let filtered = nursesData.filter(n => n.empId !== 'ADMIN999' && (filterDept === 'all' || n.department === filterDept) && (filterRole === 'all' || n.role === filterRole) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
-        
-        filtered.forEach(n => {
-            let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
-            let modules = getAllModulesCount(n.department);
-            let percent = modules.total > 0 ? Math.round(((n.trainingModulesCompleted?.length || 0)/modules.total)*100) : 0;
-            html += `<tr>
-                <td>${n.empId}</td>
-                <td><strong>${n.name}</strong></td>
-                <td>${n.department}</td>
-                <td>${roleBadge}</td>
-                <td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td>
-                <td>${percent}%</td>
-                <td><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button></td>
-            </tr>`;
-        });
-        
-        html += `</tbody></table><p style="margin-top:0.8rem;">Total: ${filtered.length} staff members</p></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        closeSidebar();
-    }
-
-    let selectedNurseForRoleChange = null;
-
-    function openRoleModal(nurseId) {
-        const nurse = nursesData.find(n => n.id === nurseId);
-        if (nurse) {
-            selectedNurseForRoleChange = nurse;
-            document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
-            document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
-            document.getElementById('newRoleSelect').value = nurse.role;
-            document.getElementById('roleModal').style.display = 'flex';
-        }
-    }
-
-    function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; selectedNurseForRoleChange = null; }
-
-    function confirmRoleChange() {
-        if (!selectedNurseForRoleChange) return;
-        const newRole = document.getElementById('newRoleSelect').value;
-        const oldRole = selectedNurseForRoleChange.role;
-        if (oldRole === newRole) { alert("No change selected."); closeRoleModal(); return; }
-        if (confirm(`Change ${selectedNurseForRoleChange.name} from ${oldRole.toUpperCase()} to ${newRole.toUpperCase()}?`)) {
-            selectedNurseForRoleChange.role = newRole;
-            if (newRole === 'manager') selectedNurseForRoleChange.privilege = 3;
-            else if (newRole === 'supervisor') selectedNurseForRoleChange.privilege = Math.max(2, selectedNurseForRoleChange.privilege);
-            updateLoginUsers();
-            addAuditLog("ROLE_CHANGE", `${selectedNurseForRoleChange.name} changed from ${oldRole} to ${newRole}`);
-            showNotification(`${selectedNurseForRoleChange.name} is now a ${newRole.toUpperCase()}!`, 'success');
-            if (currentUser.id === selectedNurseForRoleChange.empId) {
-                currentUser.role = newRole;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateSidebarPrivilege();
-                const menu = getMenuForUser(currentUser);
-                document.getElementById('navMenu').innerHTML = menu.map(i => `<div class="nav-item" onclick="navigateTo('${i.id}')"><span class="nav-icon">${i.icon}</span> ${i.name}</div>`).join('');
-            }
-            closeRoleModal();
-            renderRoleManagement();
-        }
-    }
-
     function renderAuditLog() { 
         let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions</p></div>
         <div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search" onkeyup="renderAuditLog()"></div>
@@ -1824,14 +1998,14 @@
         renderSettings(); 
     }
 
-    // ========== MENU (Quiz visible to Admin AND Nurses) ==========
+    // ========== MENU ==========
     const allMenuItems = [
         { id: "dashboard", name: "Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
         { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "trainingStatus", name: "Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
-        { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["admin", "nurse"] },  // Admin AND Nurses can see/access quiz
+        { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["admin", "nurse"] },
         { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
-        { id: "roleManagement", name: "Role Management", icon: "👔", roles: ["admin","manager"] },
+        { id: "userManagement", name: "User Management", icon: "👥", roles: ["admin","manager","supervisor"] },
         { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin","manager"] },
         { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }
     ];
@@ -1875,7 +2049,7 @@
         else if(moduleId === 'trainingStatus') renderTrainingStatusUpdater();
         else if(moduleId === 'quiz') renderQuiz();
         else if(moduleId === 'reports') renderReports();
-        else if(moduleId === 'roleManagement') renderRoleManagement();
+        else if(moduleId === 'userManagement') renderUserManagement();
         else if(moduleId === 'auditLog') renderAuditLog();
         else if(moduleId === 'settings') renderSettings();
         closeSidebar();
@@ -1900,7 +2074,12 @@
     window.toggleModuleCompletion = toggleModuleCompletion;
     window.markAllModules = markAllModules;
     window.runPrivilegeRecalculation = runPrivilegeRecalculation;
-    window.renderRoleManagement = renderRoleManagement;
+    window.renderUserManagement = renderUserManagement;
+    window.openAddNurseModal = openAddNurseModal;
+    window.openEditNurseModal = openEditNurseModal;
+    window.closeNurseModal = closeNurseModal;
+    window.saveNurse = saveNurse;
+    window.deleteNurse = deleteNurse;
     window.openRoleModal = openRoleModal;
     window.closeRoleModal = closeRoleModal;
     window.confirmRoleChange = confirmRoleChange;
