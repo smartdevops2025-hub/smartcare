@@ -6,6 +6,7 @@
     <title>SMARTCARE — Nurse Induction Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* [Keep all existing styles from previous version - same as before] */
         * {
             margin: 0;
             padding: 0;
@@ -663,8 +664,12 @@
         if (e.ctrlKey && e.key === 'd') { e.preventDefault(); navigateTo('dashboard'); showNotification('Dashboard (Ctrl+D)', 'info'); }
         if (e.ctrlKey && e.key === 't') { e.preventDefault(); navigateTo('trainingStatus'); showNotification('Training Status (Ctrl+T)', 'info'); }
         if (e.ctrlKey && e.key === 'q') { e.preventDefault(); 
-            if (currentUser.role === 'nurse') { navigateTo('quiz'); showNotification('Competency Quiz (Ctrl+Q)', 'info'); }
-            else { showNotification('Quiz is only available for nurses', 'warning'); }
+            if (currentUser.role === 'admin' || currentUser.role === 'nurse') { 
+                navigateTo('quiz'); 
+                showNotification('Competency Quiz (Ctrl+Q)', 'info'); 
+            } else { 
+                showNotification('Quiz is only available for Admin and Nurses', 'warning'); 
+            }
         }
         if (e.ctrlKey && e.key === 'r') { e.preventDefault(); navigateTo('reports'); showNotification('Reports (Ctrl+R)', 'info'); }
         if (e.ctrlKey && e.key === 's') { e.preventDefault(); exportFullBackup(); showNotification('Backup exported (Ctrl+S)', 'info'); }
@@ -764,18 +769,116 @@
     const savedConfig = localStorage.getItem('smartcare_config');
     if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
-    // ========== TRAINING MODULES (Condensed for brevity - same as before) ==========
-    // [Training modules object - same as previous version]
-    // For brevity, I'm showing a simplified version. In your actual code, keep the full trainingModulesByDept object.
+    // ========== TRAINING MODULES ==========
     const trainingModulesByDept = {
-        "ICU": { "Clinical Skills": ["IV Cannulation", "CPR", "Patient Monitoring"] },
-        "Emergency Department": { "Clinical Skills": ["Trauma Care", "CPR", "Emergency Drugs"] },
-        "Infection Control": { "Clinical Skills": ["Hand Hygiene", "PPE Use", "Waste Management"] },
-        "Labour Room": { "Clinical Skills": ["Delivery Assistance", "Newborn Care", "PPH Management"] },
-        "Critical Care": { "Clinical Skills": ["Ventilator Management", "ABG Analysis", "Hemodynamic Monitoring"] },
-        "Ward": { "Clinical Skills": ["Patient Assessment", "Medication Administration", "Documentation"] }
+        "Labour Room": {
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care", "Patient transport", "Alternative communication"],
+            "Clinical Skills of LR Performance": [
+                "Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist",
+                "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour",
+                "Biomedical waste", "Infection prevention", "Maternal/neonatal safety", "Documentation", "Emergency handling",
+                "Clinical expertise", "Decision making", "Protocol-based care", "Leadership", "Medico-legal safety"
+            ],
+            "Medication Management": ["Patient identification", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk meds", "Drug calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste disposal", "Device related care", "Surveillance"],
+            "Collaboration": ["Total care process", "Communication channel"],
+            "Documentation": ["Pantograph", "Quality Indicators", "Patient education", "BLS"],
+            "Professional Development": ["Current practice", "Quality improvement", "Continuing education", "Senior allocation", "Infection control training", "BLS", "Preceptorship", "Critical care experience"],
+            "Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
+            "Advocacy": ["Patient rights", "Cultural needs", "Family education", "Safe equipment", "End of life care"],
+            "Others": ["Punctuality", "Discipline", "No absenteeism", "Inventory control", "Respect", "Crisis management", "Code awareness"]
+        },
+        "Emergency Department": {
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort", "Vulnerable care", "Pre/post-op", "Transport", "Alternative communication", "Pain assessment"],
+            "Clinical Skills": [
+                "Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging",
+                "POP application", "Trauma transport", "Airway Management", "Defibrillator", "Traction", "Ryles Tube",
+                "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning",
+                "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Patient safety", "Fluid aspiration",
+                "Preoperative care", "Death Protocol"
+            ],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk", "Drug calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["Care Plan", "Quality Indicators", "Unitbase"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
+        },
+        "ICU": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort/hygiene", "Vulnerable care", "Transport", "Communication"],
+            "Clinical Skills": [
+                "Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter",
+                "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP", "ICD", "Intubation/extubation",
+                "Re-exploration", "Ventilator/Bi-pap", "Defibrillator", "Suctioning", "Wound care", "TPI", "CPR",
+                "Enteral feeds", "Blood transfusion", "Safety", "Fluid aspiration", "Major dressing", "End of life"
+            ],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["ICU Chart", "Quality Indicators", "Unitbase", "BLS"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
+        },
+        "Infection Control": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": [
+                "Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage",
+                "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care",
+                "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Pre/post-op", "Death Protocol"
+            ],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["Care Plan", "Quality Indicators", "Unitbase"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
+        },
+        "Critical Care": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication"],
+            "Clinical Skills": [
+                "Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage",
+                "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning",
+                "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration",
+                "Major dressing", "End of life"
+            ],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["ICU Chart", "Quality Indicators", "Unitbase", "BLS"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
+        },
+        "Ward": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": [
+                "Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage",
+                "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care",
+                "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Pre/post-op", "Death Protocol"
+            ],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["Care Plan", "Quality Indicators", "Unitbase"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
+        }
     };
-    // NOTE: Please replace this with your full trainingModulesByDept from previous code
 
     // ========== Generate Quiz Questions ==========
     function generateQuizQuestions(department, count = 20) {
@@ -788,7 +891,12 @@
                 allItems.push({
                     category: category,
                     text: item,
-                    correctAnswer: "Follow established protocol and demonstrate competency"
+                    correctAnswer: item.includes("protocol") || item.includes("policy") ? "Follow established protocol" :
+                                  item.includes("identify") ? "Verify patient identification" :
+                                  item.includes("safety") ? "Ensure patient safety measures" :
+                                  item.includes("document") ? "Complete documentation accurately" :
+                                  item.includes("care") ? "Provide appropriate patient care" :
+                                  "Demonstrate competency in " + item.toLowerCase()
                 });
             });
         }
@@ -859,6 +967,8 @@
 
     // ========== COMPETENCY ENGINE ==========
     function recalculatePrivilege(nurse) {
+        // Admins don't get privilege changes from quiz
+        if (currentUser?.role === 'admin') return nurse.privilege;
         if (!systemConfig.autoAssignPrivilege || nurse.role !== 'nurse') return nurse.privilege;
         let newPrivilege = nurse.privilege;
         const modules = getAllModulesCount(nurse.department);
@@ -1216,21 +1326,43 @@
         if (currentUser.role === 'nurse') updateSidebarPrivilege(); 
     }
 
-    // ========== COMPETENCY QUIZ (FIXED - Only for nurses) ==========
+    // ========== COMPETENCY QUIZ (Admin can test, Nurses take for competency) ==========
     function renderQuiz() {
-        // Check if user is a nurse
-        if (currentUser.role !== 'nurse') {
+        // Check if user is Admin or Nurse
+        if (currentUser.role !== 'admin' && currentUser.role !== 'nurse') {
             document.getElementById('mainContent').innerHTML = `<div class="card">
                 <div class="score-display">🔒 Quiz Access Restricted</div>
-                <p style="margin-top: 0.8rem;">The Competency Quiz is only available for nursing staff.</p>
+                <p style="margin-top: 0.8rem;">The Competency Quiz is only available for Admin (testing) and Nursing staff.</p>
                 <p>Your role: <strong>${currentUser.role.toUpperCase()}</strong></p>
-                <p>Please login with nurse credentials to access the quiz.</p>
                 <button class="quiz-btn" onclick="navigateTo('dashboard')" style="margin-top:1rem;">Go to Dashboard</button>
             </div>`;
             return;
         }
         
-        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        // For Admin: Create a temporary nurse record if needed for testing
+        let nurse;
+        let isAdminMode = false;
+        
+        if (currentUser.role === 'admin') {
+            // Check if admin exists in nursesData, if not, create a temporary one for testing
+            nurse = nursesData.find(n => n.empId === currentUser.id);
+            if (!nurse) {
+                isAdminMode = true;
+                // Create a temporary nurse record for admin testing
+                nurse = {
+                    id: 999,
+                    name: currentUser.name,
+                    empId: currentUser.id,
+                    department: "ICU",
+                    role: "admin_test",
+                    privilege: 3,
+                    trainingModulesCompleted: [],
+                    quizScore: null
+                };
+            }
+        } else {
+            nurse = nursesData.find(n => n.empId === currentUser.id);
+        }
         
         if (!nurse) {
             document.getElementById('mainContent').innerHTML = `<div class="card">
@@ -1244,7 +1376,11 @@
         
         const quizData = getOrCreateQuiz(currentUser.id, nurse.department);
         
-        if (quizData.completed && nurse.quizScore) {
+        // Show different message for Admin vs Nurse
+        const isAdmin = currentUser.role === 'admin';
+        const adminNote = isAdmin ? '<p style="background: #fef9c3; padding: 0.5rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #854d0e;">🔧 <strong>Admin Test Mode:</strong> Your quiz score will NOT affect any nurse\'s privilege level. This is for testing purposes only.</p>' : '';
+        
+        if (quizData.completed && nurse.quizScore && !isAdmin) {
             document.getElementById('mainContent').innerHTML = `<div class="card">
                 <div class="score-display">✅ Quiz Completed! Score: ${nurse.quizScore}%</div>
                 <p style="margin-top: 0.8rem;">Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
@@ -1257,6 +1393,7 @@
         let html = `<div class="page-header">
             <h1 class="page-title">📝 Competency Assessment Quiz</h1>
             <p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade</p>
+            ${adminNote}
         </div>
         <div class="card">
             <form id="quizForm">`;
@@ -1287,33 +1424,43 @@
             const percentage = Math.round((score / quizData.questions.length) * 100);
             quizData.completed = true;
             quizData.score = percentage;
-            nurse.quizScore = percentage;
-            nurse.lastActivity = new Date().toISOString().split('T')[0];
             
-            const oldPrivilege = nurse.privilege;
-            const newPrivilege = recalculatePrivilege(nurse);
-            nurse.privilege = newPrivilege;
+            if (!isAdmin) {
+                // Only update nurse's actual score if not admin
+                nurse.quizScore = percentage;
+                nurse.lastActivity = new Date().toISOString().split('T')[0];
+                
+                const oldPrivilege = nurse.privilege;
+                const newPrivilege = recalculatePrivilege(nurse);
+                nurse.privilege = newPrivilege;
+                
+                updateLoginUsers();
+                addAuditLog("QUIZ_COMPLETED", `${currentUser.name} scored ${percentage}% - Privilege: ${oldPrivilege}→${newPrivilege}`);
+                
+                let message = `Quiz Score: ${percentage}%\n\n`;
+                if (percentage >= systemConfig.privilegeUpgradeScore && newPrivilege > oldPrivilege) {
+                    message += `🎉 CONGRATULATIONS! Upgraded to Level ${newPrivilege}!`;
+                    showNotification(`🎉 ${currentUser.name} upgraded to Level ${newPrivilege}!`, 'success');
+                } else if (percentage < systemConfig.privilegeDowngradeScore && newPrivilege < oldPrivilege) {
+                    message += `⚠️ Downgraded to Level ${newPrivilege}. Please review training.`;
+                    showNotification(`⚠️ ${currentUser.name} downgraded to Level ${newPrivilege}`, 'warning');
+                } else {
+                    message += `Competency remains Level ${newPrivilege}.`;
+                }
+                alert(message);
+                updateSidebarPrivilege();
+            } else {
+                // Admin test mode - no privilege changes
+                addAuditLog("ADMIN_QUIZ_TEST", `Admin ${currentUser.name} tested quiz and scored ${percentage}%`);
+                alert(`📊 Admin Test Quiz Score: ${percentage}%\n\nThis score does NOT affect any nurse's privilege level.`);
+                showNotification(`Admin Quiz Score: ${percentage}% (Test Mode)`, 'info');
+            }
             
             localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
-            updateLoginUsers();
-            addAuditLog("QUIZ_COMPLETED", `${currentUser.name} scored ${percentage}% - Privilege: ${oldPrivilege}→${newPrivilege}`);
-            
-            let message = `Quiz Score: ${percentage}%\n\n`;
-            if (percentage >= systemConfig.privilegeUpgradeScore && newPrivilege > oldPrivilege) {
-                message += `🎉 CONGRATULATIONS! Upgraded to Level ${newPrivilege}!`;
-                showNotification(`🎉 ${currentUser.name} upgraded to Level ${newPrivilege}!`, 'success');
-            } else if (percentage < systemConfig.privilegeDowngradeScore && newPrivilege < oldPrivilege) {
-                message += `⚠️ Downgraded to Level ${newPrivilege}. Please review training.`;
-                showNotification(`⚠️ ${currentUser.name} downgraded to Level ${newPrivilege}`, 'warning');
-            } else {
-                message += `Competency remains Level ${newPrivilege}.`;
-            }
-            alert(message);
-            updateSidebarPrivilege();
             
             document.getElementById('mainContent').innerHTML = `<div class="card">
                 <div class="score-display">📊 Quiz Score: ${percentage}%</div>
-                <p style="margin-top: 0.8rem;">Your competency level: ${newPrivilege === 1 ? '⭐ Level 1 (Trainee)' : (newPrivilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
+                ${!isAdmin ? `<p style="margin-top: 0.8rem;">Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>` : '<p style="margin-top: 0.8rem;">This was an Admin test. No privileges were changed.</p>'}
                 <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button>
             </div>`;
         });
@@ -1329,6 +1476,13 @@
             localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
             updateLoginUsers();
             showNotification('Quiz reset. You can retake the assessment.', 'info');
+            renderQuiz();
+        } else if (currentUser.role === 'admin') {
+            // For admin, just clear the quiz data
+            const key = `${currentUser.id}_ICU`;
+            delete nurseQuizzes[key];
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            showNotification('Quiz reset. You can retake the test.', 'info');
             renderQuiz();
         }
     }
@@ -1446,7 +1600,7 @@
             <button class="backup-btn" onclick="exportFullBackup()">💾 Full Backup</button>
         </div>
         <div class="tracker-card">
-            <tr>
+            <table>
                 <thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Quiz%</th><th>Modules</th><th>Progress</th><th>Status</th><th>Competency</th></tr></thead>
                 <tbody>`;
         nursesData.filter(n => n.role === 'nurse').forEach(n => {
@@ -1567,7 +1721,7 @@
         </div>
         <div class="tracker-card">
             <table>
-                <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Current Role</th><th>Privilege</th><th>Training</th><th>Action</th></tr></thead>
+                <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Current Role</th><th>Privilege</th><th>Training</th><th>Action</th></td></thead>
                 <tbody>`;
         
         const search = document.getElementById('searchRole')?.value.toLowerCase() || '';
@@ -1670,12 +1824,12 @@
         renderSettings(); 
     }
 
-    // ========== MENU (Quiz only visible to nurses) ==========
+    // ========== MENU (Quiz visible to Admin AND Nurses) ==========
     const allMenuItems = [
         { id: "dashboard", name: "Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
         { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "trainingStatus", name: "Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
-        { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["nurse"] },  // Only nurses see this
+        { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["admin", "nurse"] },  // Admin AND Nurses can see/access quiz
         { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
         { id: "roleManagement", name: "Role Management", icon: "👔", roles: ["admin","manager"] },
         { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin","manager"] },
