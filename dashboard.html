@@ -43,7 +43,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* Dark Mode Toggle Button */
         .dark-mode-toggle {
             position: fixed;
             bottom: 20px;
@@ -62,11 +61,8 @@
             box-shadow: var(--card-shadow);
             transition: all 0.3s;
         }
-        .dark-mode-toggle:hover {
-            transform: scale(1.05);
-        }
+        .dark-mode-toggle:hover { transform: scale(1.05); }
 
-        /* Notification Styles */
         .notification {
             position: fixed;
             top: 20px;
@@ -88,7 +84,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Session Timeout Warning */
         .timeout-warning {
             position: fixed;
             bottom: 80px;
@@ -526,18 +521,9 @@
             font-weight: 600;
             margin-left: 0.5rem;
         }
-        .badge-warning {
-            background: #f59e0b;
-            color: white;
-        }
-        .badge-danger {
-            background: #ef4444;
-            color: white;
-        }
-        .badge-success {
-            background: #10b981;
-            color: white;
-        }
+        .badge-warning { background: #f59e0b; color: white; }
+        .badge-danger { background: #ef4444; color: white; }
+        .badge-success { background: #10b981; color: white; }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -610,10 +596,8 @@
         <h3>📚 Bulk Training Assignment</h3>
         <p style="margin-bottom: 0.5rem;">Select nurses and training modules to assign</p>
         <select id="bulkNurseSelect" multiple size="5" style="height: auto;">
-            <!-- Populated dynamically -->
         </select>
         <select id="bulkModuleSelect" multiple size="5" style="height: auto;">
-            <!-- Populated dynamically -->
         </select>
         <div class="modal-buttons">
             <button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button>
@@ -643,7 +627,6 @@
         showNotification(isDark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
     }
 
-    // Load dark mode preference
     if (localStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark-mode');
         document.querySelector('.dark-mode-toggle').textContent = '☀️';
@@ -661,8 +644,8 @@
     // ========== SESSION TIMEOUT ==========
     let inactivityTimer;
     let warningTimer;
-    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-    const WARNING_BEFORE = 60 * 1000; // 1 minute before
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
+    const WARNING_BEFORE = 60 * 1000;
 
     function resetTimer() {
         clearTimeout(inactivityTimer);
@@ -707,7 +690,7 @@
         localStorage.setItem('smartcare_backup', JSON.stringify(backup));
         console.log('Auto-saved at:', new Date().toLocaleTimeString());
     }
-    setInterval(autoSaveData, 30000); // Auto-save every 30 seconds
+    setInterval(autoSaveData, 30000);
 
     function exportFullBackup() {
         const backup = {
@@ -1036,7 +1019,6 @@
         const nurseSelect = document.getElementById('bulkNurseSelect');
         const moduleSelect = document.getElementById('bulkModuleSelect');
         
-        // Populate nurses
         nurseSelect.innerHTML = '';
         nursesData.filter(n => n.role === 'nurse').forEach(n => {
             const option = document.createElement('option');
@@ -1045,7 +1027,6 @@
             nurseSelect.appendChild(option);
         });
         
-        // Populate modules (all unique modules from all departments)
         const allModules = new Set();
         for (const dept in trainingModulesByDept) {
             for (const cat in trainingModulesByDept[dept]) {
@@ -1141,7 +1122,6 @@
             
             let privilegeText = nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
             
-            // Training reminder badge for incomplete
             let reminderBadge = '';
             if (percentComplete < 50 && nurse.trainingStatus !== 'Completed') {
                 reminderBadge = '<span class="badge badge-warning">⚠️ Training needed</span>';
@@ -1280,38 +1260,55 @@
         if (currentUser.role === 'nurse') updateSidebarPrivilege(); 
     }
 
-    // ========== COMPETENCY QUIZ ==========
+    // ========== COMPETENCY QUIZ (FIXED) ==========
     function renderQuiz() {
+        // FIX: Find nurse by empId (currentUser.id is the Employee ID like NURSE101)
         const nurse = nursesData.find(n => n.empId === currentUser.id);
-        if (!nurse) { 
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Error: Nurse record not found.</div>
-            <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+        
+        if (!nurse) {
+            console.error("Nurse not found. Current user:", currentUser);
+            document.getElementById('mainContent').innerHTML = `<div class="card">
+                <div class="score-display">❌ Error: Nurse record not found.</div>
+                <p style="margin-top: 0.5rem;">Your Employee ID: ${currentUser?.id}</p>
+                <p>Please contact administrator to add your training record.</p>
+                <button class="quiz-btn" onclick="navigateTo('dashboard')" style="margin-top:1rem;">Go to Dashboard</button>
+            </div>`;
             return;
         }
         
         const quizData = getOrCreateQuiz(currentUser.id, nurse.department);
         
         if (quizData.completed && nurse.quizScore) {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Quiz Completed! Score: ${nurse.quizScore}%</div>
-            <p>Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
-            <button class="quiz-btn" onclick="resetQuiz()" style="margin-top:1rem;">Retake Quiz</button>
-            <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card">
+                <div class="score-display">✅ Quiz Completed! Score: ${nurse.quizScore}%</div>
+                <p style="margin-top: 0.8rem;">Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
+                <button class="quiz-btn" onclick="resetQuiz()" style="margin-top:1rem;">Retake Quiz</button>
+                <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button>
+            </div>`;
             return;
         }
         
-        let html = `<div class="page-header"><h1 class="page-title">📝 Competency Assessment Quiz</h1>
-        <p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade</p></div>
-        <div class="card"><form id="quizForm">`;
+        let html = `<div class="page-header">
+            <h1 class="page-title">📝 Competency Assessment Quiz</h1>
+            <p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade</p>
+        </div>
+        <div class="card">
+            <form id="quizForm">`;
         
         quizData.questions.forEach((q, idx) => {
-            html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
+            html += `<div class="quiz-question">
+                <p>${idx+1}. ${q.text}</p>`;
             q.options.forEach((opt, optIdx) => {
-                html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`;
+                html += `<label class="quiz-option">
+                    <input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}
+                </label>`;
             });
             html += `</div>`;
         });
         
-        html += `<button type="submit" class="quiz-btn">Submit Quiz</button></form></div>`;
+        html += `<button type="submit" class="quiz-btn">Submit Quiz</button>
+            </form>
+        </div>`;
         document.getElementById('mainContent').innerHTML = html;
         
         document.getElementById('quizForm').addEventListener('submit', function(e) {
@@ -1348,9 +1345,11 @@
             alert(message);
             updateSidebarPrivilege();
             
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Quiz Score: ${percentage}%</div>
-            <p>Your competency level: ${newPrivilege === 1 ? '⭐ Level 1 (Trainee)' : (newPrivilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
-            <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card">
+                <div class="score-display">📊 Quiz Score: ${percentage}%</div>
+                <p style="margin-top: 0.8rem;">Your competency level: ${newPrivilege === 1 ? '⭐ Level 1 (Trainee)' : (newPrivilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>
+                <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button>
+            </div>`;
         });
         closeSidebar();
     }
@@ -1368,7 +1367,7 @@
         }
     }
 
-    // ========== DASHBOARD WITH AT-RISK WIDGET ==========
+    // ========== DASHBOARD ==========
     function renderDashboard() {
         updateAllPrivileges();
         const nurses = nursesData.filter(n => n.role === 'nurse');
@@ -1381,7 +1380,6 @@
         const level3 = nurses.filter(n => n.privilege === 3).length;
         const avgQuiz = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
         
-        // At-risk nurses (quiz score < 60% OR training progress < 30%)
         const atRiskNurses = nurses.filter(n => (n.quizScore && n.quizScore < 60) || ((n.trainingModulesCompleted?.length || 0) / getAllModulesCount(n.department).total * 100) < 30);
         const topPerformers = nurses.filter(n => n.quizScore && n.quizScore >= 85);
         
@@ -1400,52 +1398,14 @@
             <div class="widget"><div class="widget-icon">⭐⭐</div><div class="widget-title">Level 2</div><div class="widget-value">${level2}</div></div>
             <div class="widget"><div class="widget-icon">⭐⭐⭐</div><div class="widget-title">Level 3</div><div class="widget-value">${level3}</div></div>
             <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Quiz</div><div class="widget-value">${Math.round(avgQuiz)}%</div></div>
-            <div class="widget"><div class="widget-icon">⚠️</div><div class="widget-title">At Risk</div><div class="widget-value">${atRiskNurses.length}</div><div class="widget-title">Need attention</div></div>
-            <div class="widget"><div class="widget-icon">🏆</div><div class="widget-title">Top Performers</div><div class="widget-value">${topPerformers.length}</div><div class="widget-title">Score ≥85%</div></div>
+            <div class="widget"><div class="widget-icon">⚠️</div><div class="widget-title">At Risk</div><div class="widget-value">${atRiskNurses.length}</div></div>
+            <div class="widget"><div class="widget-icon">🏆</div><div class="widget-title">Top Performers</div><div class="widget-value">${topPerformers.length}</div></div>
         </div>
         <div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100||0)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total}</small></div>`).join('')}</div>
         <div class="card"><h3>📊 Privilege Distribution</h3><div class="chart-container"><canvas id="privilegeChart"></canvas></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
         setTimeout(() => { const ctx = document.getElementById('privilegeChart')?.getContext('2d'); if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Level 1 (Trainee)', 'Level 2 (Independent)', 'Level 3 (Preceptor)'], datasets: [{ data: [level1, level2, level3], backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'] }] } }); }, 100);
         closeSidebar();
-    }
-
-    // ========== WEEKLY REPORT GENERATOR ==========
-    function generateWeeklyReport() {
-        const nurses = nursesData.filter(n => n.role === 'nurse');
-        const startOfWeek = new Date();
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-        
-        const report = {
-            generatedAt: new Date().toISOString(),
-            weekStart: startOfWeek.toISOString().split('T')[0],
-            totalNurses: nurses.length,
-            completedTraining: nurses.filter(n => n.trainingStatus === 'Completed').length,
-            avgQuizScore: nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1),
-            topPerformers: nurses.filter(n => n.quizScore && n.quizScore >= 85).map(n => ({ name: n.name, score: n.quizScore })),
-            atRiskNurses: nurses.filter(n => n.quizScore && n.quizScore < 60).map(n => ({ name: n.name, score: n.quizScore })),
-            departmentStats: {}
-        };
-        
-        nurses.forEach(n => {
-            if (!report.departmentStats[n.department]) report.departmentStats[n.department] = { total: 0, completed: 0, avgScore: 0, totalScore: 0 };
-            report.departmentStats[n.department].total++;
-            if (n.trainingStatus === 'Completed') report.departmentStats[n.department].completed++;
-            if (n.quizScore) {
-                report.departmentStats[n.department].totalScore += n.quizScore;
-                report.departmentStats[n.department].avgScore = report.departmentStats[n.department].totalScore / report.departmentStats[n.department].total;
-            }
-        });
-        
-        const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(reportBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `smartcare_weekly_report_${startOfWeek.toISOString().split('T')[0]}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        addAuditLog("WEEKLY_REPORT", "Weekly report generated");
-        showNotification('Weekly report generated and downloaded!', 'success');
     }
 
     // ========== TRACKER ==========
@@ -1572,6 +1532,43 @@
         showNotification('PDF exported!', 'success');
     }
 
+    function generateWeeklyReport() {
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        
+        const report = {
+            generatedAt: new Date().toISOString(),
+            weekStart: startOfWeek.toISOString().split('T')[0],
+            totalNurses: nurses.length,
+            completedTraining: nurses.filter(n => n.trainingStatus === 'Completed').length,
+            avgQuizScore: nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1),
+            topPerformers: nurses.filter(n => n.quizScore && n.quizScore >= 85).map(n => ({ name: n.name, score: n.quizScore })),
+            atRiskNurses: nurses.filter(n => n.quizScore && n.quizScore < 60).map(n => ({ name: n.name, score: n.quizScore })),
+            departmentStats: {}
+        };
+        
+        nurses.forEach(n => {
+            if (!report.departmentStats[n.department]) report.departmentStats[n.department] = { total: 0, completed: 0, avgScore: 0, totalScore: 0 };
+            report.departmentStats[n.department].total++;
+            if (n.trainingStatus === 'Completed') report.departmentStats[n.department].completed++;
+            if (n.quizScore) {
+                report.departmentStats[n.department].totalScore += n.quizScore;
+                report.departmentStats[n.department].avgScore = report.departmentStats[n.department].totalScore / report.departmentStats[n.department].total;
+            }
+        });
+        
+        const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(reportBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_weekly_report_${startOfWeek.toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("WEEKLY_REPORT", "Weekly report generated");
+        showNotification('Weekly report generated and downloaded!', 'success');
+    }
+
     // ========== ROLE MANAGEMENT ==========
     function renderRoleManagement() {
         let html = `<div class="page-header"><h1 class="page-title">👔 Role Management</h1><p class="page-desc">Promote or demote nurses to Supervisor or Nurse Manager roles</p></div>
@@ -1594,7 +1591,7 @@
             </select>
         </div>
         <div class="tracker-card">
-            <tr>
+            <table>
                 <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Current Role</th><th>Privilege</th><th>Training</th><th>Action</th></tr></thead>
                 <tbody>`;
         
@@ -1608,7 +1605,15 @@
             let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
             let modules = getAllModulesCount(n.department);
             let percent = Math.round(((n.trainingModulesCompleted?.length || 0)/modules.total)*100);
-            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${roleBadge}</td><td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td><td>${percent}%</td><td><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button></td></tr>`;
+            html += `<tr>
+                <td>${n.empId}</td>
+                <td><strong>${n.name}</strong></td>
+                <td>${n.department}</td>
+                <td>${roleBadge}</td>
+                <td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td>
+                <td>${percent}%</td>
+                <td><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button></td>
+            </tr>`;
         });
         
         html += `</tbody></table><p style="margin-top:0.8rem;">Total: ${filtered.length} staff members</p></div>`;
