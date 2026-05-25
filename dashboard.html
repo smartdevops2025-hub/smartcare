@@ -13,10 +13,94 @@
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
 
+        /* Dark Mode Variables */
+        :root {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #4b5563;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --sidebar-bg: linear-gradient(180deg, #0b3b4f 0%, #0f4a5e 100%);
+            --sidebar-text: #e0f2fe;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --sidebar-bg: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            --sidebar-text: #cbd5e1;
+        }
+
         body {
-            background: #f0f4f8;
+            background: var(--bg-primary);
             height: 100vh;
             overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Dark Mode Toggle Button */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+        }
+        .dark-mode-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .notification-success { background: #10b981; color: white; }
+        .notification-error { background: #ef4444; color: white; }
+        .notification-info { background: #3b82f6; color: white; }
+        .notification-warning { background: #f59e0b; color: white; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Session Timeout Warning */
+        .timeout-warning {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 1000;
+            background: #f59e0b;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: none;
         }
 
         .app-container {
@@ -27,13 +111,13 @@
 
         .sidebar {
             width: 280px;
-            background: linear-gradient(180deg, #0b3b4f 0%, #0f4a5e 100%);
+            background: var(--sidebar-bg);
             color: white;
             display: flex;
             flex-direction: column;
             box-shadow: 2px 0 12px rgba(0,0,0,0.08);
             overflow-y: auto;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background 0.3s;
             z-index: 100;
         }
 
@@ -100,7 +184,7 @@
             align-items: center;
             gap: 0.6rem;
             font-size: 0.85rem;
-            color: #e0f2fe;
+            color: var(--sidebar-text);
         }
 
         .nav-item:hover { background: rgba(255,255,255,0.1); }
@@ -133,8 +217,8 @@
         }
 
         .page-header { margin-bottom: 1.5rem; }
-        .page-title { font-size: 1.5rem; font-weight: 600; color: #0c4e6e; }
-        .page-desc { color: #4b5563; font-size: 0.8rem; margin-top: 0.2rem; }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
+        .page-desc { color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.2rem; }
 
         .dashboard-widgets {
             display: grid;
@@ -144,29 +228,31 @@
         }
 
         .widget {
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 1rem;
             padding: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
             transition: transform 0.2s;
+            color: var(--text-primary);
         }
         .widget:hover { transform: translateY(-2px); }
-        .widget-title { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; }
-        .widget-value { font-size: 1.8rem; font-weight: 700; color: #0c4e6e; margin: 0.3rem 0; }
+        .widget-title { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; }
+        .widget-value { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin: 0.3rem 0; }
         .widget-icon { float: right; font-size: 2rem; opacity: 0.3; }
 
         .card {
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
             padding: 1rem;
             margin-bottom: 1rem;
+            color: var(--text-primary);
         }
 
         .tracker-card {
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
             overflow-x: auto;
             padding: 1rem;
         }
@@ -179,13 +265,15 @@
         th {
             text-align: left;
             padding: 0.8rem 0.5rem;
-            background: #f1f5f9;
+            background: var(--bg-primary);
             font-weight: 600;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary);
         }
         td {
             padding: 0.8rem 0.5rem;
-            border-bottom: 1px solid #eef2f6;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
 
         .status-completed { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
@@ -201,18 +289,21 @@
         }
         .filter-bar input, .filter-bar select {
             padding: 0.4rem 0.8rem;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-color);
             border-radius: 2rem;
             font-size: 0.75rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
-        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .promote-btn {
+        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .promote-btn, .backup-btn {
             color: white;
             border: none;
             padding: 0.4rem 1rem;
             border-radius: 1.5rem;
             cursor: pointer;
             font-size: 0.75rem;
+            transition: opacity 0.2s;
         }
         .btn-small { background: #0f5b63; }
         .quiz-btn { background: #0f5b63; }
@@ -223,6 +314,11 @@
         .save-btn { background: #8b5cf6; }
         .export-btn { background: #6b7280; }
         .promote-btn { background: #8b5cf6; }
+        .backup-btn { background: #0f5b63; }
+
+        .btn-small:hover, .quiz-btn:hover, .update-btn:hover, .add-btn:hover, .edit-btn:hover, .delete-btn:hover, .save-btn:hover, .export-btn:hover, .promote-btn:hover, .backup-btn:hover {
+            opacity: 0.85;
+        }
 
         .role-badge {
             display: inline-block;
@@ -237,21 +333,22 @@
         .role-nurse { background: #3b82f6; color: white; }
 
         .quiz-question {
-            background: #f8fafc;
+            background: var(--bg-primary);
             padding: 0.8rem;
             margin-bottom: 0.8rem;
             border-radius: 0.6rem;
         }
-        .quiz-question p { font-weight: 600; margin-bottom: 0.4rem; font-size: 0.85rem; }
-        .quiz-option { margin: 0.2rem 0 0.2rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+        .quiz-question p { font-weight: 600; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-primary); }
+        .quiz-option { margin: 0.2rem 0 0.2rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-primary); }
         .quiz-option input { width: auto; }
         .score-display {
             font-size: 1rem;
             font-weight: 700;
             padding: 0.8rem;
-            background: #e0f2fe;
+            background: var(--bg-primary);
             border-radius: 0.8rem;
             text-align: center;
+            color: var(--text-primary);
         }
 
         .stats-grid {
@@ -261,13 +358,14 @@
             margin-bottom: 1rem;
         }
         .stat-card {
-            background: white;
+            background: var(--bg-secondary);
             padding: 1rem;
             border-radius: 0.8rem;
             text-align: center;
+            box-shadow: var(--card-shadow);
         }
-        .stat-number { font-size: 1.6rem; font-weight: 700; color: #0c4e6e; }
-        .stat-label { font-size: 0.7rem; color: #6b7280; }
+        .stat-number { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); }
+        .stat-label { font-size: 0.7rem; color: var(--text-secondary); }
 
         .chart-container { max-width: 300px; margin: 0 auto; }
 
@@ -284,26 +382,30 @@
             z-index: 1000;
         }
         .modal-content {
-            background: white;
+            background: var(--bg-secondary);
             padding: 1.5rem;
             border-radius: 1rem;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
+            color: var(--text-primary);
         }
-        .modal-content h3 { margin-bottom: 0.8rem; color: #0c4e6e; font-size: 1.2rem; }
-        .modal-content select {
+        .modal-content h3 { margin-bottom: 0.8rem; color: var(--text-primary); font-size: 1.2rem; }
+        .modal-content select, .modal-content input {
             width: 100%;
             padding: 0.6rem;
             margin-bottom: 0.8rem;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-color);
             border-radius: 0.6rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
         .modal-buttons { display: flex; gap: 0.8rem; justify-content: flex-end; }
 
         .audit-log-entry {
             padding: 0.4rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-color);
             font-size: 0.75rem;
+            color: var(--text-primary);
         }
 
         .module-grid {
@@ -315,12 +417,13 @@
             overflow-y: auto;
         }
         .module-chip {
-            background: #e2e8f0;
+            background: var(--bg-primary);
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-size: 0.7rem;
             cursor: pointer;
             transition: all 0.2s;
+            color: var(--text-primary);
         }
         .module-chip.completed {
             background: #10b981;
@@ -332,12 +435,12 @@
 
         .category-group {
             margin-bottom: 0.5rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
             border-radius: 0.5rem;
             overflow: hidden;
         }
         .category-header {
-            background: #f1f5f9;
+            background: var(--bg-primary);
             padding: 0.5rem 0.8rem;
             font-weight: 600;
             cursor: pointer;
@@ -345,6 +448,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.8rem;
+            color: var(--text-primary);
         }
         .category-content {
             padding: 0.5rem;
@@ -354,15 +458,14 @@
             display: block;
         }
 
-        /* Training Status Card Styles */
         .training-card {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
             border-radius: 0.8rem;
             margin-bottom: 1rem;
             overflow: hidden;
         }
         .training-card-header {
-            background: #f8fafc;
+            background: var(--bg-primary);
             padding: 0.8rem 1rem;
             cursor: pointer;
             display: flex;
@@ -371,11 +474,12 @@
             transition: background 0.2s;
         }
         .training-card-header:hover {
-            background: #f1f5f9;
+            background: var(--border-color);
         }
         .training-card-header h4 {
             font-size: 0.9rem;
             margin: 0;
+            color: var(--text-primary);
         }
         .training-progress {
             display: flex;
@@ -386,7 +490,7 @@
         .progress-bar-container {
             width: 150px;
             height: 6px;
-            background: #e2e8f0;
+            background: var(--border-color);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -406,12 +510,33 @@
         .training-card-body {
             display: none;
             padding: 1rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border-color);
             max-height: 500px;
             overflow-y: auto;
         }
         .training-card-body.expanded {
             display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .badge-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .badge-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .badge-success {
+            background: #10b981;
+            color: white;
         }
 
         @media (max-width: 768px) {
@@ -441,6 +566,8 @@
 </head>
 <body>
 <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</div>
+<div class="timeout-warning" id="timeoutWarning" onclick="resetTimer()">⏰ Session expiring soon! Click to stay logged in.</div>
 <div class="app-container">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -477,6 +604,24 @@
     </div>
 </div>
 
+<!-- Modal for Bulk Training Assignment -->
+<div id="bulkTrainingModal" class="modal">
+    <div class="modal-content">
+        <h3>📚 Bulk Training Assignment</h3>
+        <p style="margin-bottom: 0.5rem;">Select nurses and training modules to assign</p>
+        <select id="bulkNurseSelect" multiple size="5" style="height: auto;">
+            <!-- Populated dynamically -->
+        </select>
+        <select id="bulkModuleSelect" multiple size="5" style="height: auto;">
+            <!-- Populated dynamically -->
+        </select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button>
+            <button class="add-btn" onclick="assignBulkTraining()">Assign Training</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ========== MOBILE SIDEBAR ==========
     function toggleSidebar() {
@@ -486,6 +631,126 @@
         if (window.innerWidth <= 768) {
             document.getElementById('sidebar').classList.remove('open');
         }
+    }
+
+    // ========== DARK MODE ==========
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        const toggleBtn = document.querySelector('.dark-mode-toggle');
+        toggleBtn.textContent = isDark ? '☀️' : '🌙';
+        showNotification(isDark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+    }
+
+    // Load dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.querySelector('.dark-mode-toggle').textContent = '☀️';
+    }
+
+    // ========== NOTIFICATION SYSTEM ==========
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    // ========== SESSION TIMEOUT ==========
+    let inactivityTimer;
+    let warningTimer;
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+    const WARNING_BEFORE = 60 * 1000; // 1 minute before
+
+    function resetTimer() {
+        clearTimeout(inactivityTimer);
+        clearTimeout(warningTimer);
+        document.getElementById('timeoutWarning').style.display = 'none';
+        inactivityTimer = setTimeout(logout, SESSION_TIMEOUT);
+        warningTimer = setTimeout(() => {
+            document.getElementById('timeoutWarning').style.display = 'block';
+            showNotification('Session will timeout in 1 minute due to inactivity', 'warning');
+        }, SESSION_TIMEOUT - WARNING_BEFORE);
+    }
+
+    function extendSession() {
+        resetTimer();
+        document.getElementById('timeoutWarning').style.display = 'none';
+        showNotification('Session extended', 'success');
+    }
+
+    ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+        document.addEventListener(event, resetTimer);
+    });
+
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'd') { e.preventDefault(); navigateTo('dashboard'); showNotification('Dashboard (Ctrl+D)', 'info'); }
+        if (e.ctrlKey && e.key === 't') { e.preventDefault(); navigateTo('trainingStatus'); showNotification('Training Status (Ctrl+T)', 'info'); }
+        if (e.ctrlKey && e.key === 'q') { e.preventDefault(); navigateTo('quiz'); showNotification('Competency Quiz (Ctrl+Q)', 'info'); }
+        if (e.ctrlKey && e.key === 'r') { e.preventDefault(); navigateTo('reports'); showNotification('Reports (Ctrl+R)', 'info'); }
+        if (e.ctrlKey && e.key === 's') { e.preventDefault(); exportFullBackup(); showNotification('Backup exported (Ctrl+S)', 'info'); }
+        if (e.ctrlKey && e.key === 'b') { e.preventDefault(); openBulkTrainingModal(); showNotification('Bulk Training (Ctrl+B)', 'info'); }
+    });
+
+    // ========== AUTO-SAVE & BACKUP ==========
+    function autoSaveData() {
+        const backup = {
+            nurses: nursesData,
+            config: systemConfig,
+            audit: auditLog,
+            quizzes: nurseQuizzes,
+            timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('smartcare_backup', JSON.stringify(backup));
+        console.log('Auto-saved at:', new Date().toLocaleTimeString());
+    }
+    setInterval(autoSaveData, 30000); // Auto-save every 30 seconds
+
+    function exportFullBackup() {
+        const backup = {
+            nurses: nursesData,
+            config: systemConfig,
+            audit: auditLog,
+            quizzes: nurseQuizzes,
+            exportDate: new Date().toISOString(),
+            version: '2.0'
+        };
+        const dataStr = JSON.stringify(backup, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_full_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("BACKUP_EXPORT", "Full system backup exported");
+        showNotification('Full backup exported successfully!', 'success');
+    }
+
+    function importFullBackup(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const backup = JSON.parse(e.target.result);
+                if (backup.nurses) nursesData = backup.nurses;
+                if (backup.config) systemConfig = backup.config;
+                if (backup.audit) auditLog = backup.audit;
+                if (backup.quizzes) nurseQuizzes = backup.quizzes;
+                localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
+                localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
+                localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+                updateLoginUsers();
+                addAuditLog("BACKUP_IMPORT", "Full system backup imported");
+                showNotification('Backup restored successfully!', 'success');
+                location.reload();
+            } catch (err) {
+                showNotification('Invalid backup file', 'error');
+            }
+        };
+        reader.readAsText(file);
     }
 
     // ========== AUDIT LOG ==========
@@ -510,6 +775,7 @@
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) window.location.href = 'index.html';
     addAuditLog("LOGIN", "User logged into the system");
+    resetTimer();
 
     // ========== SYSTEM CONFIG ==========
     let systemConfig = { 
@@ -523,261 +789,114 @@
     const savedConfig = localStorage.getItem('smartcare_config');
     if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
-    // ========== COMPLETE TRAINING MODULES ==========
+    // ========== TRAINING MODULES ==========
     const trainingModulesByDept = {
         "Labour Room": {
-            "Environmental Hygiene": [
-                "Arrangement of Bed, Locker, Equipments etc.",
-                "Storeroom Items storage of medicines, consumables and CSSD items",
-                "Refrigerator cleaning protocol",
-                "Observe Surface Cleaning in each shift"
-            ],
-            "Provide Physical Care": [
-                "Ensure patient comfort and hygiene",
-                "Special needs and care for vulnerable patient",
-                "Provide general pre-op/post-op care",
-                "Manage patient during transport",
-                "Provider alternative communication method"
-            ],
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care", "Patient transport", "Alternative communication"],
             "Clinical Skills of LR Performance": [
-                "Criteria of admission", "Criteria of Discharge", "Quick check assessment",
-                "Layout & zoning (clean, sterile, septic areas)", "Equipment checklist",
-                "Management of PPH", "Delivery tray", "Neonatal resuscitation unit",
-                "Emergency drugs", "Stages of labour", "Biomedical waste management",
-                "Infection prevention protocols", "Ensuring maternal & neonatal safety",
-                "Maintaining documentation & audit compliance", "Handling emergencies effectively",
-                "Strengthen clinical expertise in obstetrics", "Improve decision-making in emergencies",
-                "Ensure protocol-based care (WHO / NABH)", "Develop leadership & team coordination",
-                "Enhance documentation & medico-legal safety"
+                "Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist",
+                "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour",
+                "Biomedical waste", "Infection prevention", "Maternal/neonatal safety", "Documentation", "Emergency handling",
+                "Clinical expertise", "Decision making", "Protocol-based care", "Leadership", "Medico-legal safety"
             ],
-            "Medication Management": [
-                "Identify patient by name & ID before procedure", "Indent / Return medication procedures",
-                "Storage of medicine", "Safe administer of medication", "Restricted Antibiotic",
-                "Adverse drug Recall Policy", "Verbal order / self medication policy", "Narcotic medication process",
-                "High Risk / High Alert medicine", "Drug Calculation", "Identify, report & document ADR"
-            ],
-            "Infection Control Procedures": [
-                "Standard precautions", "Segregation procedure", "Sterilization monitoring",
-                "Device care single/multiple use", "Spills management", "Waste disposal",
-                "Device related care", "Nosocomial infection surveillance"
-            ],
-            "Collaborate With Other Health Care Team Members": [
-                "Total care process follow up with handing/taking over",
-                "Appropriate use of communication channel (Hierarchy)"
-            ],
-            "Document Medical & Nursing Management": [
-                "Explain pantograph", "Quality Indicator", "Patient education on antenatal care", "BLS Training"
-            ],
-            "Promote Professional Development": [
-                "Maintain current hospital practice", "Promote quality improvement",
-                "Participate in continuing education", "Follow senior allocation",
-                "Infection control training program", "BLS Training",
-                "Prepare and support staff as preceptor", "Critical care experience in nursing education"
-            ],
-            "Manage Technical Support": [
-                "Equipment selection", "Equipment operation", "Unexpected findings identification"
-            ],
-            "Advocate Patient And Family Needs": [
-                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
-                "Safe equipment use", "End of life care participation"
-            ],
-            "Others": [
-                "Punctuality", "Discipline", "No absenteeism (especially during night)",
-                "Inventory control responsibility", "Respect to colleagues",
-                "Crisis management help", "Code awareness"
-            ]
+            "Medication Management": ["Patient identification", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk meds", "Drug calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste disposal", "Device related care", "Surveillance"],
+            "Collaboration": ["Total care process", "Communication channel"],
+            "Documentation": ["Pantograph", "Quality Indicators", "Patient education", "BLS"],
+            "Professional Development": ["Current practice", "Quality improvement", "Continuing education", "Senior allocation", "Infection control training", "BLS", "Preceptorship", "Critical care experience"],
+            "Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
+            "Advocacy": ["Patient rights", "Cultural needs", "Family education", "Safe equipment", "End of life care"],
+            "Others": ["Punctuality", "Discipline", "No absenteeism", "Inventory control", "Respect", "Crisis management", "Code awareness"]
         },
         "Emergency Department": {
             "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
-            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care", "Patient transport", "Alternative communication", "Pain Assessment"],
-            "Clinical Skills in ER Ward": [
-                "Admission Protocol", "Discharge Protocol", "Transfer Protocol", "Initial Assessment",
-                "IV Cannulation/Injections", "CBG Monitoring", "Collar types use", "Bandaging techniques",
-                "POP application assist", "Trauma patient transport", "Airway Management",
-                "Monitor/Defibrillator settings", "Traction/splints", "Ryles Tube Insertion",
-                "Chest drainage management", "Dressing trolley arrangement", "Crash cart checking",
-                "ECG and basic interpretation", "Blood Sample collection", "Urinary Catheter Care",
-                "Suctioning", "Wound care", "Emergency trauma care", "CPR",
-                "Enteral feeds", "Blood transfusion protocol", "Patient safety",
-                "Pleural/Pericardial fluid aspiration", "Preoperative Care", "Death Protocol"
+            "Provide Physical Care": ["Patient comfort", "Vulnerable care", "Pre/post-op", "Transport", "Alternative communication", "Pain assessment"],
+            "Clinical Skills": [
+                "Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging",
+                "POP application", "Trauma transport", "Airway Management", "Defibrillator", "Traction", "Ryles Tube",
+                "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning",
+                "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Patient safety", "Fluid aspiration",
+                "Preoperative care", "Death Protocol"
             ],
-            "Medication Management": [
-                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
-                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order policy", "Narcotic process",
-                "High Risk medicine", "Drug Calculation", "ADR reporting"
-            ],
-            "Infection Control Procedures": [
-                "Standard precautions", "Segregation", "Sterilization monitoring", "Device care",
-                "Spills management", "Waste disposal", "Device related care", "Nosocomial surveillance"
-            ],
-            "Collaborate With Other Health Care Team Members": ["Total care process", "Communication channel"],
-            "Document Medical & Nursing Management": ["Nursing Care Plan", "Quality Indicator", "Unitbase Class"],
-            "Promote Professional Development": [
-                "Current practice", "Quality improvement", "Continuing education", "Senior allocation",
-                "Infection control training", "BLS Training", "Preceptor preparation", "Critical care experience"
-            ],
-            "Manage Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
-            "Advocate Patient And Family Needs": [
-                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
-                "Safe restraint use", "End of life care"
-            ],
-            "Others": [
-                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
-                "Respect to colleagues", "Crisis management", "Code awareness"
-            ]
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk", "Drug calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["Care Plan", "Quality Indicators", "Unitbase"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
         },
         "ICU": {
-            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
-            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Patient transport", "Alternative communication"],
-            "Clinical Skills for CTVS-ICU": [
-                "Admission criteria", "Discharge criteria", "Assessment", "Preoperative Care",
-                "Postoperative care", "Monitoring drainage/Intake-Output", "PA catheter care",
-                "ECG interpretation", "Chest drainage management", "Central line Bundle care",
-                "Arrythmia management", "IABP insertion/care", "ICD insertion/care",
-                "Intubation/extubation assist", "Bedside re-exploration assist",
-                "Mechanical Ventilation/Bi-pap", "Defibrillator use", "Suctioning",
-                "Wound care/Pressure ulcer prevention", "TPI assist", "CPR",
-                "Enteral feeds", "Blood transfusion protocol", "Patient safety",
-                "Fluid aspiration", "Major Dressing", "End of life care"
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort/hygiene", "Vulnerable care", "Transport", "Communication"],
+            "Clinical Skills": [
+                "Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter",
+                "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP", "ICD", "Intubation/extubation",
+                "Re-exploration", "Ventilator/Bi-pap", "Defibrillator", "Suctioning", "Wound care", "TPI", "CPR",
+                "Enteral feeds", "Blood transfusion", "Safety", "Fluid aspiration", "Major dressing", "End of life"
             ],
-            "Medication Management": [
-                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
-                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
-                "High Risk medicine", "Drug Calculation", "ADR reporting"
-            ],
-            "Infection Control Procedures": [
-                "Standard precautions", "Segregation", "Sterilization monitoring", "Device care",
-                "Spills management", "Waste disposal", "Device related care", "Nosocomial surveillance"
-            ],
-            "Collaborate With Other Health Care Team Members": ["Total care process", "Communication channel"],
-            "Document Medical & Nursing Management": ["ICU Chart", "Quality Indicator", "Unitbase Class", "BLS Training"],
-            "Promote Professional Development": [
-                "Current practice", "Quality improvement", "Continuing education", "Senior allocation",
-                "Infection control training", "BLS Training", "Preceptor preparation", "Critical care experience"
-            ],
-            "Manage Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
-            "Advocate Patient And Family Needs": [
-                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
-                "Safe restraint use", "End of life care"
-            ],
-            "Others": [
-                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
-                "Respect to colleagues", "Crisis management", "Code awareness"
-            ]
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["ICU Chart", "Quality Indicators", "Unitbase", "BLS"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
         },
         "Infection Control": {
-            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
-            "Provide Physical Care": [
-                "Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care",
-                "Patient transport", "Alternative communication", "Pain Assessment"
-            ],
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
             "Clinical Skills": [
-                "Admission Protocol", "Discharge Protocol", "Transfer Protocol", "Initial Assessment",
-                "IV Cannulation", "CBG Monitoring", "Intake-Output chart", "Chest drainage management",
-                "Dressing trolley", "Crash cart checking", "ECG", "Blood Sample collection",
-                "Urinary Catheter Care", "Suctioning", "Wound care", "Emergency trauma care",
-                "CPR", "Enteral feeds", "Blood transfusion protocol", "Patient safety",
-                "Fluid aspiration", "Preoperative Care", "Postoperative Care", "Death Protocol"
+                "Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage",
+                "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care",
+                "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Pre/post-op", "Death Protocol"
             ],
-            "Medication Management": [
-                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
-                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
-                "High Risk medicine", "Drug Calculation", "ADR reporting"
-            ],
-            "Infection Control Procedures": [
-                "Standard precautions", "Segregation", "Sterilization monitoring", "Device care",
-                "Spills management", "Waste disposal", "Device related care", "Nosocomial surveillance"
-            ],
-            "Collaborate With Other Health Care Team Members": ["Total care process", "Communication channel"],
-            "Document Medical & Nursing Management": ["Nursing Care Plan", "Quality Indicator", "Unitbase Class"],
-            "Promote Professional Development": [
-                "Current practice", "Quality improvement", "Continuing education", "Senior allocation",
-                "Infection control training", "BLS Training", "Preceptor preparation", "Critical care experience"
-            ],
-            "Manage Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
-            "Advocate Patient And Family Needs": [
-                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
-                "Safe restraint use", "End of life care"
-            ],
-            "Others": [
-                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
-                "Respect to colleagues", "Crisis management", "Code awareness"
-            ]
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["Care Plan", "Quality Indicators", "Unitbase"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
         },
         "Critical Care": {
-            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
-            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care", "Patient transport", "Alternative communication"],
-            "Clinical Skills of CCU": [
-                "Admission criteria", "Discharge criteria", "Quick assessment", "ABG interpretation",
-                "ECG interpretation", "Chest drainage management", "Central line care",
-                "Intubation/extubation assist", "Mechanical Ventilation/Bi-pap", "Defibrillator use",
-                "Suctioning", "Wound care", "Emergency trauma care", "CPR",
-                "Enteral feeds", "Blood transfusion protocol", "Patient safety",
-                "Fluid aspiration", "Major Dressing", "End of life care"
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication"],
+            "Clinical Skills": [
+                "Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage",
+                "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning",
+                "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration",
+                "Major dressing", "End of life"
             ],
-            "Medication Management": [
-                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
-                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
-                "High Risk medicine", "Drug Calculation", "ADR reporting"
-            ],
-            "Infection Control Procedures": [
-                "Standard precautions", "Segregation", "Sterilization monitoring", "Device care",
-                "Spills management", "Waste disposal", "Device related care", "Nosocomial surveillance"
-            ],
-            "Collaborate With Other Health Care Team Members": ["Total care process", "Communication channel"],
-            "Document Medical & Nursing Management": ["ICU Chart", "Quality Indicator", "Unitbase Class", "BLS Training"],
-            "Promote Professional Development": [
-                "Current practice", "Quality improvement", "Continuing education", "Senior allocation",
-                "Infection control training", "BLS Training", "Preceptor preparation", "Critical care experience"
-            ],
-            "Manage Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
-            "Advocate Patient And Family Needs": [
-                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
-                "Safe restraint use", "End of life care"
-            ],
-            "Others": [
-                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
-                "Respect to colleagues", "Crisis management", "Code awareness"
-            ]
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["ICU Chart", "Quality Indicators", "Unitbase", "BLS"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
         },
         "Ward": {
-            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
-            "Provide Physical Care": [
-                "Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care",
-                "Patient transport", "Alternative communication", "Pain Assessment"
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": [
+                "Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage",
+                "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care",
+                "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Pre/post-op", "Death Protocol"
             ],
-            "Clinical Skills of Ward": [
-                "Admission Protocol", "Discharge Protocol", "Transfer Protocol", "Initial Assessment",
-                "IV Cannulation", "CBG Monitoring", "Intake-Output chart", "Chest drainage management",
-                "Dressing trolley", "Crash cart checking", "ECG", "Blood Sample collection",
-                "Urinary Catheter Care", "Suctioning", "Wound care", "Emergency trauma care",
-                "CPR", "Enteral feeds", "Blood transfusion protocol", "Patient safety",
-                "Fluid aspiration", "Preoperative Care", "Postoperative Care", "Death Protocol"
-            ],
-            "Medication Management": [
-                "Patient identification", "Indent/Return", "Medicine storage", "Safe administration",
-                "Restricted Antibiotic", "Adverse drug Recall", "Verbal order", "Narcotic process",
-                "High Risk medicine", "Drug Calculation", "ADR reporting"
-            ],
-            "Infection Control Procedures": [
-                "Standard precautions", "Segregation", "Sterilization monitoring", "Device care",
-                "Spills management", "Waste disposal", "Device related care", "Nosocomial surveillance"
-            ],
-            "Collaborate With Other Health Care Team Members": ["Total care process", "Communication channel"],
-            "Document Medical & Nursing Management": ["Nursing Care Plan", "Quality Indicator", "Unitbase Class"],
-            "Promote Professional Development": [
-                "Current practice", "Quality improvement", "Continuing education", "Senior allocation",
-                "Infection control training", "BLS Training", "Preceptor preparation", "Critical care experience"
-            ],
-            "Manage Technical Support": ["Equipment selection", "Equipment operation", "Unexpected findings"],
-            "Advocate Patient And Family Needs": [
-                "Patient rights", "Cultural/spiritual needs", "Patient/family education",
-                "Safe restraint use", "End of life care"
-            ],
-            "Others": [
-                "Punctuality", "Discipline", "No absenteeism", "Inventory control",
-                "Respect to colleagues", "Crisis management", "Code awareness"
-            ]
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"],
+            "Collaboration": ["Total care", "Communication"],
+            "Documentation": ["Care Plan", "Quality Indicators", "Unitbase"],
+            "Professional Development": ["Practice", "Quality", "Education", "Allocation", "Infection training", "BLS", "Preceptorship", "Critical care"],
+            "Technical Support": ["Equipment", "Operation", "Findings"],
+            "Advocacy": ["Rights", "Cultural", "Education", "Restraints", "End of life"],
+            "Others": ["Punctuality", "Discipline", "Attendance", "Inventory", "Respect", "Crisis", "Codes"]
         }
     };
 
@@ -838,10 +957,10 @@
         return nurseQuizzes[key];
     }
 
-    // ========== NURSES DATA (UPDATED WITH YOUR CREDENTIALS) ==========
+    // ========== NURSES DATA ==========
     let nursesData = [
         { id: 1, name: "Mohan", empId: "NURSE101", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-01-15", quizScore: null },
-        { id: 2, name: "Razim", empId: "NURSE102", department: "OT", trainingStatus: "Pending", privilege: 2, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null },
+        { id: 2, name: "Razim", empId: "NURSE102", department: "Emergency Department", trainingStatus: "Pending", privilege: 2, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null },
         { id: 3, name: "Punya", empId: "NURSE103", department: "Infection Control", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null },
         { id: 4, name: "Vinesh", empId: "NURSE104", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null },
         { id: 5, name: "Manoj Das", empId: "SUP001", department: "ICU", trainingStatus: "Pending", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null },
@@ -890,19 +1009,101 @@
         nursesData.forEach(nurse => {
             const oldPrivilege = nurse.privilege;
             const newPrivilege = recalculatePrivilege(nurse);
-            if (oldPrivilege !== newPrivilege) { nurse.privilege = newPrivilege; changes++; }
+            if (oldPrivilege !== newPrivilege) { 
+                nurse.privilege = newPrivilege; 
+                changes++;
+                showNotification(`${nurse.name} privilege changed from Level ${oldPrivilege} to Level ${newPrivilege}`, 'info');
+            }
             const modules = getAllModulesCount(nurse.department);
             const completedCount = nurse.trainingModulesCompleted?.length || 0;
-            if (completedCount === modules.total && nurse.trainingStatus !== 'Completed') nurse.trainingStatus = 'Completed';
+            if (completedCount === modules.total && nurse.trainingStatus !== 'Completed') {
+                nurse.trainingStatus = 'Completed';
+                showNotification(`${nurse.name} has completed all training!`, 'success');
+            }
             else if (completedCount > 0 && nurse.trainingStatus === 'Pending') nurse.trainingStatus = 'In Progress';
         });
         updateLoginUsers();
         return changes;
     }
 
-    // ========== TRAINING STATUS (COLLAPSIBLE CARDS) ==========
+    // ========== BULK TRAINING ASSIGNMENT ==========
+    function openBulkTrainingModal() {
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Manager, and Supervisor can assign bulk training', 'error');
+            return;
+        }
+        
+        const nurseSelect = document.getElementById('bulkNurseSelect');
+        const moduleSelect = document.getElementById('bulkModuleSelect');
+        
+        // Populate nurses
+        nurseSelect.innerHTML = '';
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const option = document.createElement('option');
+            option.value = n.empId;
+            option.textContent = `${n.name} (${n.empId}) - ${n.department}`;
+            nurseSelect.appendChild(option);
+        });
+        
+        // Populate modules (all unique modules from all departments)
+        const allModules = new Set();
+        for (const dept in trainingModulesByDept) {
+            for (const cat in trainingModulesByDept[dept]) {
+                trainingModulesByDept[dept][cat].forEach(m => allModules.add(m));
+            }
+        }
+        moduleSelect.innerHTML = '';
+        Array.from(allModules).forEach(m => {
+            const option = document.createElement('option');
+            option.value = m;
+            option.textContent = m;
+            moduleSelect.appendChild(option);
+        });
+        
+        document.getElementById('bulkTrainingModal').style.display = 'flex';
+    }
+    
+    function closeBulkTrainingModal() {
+        document.getElementById('bulkTrainingModal').style.display = 'none';
+    }
+    
+    function assignBulkTraining() {
+        const nurseSelect = document.getElementById('bulkNurseSelect');
+        const moduleSelect = document.getElementById('bulkModuleSelect');
+        const selectedNurses = Array.from(nurseSelect.selectedOptions).map(opt => opt.value);
+        const selectedModules = Array.from(moduleSelect.selectedOptions).map(opt => opt.value);
+        
+        if (selectedNurses.length === 0 || selectedModules.length === 0) {
+            showNotification('Please select at least one nurse and one module', 'warning');
+            return;
+        }
+        
+        let assignedCount = 0;
+        selectedNurses.forEach(empId => {
+            const nurse = nursesData.find(n => n.empId === empId);
+            if (nurse) {
+                if (!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
+                selectedModules.forEach(module => {
+                    if (!nurse.trainingModulesCompleted.includes(module)) {
+                        nurse.trainingModulesCompleted.push(module);
+                        assignedCount++;
+                    }
+                });
+                nurse.lastActivity = new Date().toISOString().split('T')[0];
+                recalculatePrivilege(nurse);
+            }
+        });
+        
+        updateLoginUsers();
+        addAuditLog("BULK_TRAINING", `Assigned ${selectedModules.length} modules to ${selectedNurses.length} nurses`);
+        showNotification(`✅ Assigned ${assignedCount} training modules!`, 'success');
+        closeBulkTrainingModal();
+        renderTrainingStatusUpdater();
+    }
+
+    // ========== TRAINING STATUS ==========
     function renderTrainingStatusUpdater() {
-        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status</h1><p class="page-desc">Click on any staff member to expand and mark training items as complete/incomplete</p></div>
+        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status</h1><p class="page-desc">Click on any staff member to expand and mark training items</p></div>
         <div class="filter-bar">
             <input type="text" id="searchTrain" placeholder="🔍 Search nurse" onkeyup="renderTrainingStatusUpdater()">
             <select id="filterDeptTrain" onchange="renderTrainingStatusUpdater()">
@@ -915,6 +1116,10 @@
                 <option value="Ward">Ward</option>
             </select>
             <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate Competency</button>
+            <button class="backup-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
+            <button class="export-btn" onclick="exportFullBackup()">💾 Backup System</button>
+            <button class="edit-btn" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
+            <input type="file" id="importFile" style="display:none" accept=".json" onchange="importFullBackup(this.files[0])">
         </div>`;
         
         const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
@@ -936,10 +1141,18 @@
             
             let privilegeText = nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
             
+            // Training reminder badge for incomplete
+            let reminderBadge = '';
+            if (percentComplete < 50 && nurse.trainingStatus !== 'Completed') {
+                reminderBadge = '<span class="badge badge-warning">⚠️ Training needed</span>';
+            } else if (percentComplete >= 80 && percentComplete < 100) {
+                reminderBadge = '<span class="badge badge-success">📈 Almost done!</span>';
+            }
+            
             html += `<div class="training-card" id="card_${nurse.id}">
                 <div class="training-card-header" onclick="toggleTrainingCard(${nurse.id})">
                     <div>
-                        <h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department}</h4>
+                        <h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department} ${reminderBadge}</h4>
                         <div style="font-size:0.7rem; margin-top:0.2rem;">${privilegeText} | ${statusBadge}</div>
                     </div>
                     <div class="training-progress">
@@ -953,7 +1166,6 @@
                 </div>
                 <div class="training-card-body" id="body_${nurse.id}">`;
             
-            // Add category sections
             modules.categories.forEach(cat => {
                 const catCompleted = cat.items.filter(item => completedSet.has(item)).length;
                 html += `<div class="category-group">
@@ -1004,7 +1216,7 @@
     function toggleModuleCompletion(empId, moduleName, event) {
         event.stopPropagation();
         if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
-            alert("Only Admin, Nurse Manager, and Supervisors can update training status.");
+            showNotification('Only Admin, Nurse Manager, and Supervisors can update training status', 'error');
             return;
         }
         const nurse = nursesData.find(n => n.empId === empId);
@@ -1014,6 +1226,7 @@
             if(index === -1) {
                 nurse.trainingModulesCompleted.push(moduleName);
                 addAuditLog("MODULE_COMPLETED", `${nurse.name} completed: ${moduleName}`);
+                showNotification(`${nurse.name} completed: ${moduleName.substring(0, 50)}...`, 'success');
             } else {
                 nurse.trainingModulesCompleted.splice(index, 1);
                 addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked: ${moduleName}`);
@@ -1024,6 +1237,7 @@
             if (oldPrivilege !== newPrivilege) {
                 nurse.privilege = newPrivilege;
                 addAuditLog("PRIVILEGE_AUTO_UPDATE", `${nurse.name} competency changed from Level ${oldPrivilege} to Level ${newPrivilege}`);
+                showNotification(`${nurse.name} competency changed to Level ${newPrivilege}!`, 'info');
             }
             updateLoginUsers();
             renderTrainingStatusUpdater();
@@ -1034,7 +1248,7 @@
     function markAllModules(empId, complete, event) {
         if (event) event.stopPropagation();
         if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
-            alert("Only Admin, Nurse Manager, and Supervisors can update training status.");
+            showNotification('Only Admin, Nurse Manager, and Supervisors can update training status', 'error');
             return;
         }
         const nurse = nursesData.find(n => n.empId === empId);
@@ -1045,6 +1259,7 @@
             if (complete) {
                 nurse.trainingModulesCompleted = [...allItems];
                 addAuditLog("ALL_MODULES_COMPLETED", `${nurse.name} marked all ${allItems.length} modules complete`);
+                showNotification(`${nurse.name} completed all ${allItems.length} modules!`, 'success');
             } else {
                 nurse.trainingModulesCompleted = [];
                 addAuditLog("ALL_MODULES_INCOMPLETE", `${nurse.name} marked all modules incomplete`);
@@ -1055,24 +1270,22 @@
             updateLoginUsers();
             renderTrainingStatusUpdater();
             if (currentUser.empId === empId) updateSidebarPrivilege();
-            alert(`✅ ${complete ? 'Marked all modules complete' : 'Marked all modules incomplete'} for ${nurse.name}`);
         }
     }
 
     function runPrivilegeRecalculation() { 
         const changes = updateAllPrivileges(); 
-        alert(`✅ Competency recalculation complete!\n\n${changes} nurses had privilege changes.`);
+        showNotification(`✅ Competency recalculation complete! ${changes} nurses had privilege changes.`, 'success');
         renderTrainingStatusUpdater(); 
         if (currentUser.role === 'nurse') updateSidebarPrivilege(); 
     }
 
-    // ========== COMPETENCY QUIZ (FIXED) ==========
+    // ========== COMPETENCY QUIZ ==========
     function renderQuiz() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
         if (!nurse) { 
-            console.error("Nurse not found for ID:", currentUser.id);
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Error: Nurse record not found. Please contact administrator.</div>
-            <button class="quiz-btn" onclick="navigateTo('dashboard')" style="margin-top:1rem;">Go to Dashboard</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Error: Nurse record not found.</div>
+            <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
@@ -1087,7 +1300,7 @@
         }
         
         let html = `<div class="page-header"><h1 class="page-title">📝 Competency Assessment Quiz</h1>
-        <p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade privilege</p></div>
+        <p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade</p></div>
         <div class="card"><form id="quizForm">`;
         
         quizData.questions.forEach((q, idx) => {
@@ -1124,11 +1337,13 @@
             
             let message = `Quiz Score: ${percentage}%\n\n`;
             if (percentage >= systemConfig.privilegeUpgradeScore && newPrivilege > oldPrivilege) {
-                message += `🎉 CONGRATULATIONS! You have been upgraded to Level ${newPrivilege}!`;
+                message += `🎉 CONGRATULATIONS! Upgraded to Level ${newPrivilege}!`;
+                showNotification(`🎉 ${currentUser.name} upgraded to Level ${newPrivilege}!`, 'success');
             } else if (percentage < systemConfig.privilegeDowngradeScore && newPrivilege < oldPrivilege) {
-                message += `⚠️ Your competency level has been downgraded to Level ${newPrivilege}. Please review training materials.`;
+                message += `⚠️ Downgraded to Level ${newPrivilege}. Please review training.`;
+                showNotification(`⚠️ ${currentUser.name} downgraded to Level ${newPrivilege}`, 'warning');
             } else {
-                message += `Your competency level remains Level ${newPrivilege}.`;
+                message += `Competency remains Level ${newPrivilege}.`;
             }
             alert(message);
             updateSidebarPrivilege();
@@ -1148,11 +1363,12 @@
             nurse.quizScore = null;
             localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
             updateLoginUsers();
+            showNotification('Quiz reset. You can retake the assessment.', 'info');
             renderQuiz();
         }
     }
 
-    // ========== DASHBOARD ==========
+    // ========== DASHBOARD WITH AT-RISK WIDGET ==========
     function renderDashboard() {
         updateAllPrivileges();
         const nurses = nursesData.filter(n => n.role === 'nurse');
@@ -1165,6 +1381,10 @@
         const level3 = nurses.filter(n => n.privilege === 3).length;
         const avgQuiz = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
         
+        // At-risk nurses (quiz score < 60% OR training progress < 30%)
+        const atRiskNurses = nurses.filter(n => (n.quizScore && n.quizScore < 60) || ((n.trainingModulesCompleted?.length || 0) / getAllModulesCount(n.department).total * 100) < 30);
+        const topPerformers = nurses.filter(n => n.quizScore && n.quizScore >= 85);
+        
         let deptStats = {};
         nurses.forEach(n => { if(!deptStats[n.department]) deptStats[n.department] = { total:0, completed:0 };
             deptStats[n.department].total++;
@@ -1174,18 +1394,58 @@
         let html = `<div class="page-header"><h1 class="page-title">📊 Competency Dashboard</h1><p class="page-desc">Real-time training progress and privilege levels</p></div>
         <div class="dashboard-widgets">
             <div class="widget"><div class="widget-icon">👩‍⚕️</div><div class="widget-title">Total Nurses</div><div class="widget-value">${total}</div></div>
-            <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Training Completed</div><div class="widget-value">${completed}</div></div>
+            <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Completed</div><div class="widget-value">${completed}</div></div>
             <div class="widget"><div class="widget-icon">🔄</div><div class="widget-title">In Progress</div><div class="widget-value">${inProgress}</div></div>
-            <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Level 1 (Trainee)</div><div class="widget-value">${level1}</div></div>
-            <div class="widget"><div class="widget-icon">⭐⭐</div><div class="widget-title">Level 2 (Indep)</div><div class="widget-value">${level2}</div></div>
-            <div class="widget"><div class="widget-icon">⭐⭐⭐</div><div class="widget-title">Level 3 (Preceptor)</div><div class="widget-value">${level3}</div></div>
-            <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Quiz Score</div><div class="widget-value">${Math.round(avgQuiz)}%</div></div>
+            <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Level 1</div><div class="widget-value">${level1}</div></div>
+            <div class="widget"><div class="widget-icon">⭐⭐</div><div class="widget-title">Level 2</div><div class="widget-value">${level2}</div></div>
+            <div class="widget"><div class="widget-icon">⭐⭐⭐</div><div class="widget-title">Level 3</div><div class="widget-value">${level3}</div></div>
+            <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Quiz</div><div class="widget-value">${Math.round(avgQuiz)}%</div></div>
+            <div class="widget"><div class="widget-icon">⚠️</div><div class="widget-title">At Risk</div><div class="widget-value">${atRiskNurses.length}</div><div class="widget-title">Need attention</div></div>
+            <div class="widget"><div class="widget-icon">🏆</div><div class="widget-title">Top Performers</div><div class="widget-value">${topPerformers.length}</div><div class="widget-title">Score ≥85%</div></div>
         </div>
-        <div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100||0)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total} nurses</small></div>`).join('')}</div>
+        <div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100||0)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total}</small></div>`).join('')}</div>
         <div class="card"><h3>📊 Privilege Distribution</h3><div class="chart-container"><canvas id="privilegeChart"></canvas></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
         setTimeout(() => { const ctx = document.getElementById('privilegeChart')?.getContext('2d'); if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Level 1 (Trainee)', 'Level 2 (Independent)', 'Level 3 (Preceptor)'], datasets: [{ data: [level1, level2, level3], backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'] }] } }); }, 100);
         closeSidebar();
+    }
+
+    // ========== WEEKLY REPORT GENERATOR ==========
+    function generateWeeklyReport() {
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        
+        const report = {
+            generatedAt: new Date().toISOString(),
+            weekStart: startOfWeek.toISOString().split('T')[0],
+            totalNurses: nurses.length,
+            completedTraining: nurses.filter(n => n.trainingStatus === 'Completed').length,
+            avgQuizScore: nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1),
+            topPerformers: nurses.filter(n => n.quizScore && n.quizScore >= 85).map(n => ({ name: n.name, score: n.quizScore })),
+            atRiskNurses: nurses.filter(n => n.quizScore && n.quizScore < 60).map(n => ({ name: n.name, score: n.quizScore })),
+            departmentStats: {}
+        };
+        
+        nurses.forEach(n => {
+            if (!report.departmentStats[n.department]) report.departmentStats[n.department] = { total: 0, completed: 0, avgScore: 0, totalScore: 0 };
+            report.departmentStats[n.department].total++;
+            if (n.trainingStatus === 'Completed') report.departmentStats[n.department].completed++;
+            if (n.quizScore) {
+                report.departmentStats[n.department].totalScore += n.quizScore;
+                report.departmentStats[n.department].avgScore = report.departmentStats[n.department].totalScore / report.departmentStats[n.department].total;
+            }
+        });
+        
+        const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(reportBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_weekly_report_${startOfWeek.toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("WEEKLY_REPORT", "Weekly report generated");
+        showNotification('Weekly report generated and downloaded!', 'success');
     }
 
     // ========== TRACKER ==========
@@ -1208,12 +1468,13 @@
                 <option value="2">Level 2 (Independent)</option>
                 <option value="3">Level 3 (Preceptor)</option>
             </select>
+            <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
         </div>
         <div class="tracker-card">
             <table>
                 <thead>
                     <tr>
-                        <th>Emp ID</th><th>Name</th><th>Department</th><th>Quiz %</th><th>Modules Done</th><th>Total Modules</th><th>Progress</th><th>Status</th><th>Competency</th>
+                        <th>Emp ID</th><th>Name</th><th>Department</th><th>Quiz %</th><th>Modules Done</th><th>Total</th><th>Progress</th><th>Status</th><th>Competency</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -1231,8 +1492,9 @@
             const modulesDone = n.trainingModulesCompleted?.length || 0;
             const percent = Math.round((modulesDone/modules.total)*100);
             let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>');
+            let atRiskBadge = (n.quizScore && n.quizScore < 60) ? '<span class="badge badge-danger">⚠️ At Risk</span>' : '';
             html += `<tr>
-                <td>${n.empId}</td>
+                <td>${n.empId} ${atRiskBadge}</td>
                 <td><strong>${n.name}</strong></td>
                 <td>${n.department}</td>
                 <td>${n.quizScore || '—'}%</td>
@@ -1254,6 +1516,8 @@
         <div class="filter-bar">
             <button class="export-btn" onclick="exportToCSV()">📎 Export to CSV</button>
             <button class="export-btn" onclick="exportToPDFReport()">📄 Export to PDF</button>
+            <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
+            <button class="backup-btn" onclick="exportFullBackup()">💾 Full Backup</button>
         </div>
         <div class="tracker-card">
             <table>
@@ -1286,7 +1550,7 @@
         a.click();
         URL.revokeObjectURL(url);
         addAuditLog("EXPORT_CSV", "Exported competency report to CSV");
-        alert("✅ CSV exported!");
+        showNotification('CSV exported!', 'success');
     }
 
     function exportToPDFReport() {
@@ -1305,14 +1569,14 @@
         doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 25);
         doc.save(`smartcare_competency_${new Date().toISOString().split('T')[0]}.pdf`);
         addAuditLog("EXPORT_PDF", "Exported competency report to PDF");
-        alert("✅ PDF exported!");
+        showNotification('PDF exported!', 'success');
     }
 
-    // ========== ROLE MANAGEMENT (CLEAN TABLE FORMAT) ==========
+    // ========== ROLE MANAGEMENT ==========
     function renderRoleManagement() {
         let html = `<div class="page-header"><h1 class="page-title">👔 Role Management</h1><p class="page-desc">Promote or demote nurses to Supervisor or Nurse Manager roles</p></div>
         <div class="filter-bar">
-            <input type="text" id="searchRole" placeholder="🔍 Search by name or ID" onkeyup="renderRoleManagement()">
+            <input type="text" id="searchRole" placeholder="🔍 Search" onkeyup="renderRoleManagement()">
             <select id="filterDeptRole" onchange="renderRoleManagement()">
                 <option value="all">All Departments</option>
                 <option value="Labour Room">Labour Room</option>
@@ -1330,49 +1594,21 @@
             </select>
         </div>
         <div class="tracker-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Emp ID</th>
-                        <th>Name</th>
-                        <th>Department</th>
-                        <th>Current Role</th>
-                        <th>Privilege Level</th>
-                        <th>Training Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+            <tr>
+                <thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Current Role</th><th>Privilege</th><th>Training</th><th>Action</th></tr></thead>
                 <tbody>`;
         
         const search = document.getElementById('searchRole')?.value.toLowerCase() || '';
         const filterDept = document.getElementById('filterDeptRole')?.value || 'all';
         const filterRole = document.getElementById('filterCurrentRole')?.value || 'all';
         
-        let filtered = nursesData.filter(n => 
-            n.empId !== 'ADMIN999' && 
-            (filterDept === 'all' || n.department === filterDept) && 
-            (filterRole === 'all' || n.role === filterRole) && 
-            (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))
-        );
+        let filtered = nursesData.filter(n => n.empId !== 'ADMIN999' && (filterDept === 'all' || n.department === filterDept) && (filterRole === 'all' || n.role === filterRole) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
         
         filtered.forEach(n => {
-            let roleBadge = '';
-            if (n.role === 'manager') roleBadge = '<span class="role-badge role-manager">👔 Nurse Manager</span>';
-            else if (n.role === 'supervisor') roleBadge = '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>';
-            else roleBadge = '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>';
-            
-            let privilegeText = n.privilege === 1 ? '⭐ Level 1 (Trainee)' : (n.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
-            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄 In Progress</span>' : '<span class="status-pending">⏳ Pending</span>');
-            
-            html += `<tr>
-                <td>${n.empId}</td>
-                <td><strong>${n.name}</strong></td>
-                <td>${n.department}</td>
-                <td>${roleBadge}</td>
-                <td>${privilegeText}</td>
-                <td>${statusBadge}</td>
-                <td><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button></td>
-            </tr>`;
+            let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
+            let modules = getAllModulesCount(n.department);
+            let percent = Math.round(((n.trainingModulesCompleted?.length || 0)/modules.total)*100);
+            html += `<tr><td>${n.empId}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${roleBadge}</td><td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td><td>${percent}%</td><td><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button></td></tr>`;
         });
         
         html += `</tbody></table><p style="margin-top:0.8rem;">Total: ${filtered.length} staff members</p></div>`;
@@ -1387,16 +1623,13 @@
         if (nurse) {
             selectedNurseForRoleChange = nurse;
             document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
-            document.getElementById('roleModalNurse').innerHTML = `Current role: <strong>${nurse.role.toUpperCase()}</strong>`;
+            document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
             document.getElementById('newRoleSelect').value = nurse.role;
             document.getElementById('roleModal').style.display = 'flex';
         }
     }
 
-    function closeRoleModal() { 
-        document.getElementById('roleModal').style.display = 'none'; 
-        selectedNurseForRoleChange = null; 
-    }
+    function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; selectedNurseForRoleChange = null; }
 
     function confirmRoleChange() {
         if (!selectedNurseForRoleChange) return;
@@ -1409,7 +1642,7 @@
             else if (newRole === 'supervisor') selectedNurseForRoleChange.privilege = Math.max(2, selectedNurseForRoleChange.privilege);
             updateLoginUsers();
             addAuditLog("ROLE_CHANGE", `${selectedNurseForRoleChange.name} changed from ${oldRole} to ${newRole}`);
-            alert(`✅ ${selectedNurseForRoleChange.name} is now a ${newRole.toUpperCase()}!`);
+            showNotification(`${selectedNurseForRoleChange.name} is now a ${newRole.toUpperCase()}!`, 'success');
             if (currentUser.id === selectedNurseForRoleChange.empId) {
                 currentUser.role = newRole;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -1423,8 +1656,8 @@
     }
 
     function renderAuditLog() { 
-        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions and competency changes</p></div>
-        <div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search by user or action" onkeyup="renderAuditLog()"></div>
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions</p></div>
+        <div class="filter-bar"><input type="text" id="auditSearch" placeholder="🔍 Search" onkeyup="renderAuditLog()"></div>
         <div class="tracker-card">`;
         const search = document.getElementById('auditSearch')?.value.toLowerCase() || '';
         auditLog.filter(l => l.user.toLowerCase().includes(search) || l.action.toLowerCase().includes(search) || l.details.toLowerCase().includes(search)).slice(0, 100).forEach(l => { 
@@ -1442,7 +1675,10 @@
         <div class="setting-group"><label>Inactivity Days: </label><input type="number" id="id" value="${systemConfig.inactivityDaysThreshold}"><button onclick="updateSetting('inactivityDaysThreshold',document.getElementById('id').value)">Save</button></div>
         <div class="setting-group"><label>Quiz Questions: </label><input type="number" id="qq" value="${systemConfig.quizQuestionsCount}"><button onclick="updateSetting('quizQuestionsCount',document.getElementById('qq').value)">Save</button></div>
         <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate All Competencies</button>
-        <button class="export-btn" onclick="exportToCSV()">📎 Export Competency Data</button></div>`;
+        <button class="export-btn" onclick="exportToCSV()">📎 Export Competency Data</button>
+        <button class="backup-btn" onclick="exportFullBackup()">💾 Full Backup</button>
+        <button class="edit-btn" onclick="document.getElementById('restoreFile').click()">📥 Restore Backup</button>
+        <input type="file" id="restoreFile" style="display:none" accept=".json" onchange="importFullBackup(this.files[0])"></div>`;
         closeSidebar();
     }
 
@@ -1450,7 +1686,7 @@
         systemConfig[key] = parseInt(value); 
         localStorage.setItem('smartcare_config', JSON.stringify(systemConfig)); 
         addAuditLog("CONFIG_CHANGE", `${key} → ${value}`); 
-        alert(`✅ ${key} updated to ${value}`); 
+        showNotification(`${key} updated to ${value}`, 'success');
         renderSettings(); 
     }
 
@@ -1511,12 +1747,19 @@
         closeSidebar();
     }
 
-    function logout() { addAuditLog("LOGOUT","User logged out"); localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
+    function logout() { 
+        addAuditLog("LOGOUT","User logged out"); 
+        localStorage.removeItem('currentUser'); 
+        window.location.href = 'index.html'; 
+    }
 
     // Global functions
     window.toggleSidebar = toggleSidebar;
     window.navigateTo = navigateTo;
     window.logout = logout;
+    window.toggleDarkMode = toggleDarkMode;
+    window.resetTimer = resetTimer;
+    window.extendSession = extendSession;
     window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
     window.toggleTrainingCard = toggleTrainingCard;
     window.toggleCategory = toggleCategory;
@@ -1532,6 +1775,12 @@
     window.exportToPDFReport = exportToPDFReport;
     window.renderQuiz = renderQuiz;
     window.resetQuiz = resetQuiz;
+    window.exportFullBackup = exportFullBackup;
+    window.importFullBackup = importFullBackup;
+    window.generateWeeklyReport = generateWeeklyReport;
+    window.openBulkTrainingModal = openBulkTrainingModal;
+    window.closeBulkTrainingModal = closeBulkTrainingModal;
+    window.assignBulkTraining = assignBulkTraining;
 
     initDashboard();
 </script>
