@@ -291,7 +291,7 @@
             color: var(--text-primary);
         }
 
-        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .promote-btn, .backup-btn {
+        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .promote-btn, .backup-btn, .reset-pwd-btn {
             color: white;
             border: none;
             padding: 0.4rem 1rem;
@@ -310,6 +310,7 @@
         .export-btn { background: #6b7280; }
         .promote-btn { background: #8b5cf6; }
         .backup-btn { background: #0f5b63; }
+        .reset-pwd-btn { background: #f59e0b; }
 
         .role-badge {
             display: inline-block;
@@ -570,7 +571,7 @@
     </div>
 </div>
 
-<!-- Modal for Add/Edit Nurse -->
+<!-- Modal for Add/Edit Nurse (Password field removed for non-Admin) -->
 <div id="nurseModal" class="modal">
     <div class="modal-content">
         <h3 id="nurseModalTitle">Add New Nurse</h3>
@@ -596,10 +597,28 @@
             <option value="supervisor">👩‍🏫 Supervisor</option>
             <option value="manager">👔 Nurse Manager</option>
         </select>
-        <input type="text" id="nursePassword" placeholder="Password" value="nurse123">
+        <!-- Password field - Only visible for Admin when adding NEW nurse -->
+        <div id="passwordFieldContainer" style="display: none;">
+            <input type="password" id="nursePassword" placeholder="Password (default: nurse123)" value="nurse123">
+            <small style="font-size: 0.7rem; color: #666;">Only visible to Admin</small>
+        </div>
         <div class="modal-buttons">
             <button class="btn-small" onclick="closeNurseModal()">Cancel</button>
             <button class="add-btn" onclick="saveNurse()">Save Nurse</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Password Reset (Admin only) -->
+<div id="passwordResetModal" class="modal">
+    <div class="modal-content">
+        <h3>Reset Password</h3>
+        <p id="resetNurseName" style="margin-bottom: 0.5rem;"></p>
+        <input type="password" id="newPassword" placeholder="New Password" value="nurse123">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordResetModal()">Cancel</button>
+            <button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset Password</button>
         </div>
     </div>
 </div>
@@ -1005,6 +1024,56 @@
         return { total, categories };
     }
 
+    // ========== PASSWORD RESET (Admin Only) ==========
+    let selectedNurseForPasswordReset = null;
+
+    function openPasswordResetModal(nurseId) {
+        if (currentUser.role !== 'admin') {
+            showNotification('Only Admin can reset passwords', 'error');
+            return;
+        }
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            selectedNurseForPasswordReset = nurse;
+            document.getElementById('resetNurseName').innerHTML = `Reset password for: <strong>${nurse.name} (${nurse.empId})</strong>`;
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('passwordResetModal').style.display = 'flex';
+        }
+    }
+
+    function closePasswordResetModal() {
+        document.getElementById('passwordResetModal').style.display = 'none';
+        selectedNurseForPasswordReset = null;
+    }
+
+    function confirmPasswordReset() {
+        const newPassword = document.getElementById('newPassword').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+        
+        if (!newPassword) {
+            showNotification('Please enter a new password', 'error');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            showNotification('Passwords do not match', 'error');
+            return;
+        }
+        if (newPassword.length < 4) {
+            showNotification('Password must be at least 4 characters', 'error');
+            return;
+        }
+        
+        if (selectedNurseForPasswordReset) {
+            selectedNurseForPasswordReset.password = newPassword;
+            updateLoginUsers();
+            addAuditLog("PASSWORD_RESET", `Admin reset password for ${selectedNurseForPasswordReset.name} (${selectedNurseForPasswordReset.empId})`);
+            showNotification(`✅ Password reset for ${selectedNurseForPasswordReset.name}`, 'success');
+            closePasswordResetModal();
+            renderUserManagement();
+        }
+    }
+
     // ========== NURSE MANAGEMENT (Add/Edit/Delete) ==========
     function openAddNurseModal() {
         document.getElementById('nurseModalTitle').innerText = "Add New Nurse";
@@ -1014,7 +1083,15 @@
         document.getElementById('nurseDept').value = "ICU";
         document.getElementById('nursePrivilege').value = "1";
         document.getElementById('nurseRole').value = "nurse";
-        document.getElementById('nursePassword').value = "nurse123";
+        
+        // Only show password field for Admin when adding new nurse
+        if (currentUser.role === 'admin') {
+            document.getElementById('passwordFieldContainer').style.display = 'block';
+            document.getElementById('nursePassword').value = "nurse123";
+        } else {
+            document.getElementById('passwordFieldContainer').style.display = 'none';
+        }
+        
         document.getElementById('nurseModal').style.display = 'flex';
     }
 
@@ -1028,7 +1105,10 @@
             document.getElementById('nurseDept').value = nurse.department;
             document.getElementById('nursePrivilege').value = nurse.privilege;
             document.getElementById('nurseRole').value = nurse.role || "nurse";
-            document.getElementById('nursePassword').value = nurse.password || "nurse123";
+            
+            // NEVER show password field when editing - only Admin can reset password separately
+            document.getElementById('passwordFieldContainer').style.display = 'none';
+            
             document.getElementById('nurseModal').style.display = 'flex';
         }
     }
@@ -1044,7 +1124,6 @@
         const department = document.getElementById('nurseDept').value;
         const privilege = parseInt(document.getElementById('nursePrivilege').value);
         const role = document.getElementById('nurseRole').value;
-        const password = document.getElementById('nursePassword').value.trim();
         
         if (!name || !empId) {
             showNotification('Please fill Name and Employee ID', 'error');
@@ -1059,21 +1138,26 @@
         }
         
         if (id) {
-            // Edit existing
+            // Edit existing - preserve existing password
             const index = nursesData.findIndex(n => n.id == id);
             if (index !== -1) {
                 const oldRole = nursesData[index].role;
                 nursesData[index] = { 
                     ...nursesData[index], 
                     name, empId, department, privilege, 
-                    role: role, 
-                    password: password 
+                    role: role
+                    // Password remains unchanged
                 };
                 addAuditLog("NURSE_EDITED", `${currentUser.name} edited nurse: ${name} (${empId}) | Role: ${oldRole} → ${role}`);
                 showNotification(`✅ Nurse ${name} updated successfully`, 'success');
             }
         } else {
-            // Add new
+            // Add new - only Admin can set password, others use default
+            let password = "nurse123";
+            if (currentUser.role === 'admin' && document.getElementById('nursePassword')) {
+                password = document.getElementById('nursePassword').value.trim() || "nurse123";
+            }
+            
             const newId = Math.max(...nursesData.map(n => n.id), 0) + 1;
             nursesData.push({
                 id: newId, 
@@ -1099,11 +1183,12 @@
         closeNurseModal();
         
         // Refresh the current view
-        if (document.getElementById('userManagement') && document.getElementById('userManagement').style.display !== 'none') {
+        if (document.querySelector('.nav-item.active')?.innerText.includes('User Management')) {
             renderUserManagement();
-        }
-        if (document.getElementById('trainingStatus') && document.getElementById('trainingStatus').style.display !== 'none') {
+        } else if (document.querySelector('.nav-item.active')?.innerText.includes('Training Status')) {
             renderTrainingStatusUpdater();
+        } else if (document.querySelector('.nav-item.active')?.innerText.includes('Nurse Tracker')) {
+            renderTrackerSheet();
         }
         renderDashboard();
     }
@@ -1127,6 +1212,7 @@
             renderUserManagement();
             renderDashboard();
             renderTrainingStatusUpdater();
+            renderTrackerSheet();
         }
     }
 
@@ -1338,10 +1424,11 @@
                 html += `<p>No training modules defined for this department.</p>`;
             }
             
-            html += `<div style="margin-top:1rem; display:flex; gap:0.5rem;">
+            html += `<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', true, event)">✅ Mark All Complete</button>
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', false, event)">⬜ Mark All Incomplete</button>
-                        ${(currentUser.role === 'admin' || currentUser.role === 'manager' || currentUser.role === 'supervisor') ? `<button class="edit-btn" onclick="openEditNurseModal(${nurse.id})">✏️ Edit Nurse</button>` : ''}
+                        <button class="edit-btn" onclick="openEditNurseModal(${nurse.id})">✏️ Edit Nurse</button>
+                        ${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${nurse.id})">🔑 Reset Password</button>` : ''}
                     </div>
                 </div>
             </div>`;
@@ -1742,7 +1829,10 @@
                 <td><div style="background:#e2e8f0; border-radius:10px; width:100px;"><div style="background:#10b981; width:${percent}%; height:8px; border-radius:10px;"></div></div>${percent}%</td>
                 <td>${statusBadge}</td>
                 <td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td>
-                <td><button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button> <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button></td>
+                <td><button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button> 
+                    <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button>
+                    ${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${n.id})">🔑 Reset Pwd</button>` : ''}
+                </td>
             </tr>`;
         });
         html += `</tbody></table></div>`;
@@ -1805,13 +1895,16 @@
                 <td>${roleBadge}</td>
                 <td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td>
                 <td>${trainingPercent}%</td><td>${n.quizScore || '—'}%</td><td>${statusBadge}</td>
-                <td><button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button> 
+                <td>
+                    <button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button> 
                     <button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button>
-                    <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button></td>
-            </tr>`;
+                    <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button>
+                    ${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${n.id})">🔑 Reset Pwd</button>` : ''}
+                 </td>
+            </table>`;
         });
         
-        html += `</tbody><tr><p style="margin-top:0.8rem;">Total: ${filtered.length} users</p></div>`;
+        html += `</tbody></table><p style="margin-top:0.8rem;">Total: ${filtered.length} users</p></div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
@@ -1883,7 +1976,7 @@
                 <td>${n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')}</td>
             </tr>`;
         });
-        html += `</tbody><tr></div>`;
+        html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
@@ -2083,6 +2176,9 @@
     window.openRoleModal = openRoleModal;
     window.closeRoleModal = closeRoleModal;
     window.confirmRoleChange = confirmRoleChange;
+    window.openPasswordResetModal = openPasswordResetModal;
+    window.closePasswordResetModal = closePasswordResetModal;
+    window.confirmPasswordReset = confirmPasswordReset;
     window.updateSetting = updateSetting;
     window.exportToCSV = exportToCSV;
     window.exportToPDFReport = exportToPDFReport;
