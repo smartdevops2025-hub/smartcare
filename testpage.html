@@ -1,1 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SMARTCARE — Nurse Induction Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
 
+        :root {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #4b5563;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --sidebar-bg: linear-gradient(180deg, #0b3b4f 0%, #0f4a5e 100%);
+            --sidebar-text: #e0f2fe;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --sidebar-bg: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            --sidebar-text: #cbd5e1;
+        }
+
+        body {
+            background: var(--bg-primary);
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+        }
+        .dark-mode-toggle:hover { transform: scale(1.05); }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .notification-success { background: #10b981; color: white; }
+        .notification-error { background: #ef4444; color: white; }
+        .notification-info { background: #3b82f6; color: white; }
+        .notification-warning { background: #f59e0b; color: white; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .timeout-warning {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 1000;
+            background: #f59e0b;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            transition: transform 0.3s ease, background 0.3s;
+            z-index: 100;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: #0b3b4f;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .sidebar-header h2 { font-size: 1.5rem; font-weight: 700; }
+        .sidebar-header p { font-size: 0.65rem; opacity: 0.7; margin-top: 0.3rem; }
+
+        .user-info {
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.08);
+            margin: 0.8rem;
+            border-radius: 0.8rem;
+        }
+
+        .user-name { font-weight: 600; font-size: 0.85rem; }
+        .user-role { font-size: 0.65rem; opacity: 0.7; margin-top: 0.2rem; }
+
+        .privilege-indicator {
+            margin-top: 0.6rem;
+            padding: 0.4rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .privilege-l1 { background: #3b82f6; color: white; }
+        .privilege-l2 { background: #10b981; color: white; }
+        .privilege-l3 { background: #8b5cf6; color: white; }
+        .privilege-admin { background: #ef4444; color: white; }
+        .privilege-manager { background: #8b5cf6; color: white; }
+        .privilege-supervisor { background: #f59e0b; color: white; }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0.5rem 0;
+        }
+
+        .nav-item {
+            padding: 0.6rem 1rem;
+            margin: 0.1rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            color: var(--sidebar-text);
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left: 3px solid #7ab7c7;
+            font-weight: 500;
+        }
+
+        .nav-icon { font-size: 1.1rem; width: 24px; }
+
+        .logout-btn {
+            margin: 0.8rem;
+            padding: 0.6rem;
+            background: rgba(220,80,80,0.2);
+            border: 1px solid rgba(220,80,80,0.4);
+            border-radius: 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .logout-btn:hover { background: rgba(220,80,80,0.4); }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .page-header { margin-bottom: 1.5rem; }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
+        .page-desc { color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.2rem; }
+
+        .dashboard-widgets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .widget {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+            color: var(--text-primary);
+        }
+        .widget:hover { transform: translateY(-2px); }
+        .widget-title { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; }
+        .widget-value { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin: 0.3rem 0; }
+        .widget-icon { float: right; font-size: 2rem; opacity: 0.3; }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .tracker-card {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            min-width: 800px;
+        }
+        th {
+            text-align: left;
+            padding: 0.8rem 0.6rem;
+            background: var(--bg-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.7rem 0.6rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .action-buttons button {
+            white-space: nowrap;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.7rem;
+        }
+
+        .status-completed { background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
+        .status-pending { background: #fff3e3; color: #b45309; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
+        .status-inprogress { background: #fef9c3; color: #854d0e; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
+
+        .filter-bar {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-bar input, .filter-bar select {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-small, .quiz-btn, .update-btn, .add-btn, .edit-btn, .delete-btn, .save-btn, .export-btn, .promote-btn, .backup-btn, .reset-pwd-btn {
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .btn-small { background: #0f5b63; }
+        .quiz-btn { background: #0f5b63; }
+        .update-btn { background: #f59e0b; }
+        .add-btn { background: #10b981; }
+        .edit-btn { background: #3b82f6; }
+        .delete-btn { background: #ef4444; }
+        .save-btn { background: #8b5cf6; }
+        .export-btn { background: #6b7280; }
+        .promote-btn { background: #8b5cf6; }
+        .backup-btn { background: #0f5b63; }
+        .reset-pwd-btn { background: #f59e0b; }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .role-admin { background: #ef4444; color: white; }
+        .role-manager { background: #8b5cf6; color: white; }
+        .role-supervisor { background: #f59e0b; color: white; }
+        .role-nurse { background: #3b82f6; color: white; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-left: 0.3rem;
+        }
+        .badge-warning { background: #f59e0b; color: white; }
+        .badge-danger { background: #ef4444; color: white; }
+        .badge-success { background: #10b981; color: white; }
+
+        .module-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .module-chip {
+            background: var(--bg-primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        .module-chip.completed {
+            background: #10b981;
+            color: white;
+        }
+        .module-chip:hover { transform: scale(1.02); }
+
+        .category-group {
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .category-header {
+            background: var(--bg-primary);
+            padding: 0.5rem 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+        .category-content {
+            padding: 0.5rem;
+            display: none;
+        }
+        .category-content.open { display: block; }
+
+        .training-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.8rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .training-card-header {
+            background: var(--bg-primary);
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .training-card-header:hover { background: var(--border-color); }
+        .training-card-header h4 { font-size: 0.9rem; margin: 0; color: var(--text-primary); }
+        .training-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .progress-bar-container {
+            width: 150px;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: #10b981;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+        .expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .expand-icon.expanded { transform: rotate(180deg); }
+        .training-card-body {
+            display: none;
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .training-card-body.expanded { display: block; }
+
+        .quiz-question {
+            background: var(--bg-primary);
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-radius: 0.6rem;
+        }
+        .quiz-question p { font-weight: 600; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-primary); }
+        .quiz-option { margin: 0.2rem 0 0.2rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-primary); }
+        .quiz-option input { width: auto; }
+        .score-display {
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0.8rem;
+            background: var(--bg-primary);
+            border-radius: 0.8rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.8rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+        .stat-number { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); }
+        .stat-label { font-size: 0.7rem; color: var(--text-secondary); }
+
+        .chart-container { max-width: 300px; margin: 0 auto; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            color: var(--text-primary);
+        }
+        .modal-content h3 { margin-bottom: 0.8rem; color: var(--text-primary); font-size: 1.2rem; }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 0.6rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.6rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        .modal-buttons { display: flex; gap: 0.8rem; justify-content: flex-end; }
+
+        .audit-log-entry {
+            padding: 0.4rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100%;
+                width: 260px;
+                transition: left 0.3s ease;
+                z-index: 200;
+            }
+            .sidebar.open { left: 0; }
+            .sidebar-toggle { display: block; }
+            .main-content { padding: 0.8rem; margin-top: 3rem; }
+            .dashboard-widgets { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+            .widget-value { font-size: 1.3rem; }
+            .page-title { font-size: 1.2rem; }
+            .training-progress { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-widgets { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</div>
+<div class="timeout-warning" id="timeoutWarning" onclick="resetTimer()">⏰ Session expiring soon! Click to stay logged in.</div>
+<div class="app-container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>SMARTCARE</h2>
+            <p>Induction & privileging</p>
+        </div>
+        <div class="user-info" id="userInfo"></div>
+        <div class="nav-menu" id="navMenu"></div>
+        <div class="logout-btn" onclick="logout()">← Logout</div>
+    </div>
+    <div class="main-content" id="mainContent"></div>
+</div>
+
+<!-- Modal for Add/Edit Nurse -->
+<div id="nurseModal" class="modal">
+    <div class="modal-content">
+        <h3 id="nurseModalTitle">Add New Nurse</h3>
+        <input type="hidden" id="editNurseId">
+        <input type="text" id="nurseName" placeholder="Full Name" required>
+        <input type="text" id="nurseEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
+        <select id="nurseDept">
+            <option value="Labour Room">Labour Room</option>
+            <option value="Emergency Department">Emergency Department</option>
+            <option value="ICU">ICU</option>
+            <option value="Infection Control">Infection Control</option>
+            <option value="Critical Care">Critical Care</option>
+            <option value="Ward">Ward</option>
+        </select>
+        <select id="nursePrivilege">
+            <option value="1">Level 1 (Trainee)</option>
+            <option value="2">Level 2 (Independent)</option>
+            <option value="3">Level 3 (Preceptor)</option>
+        </select>
+        <select id="nurseRole">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div id="passwordFieldContainer" style="display: none;">
+            <input type="password" id="nursePassword" placeholder="Password (default: nurse123)" value="nurse123">
+            <small style="font-size: 0.7rem; color: #666;">Only visible to Admin</small>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeNurseModal()">Cancel</button>
+            <button class="add-btn" onclick="saveNurse()">Save Nurse</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Password Reset (Admin only) -->
+<div id="passwordResetModal" class="modal">
+    <div class="modal-content">
+        <h3>Reset Password</h3>
+        <p id="resetNurseName" style="margin-bottom: 0.5rem;"></p>
+        <input type="password" id="newPassword" placeholder="New Password" value="nurse123">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordResetModal()">Cancel</button>
+            <button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Role Change -->
+<div id="roleModal" class="modal">
+    <div class="modal-content">
+        <h3 id="roleModalTitle">Change Role</h3>
+        <p id="roleModalNurse" style="margin-bottom: 0.5rem;"></p>
+        <select id="newRoleSelect">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeRoleModal()">Cancel</button>
+            <button class="promote-btn" onclick="confirmRoleChange()">Confirm Change</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Bulk Training Assignment -->
+<div id="bulkTrainingModal" class="modal">
+    <div class="modal-content">
+        <h3>📚 Bulk Training Assignment</h3>
+        <p style="margin-bottom: 0.5rem;">Select nurses and training modules to assign</p>
+        <select id="bulkNurseSelect" multiple size="5" style="height: auto;"></select>
+        <select id="bulkModuleSelect" multiple size="5" style="height: auto;"></select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button>
+            <button class="add-btn" onclick="assignBulkTraining()">Assign Training</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== MOBILE SIDEBAR ==========
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+    function closeSidebar() {
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+    }
+
+    // ========== DARK MODE ==========
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        const toggleBtn = document.querySelector('.dark-mode-toggle');
+        toggleBtn.textContent = isDark ? '☀️' : '🌙';
+        showNotification(isDark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+    }
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.querySelector('.dark-mode-toggle').textContent = '☀️';
+    }
+
+    // ========== NOTIFICATION SYSTEM ==========
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    // ========== SESSION TIMEOUT ==========
+    let inactivityTimer, warningTimer;
+    const SESSION_TIMEOUT = 30 * 60 * 1000;
+    const WARNING_BEFORE = 60 * 1000;
+    function resetTimer() {
+        clearTimeout(inactivityTimer); clearTimeout(warningTimer);
+        document.getElementById('timeoutWarning').style.display = 'none';
+        inactivityTimer = setTimeout(logout, SESSION_TIMEOUT);
+        warningTimer = setTimeout(() => {
+            document.getElementById('timeoutWarning').style.display = 'block';
+            showNotification('Session will timeout in 1 minute due to inactivity', 'warning');
+        }, SESSION_TIMEOUT - WARNING_BEFORE);
+    }
+    ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => document.addEventListener(event, resetTimer));
+
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'd') { e.preventDefault(); navigateTo('dashboard'); showNotification('Dashboard (Ctrl+D)', 'info'); }
+        if (e.ctrlKey && e.key === 't') { e.preventDefault(); navigateTo('trainingStatus'); showNotification('Training Status (Ctrl+T)', 'info'); }
+        if (e.ctrlKey && e.key === 'q') { e.preventDefault(); 
+            if (currentUser.role === 'admin' || currentUser.role === 'nurse') { navigateTo('quiz'); showNotification('Competency Quiz (Ctrl+Q)', 'info'); } 
+            else { showNotification('Quiz is only available for Admin and Nurses', 'warning'); }
+        }
+        if (e.ctrlKey && e.key === 'r') { e.preventDefault(); navigateTo('reports'); showNotification('Reports (Ctrl+R)', 'info'); }
+        if (e.ctrlKey && e.key === 's') { e.preventDefault(); exportFullBackup(); showNotification('Backup exported (Ctrl+S)', 'info'); }
+        if (e.ctrlKey && e.key === 'n') { e.preventDefault(); openAddNurseModal(); showNotification('Add New Nurse (Ctrl+N)', 'info'); }
+    });
+
+    // ========== AUTO-SAVE & BACKUP ==========
+    function autoSaveData() {
+        const backup = { nurses: nursesData, config: systemConfig, audit: auditLog, quizzes: nurseQuizzes, timestamp: new Date().toISOString() };
+        localStorage.setItem('smartcare_backup', JSON.stringify(backup));
+    }
+    setInterval(autoSaveData, 30000);
+    function exportFullBackup() {
+        const backup = { nurses: nursesData, config: systemConfig, audit: auditLog, quizzes: nurseQuizzes, exportDate: new Date().toISOString(), version: '2.0' };
+        const dataStr = JSON.stringify(backup, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_full_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("BACKUP_EXPORT", "Full system backup exported");
+        showNotification('Full backup exported successfully!', 'success');
+    }
+    function importFullBackup(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const backup = JSON.parse(e.target.result);
+                if (backup.nurses) nursesData = backup.nurses;
+                if (backup.config) systemConfig = backup.config;
+                if (backup.audit) auditLog = backup.audit;
+                if (backup.quizzes) nurseQuizzes = backup.quizzes;
+                localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
+                localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
+                localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+                updateLoginUsers();
+                addAuditLog("BACKUP_IMPORT", "Full system backup imported");
+                showNotification('Backup restored successfully!', 'success');
+                location.reload();
+            } catch (err) { showNotification('Invalid backup file', 'error'); }
+        };
+        reader.readAsText(file);
+    }
+
+    // ========== AUDIT LOG ==========
+    let auditLog = [];
+    function addAuditLog(action, details) {
+        const cu = JSON.parse(localStorage.getItem('currentUser'));
+        auditLog.unshift({ timestamp: new Date().toISOString(), user: cu?.name || "Unknown", userId: cu?.id || "Unknown", role: cu?.role || "Unknown", action, details });
+        if(auditLog.length > 1000) auditLog.pop();
+        localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
+    }
+    const savedAudit = localStorage.getItem('smartcare_audit');
+    if(savedAudit) auditLog = JSON.parse(savedAudit);
+
+    // ========== USER SESSION ==========
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = 'index.html';
+    addAuditLog("LOGIN", "User logged into the system");
+    resetTimer();
+
+    // ========== SYSTEM CONFIG ==========
+    let systemConfig = { passingScore: 70, privilegeUpgradeScore: 85, privilegeDowngradeScore: 60, autoAssignPrivilege: true, inactivityDaysThreshold: 30, quizQuestionsCount: 10 };
+    const savedConfig = localStorage.getItem('smartcare_config');
+    if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
+
+    // ========== COMPLETE TRAINING MODULES ==========
+    const trainingModulesByDept = {
+        "Labour Room": {
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care", "Patient transport", "Alternative communication"],
+            "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour", "Biomedical waste", "Infection prevention", "Maternal/neonatal safety", "Documentation", "Emergency handling", "Clinical expertise", "Decision making", "Protocol-based care", "Leadership", "Medico-legal safety"],
+            "Medication Management": ["Patient identification", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk meds", "Drug calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste disposal", "Device related care", "Surveillance"]
+        },
+        "Emergency Department": {
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort", "Vulnerable care", "Pre/post-op", "Transport", "Alternative communication", "Pain assessment"],
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator", "Traction", "Ryles Tube", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Patient safety", "Fluid aspiration", "Preoperative care", "Death Protocol"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk", "Drug calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "ICU": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort/hygiene", "Vulnerable care", "Transport", "Communication"],
+            "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP", "ICD", "Intubation/extubation", "Re-exploration", "Ventilator/Bi-pap", "Defibrillator", "Suctioning", "Wound care", "TPI", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Fluid aspiration", "Major dressing", "End of life"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "Infection Control": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Pre/post-op", "Death Protocol"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "Critical Care": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication"],
+            "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning", "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Major dressing", "End of life"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "Ward": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample", "Catheter care", "Suctioning", "Wound care", "Trauma care", "CPR", "Enteral feeds", "Blood transfusion", "Safety", "Aspiration", "Pre/post-op", "Death Protocol"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        }
+    };
+
+    // ========== Generate Quiz Questions ==========
+    function generateQuizQuestions(department, count = 10) {
+        const deptModules = trainingModulesByDept[department];
+        if (!deptModules) return [];
+        let allItems = [];
+        for (const [category, items] of Object.entries(deptModules)) {
+            items.forEach(item => {
+                allItems.push({
+                    category, text: item,
+                    correctAnswer: item.includes("protocol") || item.includes("policy") ? "Follow established protocol" :
+                                  item.includes("identify") ? "Verify patient identification" :
+                                  item.includes("safety") ? "Ensure patient safety measures" :
+                                  item.includes("document") ? "Complete documentation accurately" :
+                                  item.includes("care") ? "Provide appropriate patient care" :
+                                  "Demonstrate competency in " + item.toLowerCase()
+                });
+            });
+        }
+        const shuffled = [...allItems];
+        for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+        return shuffled.slice(0, count).map((item, idx) => ({
+            id: idx, text: `Regarding "${item.text}": What is the correct nursing action?`,
+            category: item.category,
+            options: [item.correctAnswer, "Ignore unless specifically instructed", "Delegate to another staff member", "Document without action"],
+            correct: 0
+        }));
+    }
+
+    let nurseQuizzes = JSON.parse(localStorage.getItem('smartcare_quizzes') || '{}');
+    function getOrCreateQuiz(nurseId, department) {
+        const key = `${nurseId}_${department}`;
+        if (!nurseQuizzes[key] || nurseQuizzes[key].completed) {
+            nurseQuizzes[key] = { questions: generateQuizQuestions(department, systemConfig.quizQuestionsCount), completed: false, score: null, startedAt: new Date().toISOString() };
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+        }
+        return nurseQuizzes[key];
+    }
+
+    // ========== NURSES DATA ==========
+    let nursesData = [
+        { id: 1, name: "Mohan", empId: "NURSE101", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-01-15", quizScore: null, preEval: null, postEval: null },
+        { id: 2, name: "Razim", empId: "NURSE102", department: "Emergency Department", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null, preEval: null, postEval: null },
+        { id: 3, name: "Punya", empId: "NURSE103", department: "Infection Control", trainingStatus: "Pending", privilege: 1, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null },
+        { id: 4, name: "Vinesh", empId: "NURSE104", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null, preEval: null, postEval: null },
+        { id: 5, name: "Manoj Das", empId: "SUP001", department: "ICU", trainingStatus: "Pending", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null },
+        { id: 6, name: "Lekha Nair", empId: "MGR001", department: "ICU", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-01-10", password: "manager001", role: "manager", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null }
+    ];
+
+    function updateLoginUsers() {
+        let loginUsers = { "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" } };
+        nursesData.forEach(n => { loginUsers[n.empId] = { password: n.password, role: n.role, name: n.name, privilege: n.privilege, department: n.department }; });
+        localStorage.setItem('smartcare_users', JSON.stringify(loginUsers));
+    }
+
+    function getAllModulesCount(department) {
+        const deptModules = trainingModulesByDept[department];
+        if (!deptModules) return { total: 0, categories: [] };
+        let total = 0, categories = [];
+        for (const [cat, items] of Object.entries(deptModules)) { categories.push({ name: cat, count: items.length, items: items }); total += items.length; }
+        return { total, categories };
+    }
+
+    // ========== PASSWORD RESET (Admin Only) ==========
+    let selectedNurseForPasswordReset = null;
+    function openPasswordResetModal(nurseId) {
+        if (currentUser.role !== 'admin') { showNotification('Only Admin can reset passwords', 'error'); return; }
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            selectedNurseForPasswordReset = nurse;
+            document.getElementById('resetNurseName').innerHTML = `Reset password for: <strong>${nurse.name} (${nurse.empId})</strong>`;
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('passwordResetModal').style.display = 'flex';
+        }
+    }
+    function closePasswordResetModal() { document.getElementById('passwordResetModal').style.display = 'none'; selectedNurseForPasswordReset = null; }
+    function confirmPasswordReset() {
+        const newPassword = document.getElementById('newPassword').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+        if (!newPassword) { showNotification('Please enter a new password', 'error'); return; }
+        if (newPassword !== confirmPassword) { showNotification('Passwords do not match', 'error'); return; }
+        if (newPassword.length < 4) { showNotification('Password must be at least 4 characters', 'error'); return; }
+        if (selectedNurseForPasswordReset) {
+            selectedNurseForPasswordReset.password = newPassword;
+            updateLoginUsers();
+            addAuditLog("PASSWORD_RESET", `Admin reset password for ${selectedNurseForPasswordReset.name} (${selectedNurseForPasswordReset.empId})`);
+            showNotification(`✅ Password reset for ${selectedNurseForPasswordReset.name}`, 'success');
+            closePasswordResetModal();
+            renderUserManagement();
+        }
+    }
+
+    // ========== NURSE MANAGEMENT ==========
+    function openAddNurseModal() {
+        document.getElementById('nurseModalTitle').innerText = "Add New Nurse";
+        document.getElementById('editNurseId').value = "";
+        document.getElementById('nurseName').value = "";
+        document.getElementById('nurseEmpId').value = "";
+        document.getElementById('nurseDept').value = "ICU";
+        document.getElementById('nursePrivilege').value = "1";
+        document.getElementById('nurseRole').value = "nurse";
+        if (currentUser.role === 'admin') {
+            document.getElementById('passwordFieldContainer').style.display = 'block';
+            document.getElementById('nursePassword').value = "nurse123";
+        } else { document.getElementById('passwordFieldContainer').style.display = 'none'; }
+        document.getElementById('nurseModal').style.display = 'flex';
+    }
+    function openEditNurseModal(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            document.getElementById('nurseModalTitle').innerText = `Edit Nurse: ${nurse.name}`;
+            document.getElementById('editNurseId').value = nurse.id;
+            document.getElementById('nurseName').value = nurse.name;
+            document.getElementById('nurseEmpId').value = nurse.empId;
+            document.getElementById('nurseDept').value = nurse.department;
+            document.getElementById('nursePrivilege').value = nurse.privilege;
+            document.getElementById('nurseRole').value = nurse.role || "nurse";
+            document.getElementById('passwordFieldContainer').style.display = 'none';
+            document.getElementById('nurseModal').style.display = 'flex';
+        }
+    }
+    function closeNurseModal() { document.getElementById('nurseModal').style.display = 'none'; }
+    function saveNurse() {
+        const id = document.getElementById('editNurseId').value;
+        const name = document.getElementById('nurseName').value.trim();
+        const empId = document.getElementById('nurseEmpId').value.trim().toUpperCase();
+        const department = document.getElementById('nurseDept').value;
+        const privilege = parseInt(document.getElementById('nursePrivilege').value);
+        const role = document.getElementById('nurseRole').value;
+        if (!name || !empId) { showNotification('Please fill Name and Employee ID', 'error'); return; }
+        const existingNurse = nursesData.find(n => n.empId === empId && n.id != id);
+        if (existingNurse) { showNotification(`Employee ID ${empId} already exists!`, 'error'); return; }
+        if (id) {
+            const index = nursesData.findIndex(n => n.id == id);
+            if (index !== -1) {
+                nursesData[index] = { ...nursesData[index], name, empId, department, privilege, role };
+                addAuditLog("NURSE_EDITED", `${currentUser.name} edited nurse: ${name} (${empId})`);
+                showNotification(`✅ Nurse ${name} updated successfully`, 'success');
+            }
+        } else {
+            let password = "nurse123";
+            if (currentUser.role === 'admin' && document.getElementById('nursePassword')) { password = document.getElementById('nursePassword').value.trim() || "nurse123"; }
+            const newId = Math.max(...nursesData.map(n => n.id), 0) + 1;
+            nursesData.push({ id: newId, name, empId, department, privilege, role, password, preEval: null, postEval: null, trainingStatus: "Pending", joiningDate: new Date().toISOString().split('T')[0], trainingModulesCompleted: [], lastActivity: new Date().toISOString().split('T')[0], quizScore: null });
+            addAuditLog("NURSE_ADDED", `${currentUser.name} added new nurse: ${name} (${empId})`);
+            showNotification(`✅ New nurse ${name} added successfully!`, 'success');
+        }
+        updateLoginUsers();
+        closeNurseModal();
+        renderUserManagement();
+        renderDashboard();
+    }
+    function deleteNurse(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (!nurse) return;
+        if (nurse.role === 'admin') { showNotification('Cannot delete Admin account', 'error'); return; }
+        if (confirm(`Are you sure you want to delete ${nurse.name} (${nurse.empId})?`)) {
+            nursesData = nursesData.filter(n => n.id !== nurseId);
+            updateLoginUsers();
+            addAuditLog("NURSE_DELETED", `${currentUser.name} deleted nurse: ${nurse.name} (${nurse.empId})`);
+            showNotification(`✅ Nurse ${nurse.name} deleted`, 'success');
+            renderUserManagement();
+            renderDashboard();
+        }
+    }
+
+    // ========== COMPETENCY ENGINE ==========
+    function recalculatePrivilege(nurse) {
+        if (currentUser?.role === 'admin') return nurse.privilege;
+        if (!systemConfig.autoAssignPrivilege || nurse.role !== 'nurse') return nurse.privilege;
+        let newPrivilege = nurse.privilege;
+        const modules = getAllModulesCount(nurse.department);
+        const completedCount = nurse.trainingModulesCompleted?.length || 0;
+        const allModulesCompleted = completedCount === modules.total;
+        const lastActivity = new Date(nurse.lastActivity || nurse.joiningDate);
+        const daysInactive = Math.floor((new Date() - lastActivity) / (1000 * 60 * 60 * 24));
+        if (daysInactive > systemConfig.inactivityDaysThreshold && newPrivilege > 1) newPrivilege--;
+        if (nurse.quizScore) {
+            if (nurse.quizScore >= systemConfig.privilegeUpgradeScore && newPrivilege < 3) newPrivilege++;
+            else if (nurse.quizScore < systemConfig.privilegeDowngradeScore && newPrivilege > 1) newPrivilege--;
+        }
+        if (allModulesCompleted && newPrivilege < 2 && nurse.preEval >= systemConfig.passingScore) newPrivilege = 2;
+        if (nurse.preEval && nurse.preEval >= systemConfig.passingScore && nurse.trainingStatus === 'Pending') nurse.trainingStatus = 'In Progress';
+        return Math.min(3, Math.max(1, newPrivilege));
+    }
+    function updateAllPrivileges() {
+        let changes = 0;
+        nursesData.forEach(nurse => {
+            const oldPrivilege = nurse.privilege;
+            const newPrivilege = recalculatePrivilege(nurse);
+            if (oldPrivilege !== newPrivilege) { nurse.privilege = newPrivilege; changes++; }
+            const modules = getAllModulesCount(nurse.department);
+            const completedCount = nurse.trainingModulesCompleted?.length || 0;
+            if (completedCount === modules.total && nurse.trainingStatus !== 'Completed') nurse.trainingStatus = 'Completed';
+            else if (completedCount > 0 && nurse.trainingStatus === 'Pending') nurse.trainingStatus = 'In Progress';
+        });
+        updateLoginUsers();
+        return changes;
+    }
+    function runPrivilegeRecalculation() { const changes = updateAllPrivileges(); showNotification(`✅ Recalculated! ${changes} nurses had privilege changes.`, 'success'); renderUserManagement(); }
+
+    // ========== BULK TRAINING ==========
+    function openBulkTrainingModal() {
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Manager, and Supervisor can assign bulk training', 'error'); return;
+        }
+        const nurseSelect = document.getElementById('bulkNurseSelect');
+        const moduleSelect = document.getElementById('bulkModuleSelect');
+        nurseSelect.innerHTML = '';
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const option = document.createElement('option'); option.value = n.empId; option.textContent = `${n.name} (${n.empId}) - ${n.department}`; nurseSelect.appendChild(option);
+        });
+        const allModules = new Set();
+        for (const dept in trainingModulesByDept) {
+            for (const cat in trainingModulesByDept[dept]) {
+                trainingModulesByDept[dept][cat].forEach(m => allModules.add(m));
+            }
+        }
+        moduleSelect.innerHTML = '';
+        Array.from(allModules).forEach(m => {
+            const option = document.createElement('option'); option.value = m; option.textContent = m; moduleSelect.appendChild(option);
+        });
+        document.getElementById('bulkTrainingModal').style.display = 'flex';
+    }
+    function closeBulkTrainingModal() { document.getElementById('bulkTrainingModal').style.display = 'none'; }
+    function assignBulkTraining() {
+        const nurseSelect = document.getElementById('bulkNurseSelect');
+        const moduleSelect = document.getElementById('bulkModuleSelect');
+        const selectedNurses = Array.from(nurseSelect.selectedOptions).map(opt => opt.value);
+        const selectedModules = Array.from(moduleSelect.selectedOptions).map(opt => opt.value);
+        if (selectedNurses.length === 0 || selectedModules.length === 0) { showNotification('Please select at least one nurse and one module', 'warning'); return; }
+        let assignedCount = 0;
+        selectedNurses.forEach(empId => {
+            const nurse = nursesData.find(n => n.empId === empId);
+            if (nurse) {
+                if (!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
+                selectedModules.forEach(module => {
+                    if (!nurse.trainingModulesCompleted.includes(module)) {
+                        nurse.trainingModulesCompleted.push(module);
+                        assignedCount++;
+                    }
+                });
+                nurse.lastActivity = new Date().toISOString().split('T')[0];
+                recalculatePrivilege(nurse);
+            }
+        });
+        updateLoginUsers();
+        addAuditLog("BULK_TRAINING", `Assigned ${selectedModules.length} modules to ${selectedNurses.length} nurses`);
+        showNotification(`✅ Assigned ${assignedCount} training modules!`, 'success');
+        closeBulkTrainingModal();
+        renderTrainingStatusUpdater();
+    }
+
+    // Store expanded states
+    let expandedNurses = new Set();
+
+    // ========== TRAINING STATUS UPDATER ==========
+    function renderTrainingStatusUpdater() {
+        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status</h1><p class="page-desc">Click on any staff member to expand and mark training items</p></div>
+        <div class="filter-bar">
+            <input type="text" id="searchTrainInput" placeholder="🔍 Search nurse" onkeyup="filterTrainingCards()">
+            <select id="filterDeptTrain" onchange="filterTrainingCards()">
+                <option value="all">All Departments</option>
+                <option value="Labour Room">Labour Room</option>
+                <option value="Emergency Department">Emergency Dept</option>
+                <option value="ICU">ICU</option>
+                <option value="Infection Control">Infection Control</option>
+                <option value="Critical Care">Critical Care</option>
+                <option value="Ward">Ward</option>
+            </select>
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
+            <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate Competency</button>
+            <button class="backup-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
+            <button class="export-btn" onclick="exportFullBackup()">💾 Backup System</button>
+        </div>
+        <div id="trainingCardsContainer">`;
+        
+        const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
+        const search = document.getElementById('searchTrainInput')?.value.toLowerCase() || '';
+        let filtered = nursesData.filter(n => 
+            (filterDept === 'all' || n.department === filterDept) && 
+            (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))
+        );
+        
+        filtered.forEach((nurse) => {
+            const modules = getAllModulesCount(nurse.department);
+            const completedSet = new Set(nurse.trainingModulesCompleted || []);
+            const completedCount = completedSet.size;
+            const percentComplete = modules.total > 0 ? Math.round((completedCount / modules.total) * 100) : 0;
+            let statusBadge = '';
+            if (nurse.trainingStatus === 'Completed') statusBadge = '<span class="status-completed">✓ Completed</span>';
+            else if (nurse.trainingStatus === 'In Progress') statusBadge = '<span class="status-inprogress">🔄 In Progress</span>';
+            else statusBadge = '<span class="status-pending">⏳ Pending</span>';
+            let privilegeText = nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
+            let reminderBadge = '';
+            if (percentComplete < 50 && nurse.trainingStatus !== 'Completed') reminderBadge = '<span class="badge badge-warning">⚠️ Training needed</span>';
+            else if (percentComplete >= 80 && percentComplete < 100) reminderBadge = '<span class="badge badge-success">📈 Almost done!</span>';
+            const isExpanded = expandedNurses.has(nurse.id);
+            html += `<div class="training-card" id="card_${nurse.id}" data-nurse-id="${nurse.id}" data-nurse-name="${nurse.name.toLowerCase()}" data-nurse-emp="${nurse.empId.toLowerCase()}" data-nurse-dept="${nurse.department}">
+                <div class="training-card-header" onclick="toggleTrainingCard(${nurse.id})">
+                    <div><h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department} ${reminderBadge}</h4>
+                    <div style="font-size:0.7rem; margin-top:0.2rem;">${privilegeText} | ${statusBadge}</div></div>
+                    <div class="training-progress">
+                        <span>${completedCount}/${modules.total} items</span>
+                        <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentComplete}%"></div></div>
+                        <span>${percentComplete}%</span>
+                        <span class="expand-icon ${isExpanded ? 'expanded' : ''}">▼</span>
+                    </div>
+                </div>
+                <div class="training-card-body" id="body_${nurse.id}" style="${isExpanded ? 'display: block;' : 'display: none;'}">`;
+            modules.categories.forEach(cat => {
+                const catCompleted = cat.items.filter(item => completedSet.has(item)).length;
+                html += `<div class="category-group">
+                    <div class="category-header" onclick="toggleCategory(this, event)">📁 ${cat.name} (${catCompleted}/${cat.count}) <span>▼</span></div>
+                    <div class="category-content"><div class="module-grid">`;
+                cat.items.forEach(item => {
+                    const isCompleted = completedSet.has(item);
+                    html += `<div class="module-chip ${isCompleted ? 'completed' : ''}" onclick="toggleModuleCompletion('${nurse.empId}', '${item.replace(/'/g, "\\'")}', event)">${isCompleted ? '✅' : '📘'} ${item}</div>`;
+                });
+                html += `</div></div></div>`;
+            });
+            html += `<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <button class="btn-small" onclick="markAllModules('${nurse.empId}', true, event)">✅ Mark All Complete</button>
+                        <button class="btn-small" onclick="markAllModules('${nurse.empId}', false, event)">⬜ Mark All Incomplete</button>
+                        <button class="edit-btn" onclick="openEditNurseModal(${nurse.id})">✏️ Edit Nurse</button>
+                        ${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${nurse.id})">🔑 Reset Password</button>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        });
+        html += `</div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function toggleTrainingCard(nurseId) {
+        const body = document.getElementById(`body_${nurseId}`);
+        const icon = document.querySelector(`#card_${nurseId} .expand-icon`);
+        if (body) {
+            if (body.style.display === 'none' || body.style.display === '') {
+                body.style.display = 'block';
+                if (icon) icon.classList.add('expanded');
+                expandedNurses.add(nurseId);
+            } else {
+                body.style.display = 'none';
+                if (icon) icon.classList.remove('expanded');
+                expandedNurses.delete(nurseId);
+            }
+        }
+    }
+
+    function filterTrainingCards() {
+        const searchTerm = document.getElementById('searchTrainInput')?.value.toLowerCase() || '';
+        const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
+        document.querySelectorAll('.training-card').forEach(card => {
+            const nurseName = card.getAttribute('data-nurse-name') || '';
+            const nurseEmp = card.getAttribute('data-nurse-emp') || '';
+            const nurseDept = card.getAttribute('data-nurse-dept') || '';
+            const matchesSearch = nurseName.includes(searchTerm) || nurseEmp.includes(searchTerm);
+            const matchesDept = filterDept === 'all' || nurseDept === filterDept;
+            card.style.display = (matchesSearch && matchesDept) ? '' : 'none';
+        });
+    }
+
+    function toggleCategory(header, event) {
+        event.stopPropagation();
+        const content = header.nextElementSibling;
+        content.classList.toggle('open');
+        const arrow = header.querySelector('span');
+        if (arrow) arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+
+    function toggleModuleCompletion(empId, moduleName, event) {
+        event.stopPropagation();
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Nurse Manager, and Supervisors can update training status', 'error');
+            return;
+        }
+        const nurse = nursesData.find(n => n.empId === empId);
+        if(nurse) {
+            if(!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
+            const index = nurse.trainingModulesCompleted.indexOf(moduleName);
+            if(index === -1) {
+                nurse.trainingModulesCompleted.push(moduleName);
+                addAuditLog("MODULE_COMPLETED", `${nurse.name} completed: ${moduleName}`);
+                showNotification(`${nurse.name} completed: ${moduleName.substring(0, 50)}...`, 'success');
+            } else {
+                nurse.trainingModulesCompleted.splice(index, 1);
+                addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked: ${moduleName}`);
+            }
+            nurse.lastActivity = new Date().toISOString().split('T')[0];
+            const oldPrivilege = nurse.privilege;
+            const newPrivilege = recalculatePrivilege(nurse);
+            if (oldPrivilege !== newPrivilege) {
+                nurse.privilege = newPrivilege;
+                addAuditLog("PRIVILEGE_AUTO_UPDATE", `${nurse.name} competency changed from Level ${oldPrivilege} to Level ${newPrivilege}`);
+                showNotification(`${nurse.name} competency changed to Level ${newPrivilege}!`, 'info');
+            }
+            updateLoginUsers();
+            const currentExpanded = new Set(expandedNurses);
+            renderTrainingStatusUpdater();
+            currentExpanded.forEach(id => {
+                if (document.getElementById(`body_${id}`)) {
+                    document.getElementById(`body_${id}`).style.display = 'block';
+                    const icon = document.querySelector(`#card_${id} .expand-icon`);
+                    if (icon) icon.classList.add('expanded');
+                    expandedNurses.add(id);
+                }
+            });
+            if (currentUser.empId === empId) updateSidebarPrivilege();
+        }
+    }
+
+    function markAllModules(empId, complete, event) {
+        if (event) event.stopPropagation();
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Nurse Manager, and Supervisors can update training status', 'error');
+            return;
+        }
+        const nurse = nursesData.find(n => n.empId === empId);
+        if(nurse) {
+            const modules = getAllModulesCount(nurse.department);
+            let allItems = [];
+            modules.categories.forEach(cat => allItems.push(...cat.items));
+            if (complete) {
+                nurse.trainingModulesCompleted = [...allItems];
+                addAuditLog("ALL_MODULES_COMPLETED", `${nurse.name} marked all ${allItems.length} modules complete`);
+                showNotification(`${nurse.name} completed all ${allItems.length} modules!`, 'success');
+            } else {
+                nurse.trainingModulesCompleted = [];
+                addAuditLog("ALL_MODULES_INCOMPLETE", `${nurse.name} marked all modules incomplete`);
+            }
+            nurse.lastActivity = new Date().toISOString().split('T')[0];
+            const newPrivilege = recalculatePrivilege(nurse);
+            nurse.privilege = newPrivilege;
+            updateLoginUsers();
+            const currentExpanded = new Set(expandedNurses);
+            renderTrainingStatusUpdater();
+            currentExpanded.forEach(id => {
+                if (document.getElementById(`body_${id}`)) {
+                    document.getElementById(`body_${id}`).style.display = 'block';
+                    const icon = document.querySelector(`#card_${id} .expand-icon`);
+                    if (icon) icon.classList.add('expanded');
+                    expandedNurses.add(id);
+                }
+            });
+            if (currentUser.empId === empId) updateSidebarPrivilege();
+        }
+    }
+
+    // ========== NURSE TRACKER ==========
+    function renderTrackerSheet() {
+        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Competency Tracker</h1><p class="page-desc">Track all nurses' training progress and competency levels</p></div>
+        <div class="filter-bar">
+            <input type="text" id="searchName" placeholder="🔍 Search" onkeyup="renderTrackerSheet()">
+            <select id="filterDept" onchange="renderTrackerSheet()">
+                <option value="all">All Departments</option>
+                <option value="Labour Room">Labour Room</option>
+                <option value="Emergency Department">Emergency Dept</option>
+                <option value="ICU">ICU</option>
+                <option value="Infection Control">Infection Control</option>
+                <option value="Critical Care">Critical Care</option>
+                <option value="Ward">Ward</option>
+            </select>
+            <select id="filterPrivilege" onchange="renderTrackerSheet()">
+                <option value="all">All Privileges</option>
+                <option value="1">Level 1 (Trainee)</option>
+                <option value="2">Level 2 (Independent)</option>
+                <option value="3">Level 3 (Preceptor)</option>
+            </select>
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
+            <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
+        </div>
+        <div class="tracker-card"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Quiz %</th><th>Modules Done</th><th>Total</th><th>Progress</th><th>Status</th><th>Competency</th></thead><tbody>`;
+        const filterDept = document.getElementById('filterDept')?.value || 'all';
+        const filterPriv = document.getElementById('filterPrivilege')?.value || 'all';
+        const search = document.getElementById('searchName')?.value.toLowerCase() || '';
+        nursesData.filter(n => n.role === 'nurse').filter(n => (filterDept === 'all' || n.department === filterDept) && (filterPriv === 'all' || n.privilege == filterPriv) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))).forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
+            let atRiskBadge = (n.quizScore && n.quizScore < 60) ? '<span class="badge badge-danger">⚠️</span>' : '';
+            html += `<tr><td>${n.empId} ${atRiskBadge}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td style="text-align:center">${n.quizScore || '—'}%</td><td style="text-align:center">${modulesDone}</td><td style="text-align:center">${modules.total}</td><td><div style="display:flex; align-items:center; gap:8px;"><div style="background:#e2e8f0; border-radius:10px; width:80px; height:6px;"><div style="background:#10b981; width:${percent}%; height:6px; border-radius:10px;"></div></div><span style="font-size:11px;">${percent}%</span></div></td><td>${statusBadge}</td><td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    // ========== COMPETENCY QUIZ ==========
+    function renderQuiz() {
+        if (currentUser.role !== 'admin' && currentUser.role !== 'nurse') {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">🔒 Quiz Access Restricted</div><p>The Competency Quiz is only available for Admin (testing) and Nursing staff.</p><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            return;
+        }
+        let nurse, isAdminMode = false;
+        if (currentUser.role === 'admin') {
+            nurse = nursesData.find(n => n.empId === currentUser.id);
+            if (!nurse) { isAdminMode = true; nurse = { id: 999, name: currentUser.name, empId: currentUser.id, department: "ICU", role: "admin_test", privilege: 3, trainingModulesCompleted: [], quizScore: null }; }
+        } else { nurse = nursesData.find(n => n.empId === currentUser.id); }
+        if (!nurse) { document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Nurse Record Not Found</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`; return; }
+        const quizData = getOrCreateQuiz(currentUser.id, nurse.department);
+        const isAdmin = currentUser.role === 'admin';
+        const adminNote = isAdmin ? '<p style="background: #fef9c3; padding: 0.5rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #854d0e;">🔧 <strong>Admin Test Mode:</strong> Your quiz score will NOT affect any nurse\'s privilege level.</p>' : '';
+        if (quizData.completed && nurse.quizScore && !isAdmin) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Quiz Completed! Score: ${nurse.quizScore}%</div><p>Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p><button class="quiz-btn" onclick="resetQuiz()">Retake Quiz</button><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            return;
+        }
+        let html = `<div class="page-header"><h1 class="page-title">📝 Competency Assessment Quiz</h1><p class="page-desc">Department: ${nurse.department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade</p>${adminNote}</div><div class="card"><form id="quizForm">`;
+        quizData.questions.forEach((q, idx) => {
+            html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
+            q.options.forEach((opt, optIdx) => { html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`; });
+            html += `</div>`;
+        });
+        html += `<button type="submit" class="quiz-btn">Submit Quiz</button></form></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            quizData.questions.forEach((q, idx) => { const selected = document.querySelector(`input[name="q${idx}"]:checked`); if(selected && parseInt(selected.value) === q.correct) score++; });
+            const percentage = Math.round((score / quizData.questions.length) * 100);
+            quizData.completed = true; quizData.score = percentage;
+            if (!isAdmin) {
+                nurse.quizScore = percentage; nurse.lastActivity = new Date().toISOString().split('T')[0];
+                const oldPrivilege = nurse.privilege; const newPrivilege = recalculatePrivilege(nurse);
+                nurse.privilege = newPrivilege;
+                updateLoginUsers();
+                addAuditLog("QUIZ_COMPLETED", `${currentUser.name} scored ${percentage}% - Privilege: ${oldPrivilege}→${newPrivilege}`);
+                let message = `Quiz Score: ${percentage}%\n\n`;
+                if (percentage >= systemConfig.privilegeUpgradeScore && newPrivilege > oldPrivilege) message += `🎉 CONGRATULATIONS! Upgraded to Level ${newPrivilege}!`;
+                else if (percentage < systemConfig.privilegeDowngradeScore && newPrivilege < oldPrivilege) message += `⚠️ Downgraded to Level ${newPrivilege}. Please review training.`;
+                else message += `Competency remains Level ${newPrivilege}.`;
+                alert(message);
+                updateSidebarPrivilege();
+            } else {
+                addAuditLog("ADMIN_QUIZ_TEST", `Admin ${currentUser.name} tested quiz and scored ${percentage}%`);
+                alert(`📊 Admin Test Quiz Score: ${percentage}%\n\nThis score does NOT affect any nurse's privilege level.`);
+                showNotification(`Admin Quiz Score: ${percentage}% (Test Mode)`, 'info');
+            }
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Quiz Score: ${percentage}%</div>${!isAdmin ? `<p>Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p>` : '<p>This was an Admin test. No privileges were changed.</p>'}<button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+        });
+        closeSidebar();
+    }
+
+    function resetQuiz() {
+        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        if (nurse) {
+            const key = `${currentUser.id}_${nurse.department}`;
+            delete nurseQuizzes[key];
+            nurse.quizScore = null;
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            updateLoginUsers();
+            showNotification('Quiz reset. You can retake the assessment.', 'info');
+            renderQuiz();
+        } else if (currentUser.role === 'admin') {
+            const key = `${currentUser.id}_ICU`;
+            delete nurseQuizzes[key];
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            showNotification('Quiz reset. You can retake the test.', 'info');
+            renderQuiz();
+        }
+    }
+
+    // ========== REPORTS (FIXED - Properly Aligned) ==========
+    function renderReports() {
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const totalNurses = nurses.length;
+        const completedTraining = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        const pendingTraining = nurses.filter(n => n.trainingStatus === 'Pending').length;
+        const inProgressTraining = nurses.filter(n => n.trainingStatus === 'In Progress').length;
+        const avgQuizScore = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
+        const level1Count = nurses.filter(n => n.privilege === 1).length;
+        const level2Count = nurses.filter(n => n.privilege === 2).length;
+        const level3Count = nurses.filter(n => n.privilege === 3).length;
+        
+        let html = `<div class="page-header">
+            <h1 class="page-title">📑 Reports & Analytics</h1>
+            <p class="page-desc">Export competency data and view detailed analytics</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">${totalNurses}</div><div class="stat-label">Total Nurses</div></div>
+            <div class="stat-card"><div class="stat-number">${completedTraining}</div><div class="stat-label">Completed</div></div>
+            <div class="stat-card"><div class="stat-number">${inProgressTraining}</div><div class="stat-label">In Progress</div></div>
+            <div class="stat-card"><div class="stat-number">${pendingTraining}</div><div class="stat-label">Pending</div></div>
+            <div class="stat-card"><div class="stat-number">${Math.round(avgQuizScore)}%</div><div class="stat-label">Avg Quiz</div></div>
+            <div class="stat-card"><div class="stat-number">${level3Count}</div><div class="stat-label">Level 3</div></div>
+        </div>
+        <div class="filter-bar">
+            <button class="export-btn" onclick="exportToCSV()">📎 Export CSV</button>
+            <button class="export-btn" onclick="exportToPDFReport()">📄 Export PDF</button>
+            <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
+            <button class="backup-btn" onclick="exportFullBackup()">💾 Full Backup</button>
+        </div>
+        <div class="tracker-card">
+            <h3 style="margin-bottom: 1rem;">📋 Nurse Competency Data</h3>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 850px; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-primary);">
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Emp ID</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Name</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Department</th>
+                            <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid var(--border-color);">Quiz%</th>
+                            <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid var(--border-color);">Modules</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Progress</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Status</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Competency</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        
+        nurses.forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:20px; font-size:12px;">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span style="background:#fef9c3; color:#854d0e; padding:4px 10px; border-radius:20px; font-size:12px;">🔄 In Progress</span>' : '<span style="background:#fff3e3; color:#b45309; padding:4px 10px; border-radius:20px; font-size:12px;">⏳ Pending</span>');
+            let competencyText = n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor');
+            let competencyColor = n.privilege === 1 ? '#3b82f6' : (n.privilege === 2 ? '#10b981' : '#8b5cf6');
+            let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
+            
+            html += `<tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px 8px;"><strong>${n.empId}</strong></td>
+                <td style="padding: 10px 8px;">${n.name}</td>
+                <td style="padding: 10px 8px;">${n.department}</td>
+                <td style="padding: 10px 8px; text-align: center;">${n.quizScore ? n.quizScore + '%' : '—'}</td>
+                <td style="padding: 10px 8px; text-align: center;">${modulesDone}/${modules.total}</td>
+                <td style="padding: 10px 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="background: #e2e8f0; border-radius: 10px; width: 80px; height: 6px; overflow: hidden;">
+                            <div style="background: #10b981; width: ${percent}%; height: 6px;"></div>
+                        </div>
+                        <span style="font-size: 11px;">${percent}%</span>
+                    </div>
+                </td>
+                <td style="padding: 10px 8px;">${statusBadge}</td>
+                <td style="padding: 10px 8px;"><span style="background: ${competencyColor}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px;">${competencyText}</span></td>
+                <td style="padding: 10px 8px; font-size: 11px;">${lastActive}</td>
+            </tr>`;
+        });
+        
+        html += `</tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 12px; color: var(--text-secondary);">Total nurses: ${nurses.length}</p>
+        </div>`;
+        
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function exportToCSV() {
+        let csv = "Emp ID,Name,Department,Quiz Score,Modules Completed,Total Modules,Progress %,Training Status,Competency Level,Last Activity\n";
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
+            csv += `"${n.empId}","${n.name}","${n.department}","${n.quizScore || '—'}","${modulesDone}","${modules.total}","${percent}%","${n.trainingStatus}","${n.privilege === 1 ? 'Level 1 Trainee' : (n.privilege === 2 ? 'Level 2 Independent' : 'Level 3 Preceptor')}","${lastActive}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_competency_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("EXPORT_CSV", "Exported competency report to CSV");
+        showNotification('CSV exported successfully!', 'success');
+    }
+
+    function exportToPDFReport() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape');
+        const tableData = nursesData.filter(n => n.role === 'nurse').map(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            return [n.empId, n.name, n.department, n.quizScore ? n.quizScore+'%' : '—', `${modulesDone}/${modules.total}`, `${percent}%`, n.trainingStatus, n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')];
+        });
+        doc.autoTable({
+            head: [['Emp ID', 'Name', 'Department', 'Quiz%', 'Modules', 'Progress', 'Status', 'Competency']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: { fillColor: [11, 59, 79], textColor: [255, 255, 255], fontSize: 10 },
+            bodyStyles: { fontSize: 9 },
+            margin: { top: 30 },
+            columnStyles: {
+                0: { cellWidth: 25 },
+                1: { cellWidth: 35 },
+                2: { cellWidth: 35 },
+                3: { cellWidth: 20 },
+                4: { cellWidth: 25 },
+                5: { cellWidth: 20 },
+                6: { cellWidth: 25 },
+                7: { cellWidth: 25 }
+            }
+        });
+        doc.setFontSize(16);
+        doc.setTextColor(11, 59, 79);
+        doc.text("SMARTCARE - Nurse Competency Report", 14, 20);
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 27);
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const totalNurses = nurses.length;
+        const completedTraining = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Total Nurses: ${totalNurses} | Training Completed: ${completedTraining} | Report Date: ${new Date().toISOString().split('T')[0]}`, 14, 280);
+        doc.save(`smartcare_competency_${new Date().toISOString().split('T')[0]}.pdf`);
+        addAuditLog("EXPORT_PDF", "Exported competency report to PDF");
+        showNotification('PDF exported successfully!', 'success');
+    }
+
+    function generateWeeklyReport() {
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const report = {
+            generatedAt: new Date().toISOString(),
+            totalNurses: nurses.length,
+            completedTraining: nurses.filter(n => n.trainingStatus === 'Completed').length,
+            avgQuizScore: nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1),
+            topPerformers: nurses.filter(n => n.quizScore && n.quizScore >= 85).map(n => ({ name: n.name, score: n.quizScore })),
+            atRiskNurses: nurses.filter(n => n.quizScore && n.quizScore < 60).map(n => ({ name: n.name, score: n.quizScore }))
+        };
+        const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(reportBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_weekly_report_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("WEEKLY_REPORT", "Weekly report generated");
+        showNotification('Weekly report generated!', 'success');
+    }
+
+    // ========== USER MANAGEMENT ==========
+    function renderUserManagement() {
+        let html = `<div class="page-header"><h1 class="page-title">👔 User Management</h1><p class="page-desc">Manage nurse accounts, roles, and permissions</p></div>
+        <div class="filter-bar">
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New User</button>
+            <button class="import-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
+            <input type="text" id="searchUser" placeholder="🔍 Search by name or ID" onkeyup="renderUserManagement()" style="width: 200px;">
+            <select id="filterDeptUser" onchange="renderUserManagement()"><option value="all">All Departments</option><option value="Labour Room">Labour Room</option><option value="Emergency Department">Emergency Dept</option><option value="ICU">ICU</option><option value="Infection Control">Infection Control</option><option value="Critical Care">Critical Care</option><option value="Ward">Ward</option></select>
+            <select id="filterRoleUser" onchange="renderUserManagement()"><option value="all">All Roles</option><option value="nurse">👩‍⚕️ Nurse</option><option value="supervisor">👩‍🏫 Supervisor</option><option value="manager">👔 Nurse Manager</option></select>
+            <button class="export-btn" onclick="exportToCSV()">📎 Export CSV</button>
+            <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalc Privileges</button>
+        </div>
+        <div class="tracker-card"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Role</th><th>Privilege</th><th>Training %</th><th>Quiz %</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+        const search = document.getElementById('searchUser')?.value.toLowerCase() || '';
+        const filterDept = document.getElementById('filterDeptUser')?.value || 'all';
+        const filterRole = document.getElementById('filterRoleUser')?.value || 'all';
+        let filtered = nursesData.filter(n => n.empId !== 'ADMIN999' && (filterDept === 'all' || n.department === filterDept) && (filterRole === 'all' || n.role === filterRole) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
+        filtered.forEach(n => {
+            let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
+            let modules = getAllModulesCount(n.department);
+            let trainingPercent = modules.total > 0 ? Math.round(((n.trainingModulesCompleted?.length || 0)/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
+            html += `<tr><td><strong>${n.empId}</strong></td><td>${n.name}</td><td>${n.department}</td><td>${roleBadge}</td><td>${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td><td>${trainingPercent}%</td><td>${n.quizScore || '—'}%</td><td>${statusBadge}</td>
+            <td><div class="action-buttons"><button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button><button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button><button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button>${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${n.id})">🔑 Reset Pwd</button>` : ''}</div></td></tr>`;
+        });
+        html += `</tbody></table><p style="margin-top: 0.8rem; font-size: 0.75rem;">Total: ${filtered.length} users</p></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    // ========== ROLE CHANGE ==========
+    let selectedNurseForRoleChange = null;
+    function openRoleModal(nurseId) {
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if (nurse) {
+            selectedNurseForRoleChange = nurse;
+            document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
+            document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
+            document.getElementById('newRoleSelect').value = nurse.role;
+            document.getElementById('roleModal').style.display = 'flex';
+        }
+    }
+    function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; selectedNurseForRoleChange = null; }
+    function confirmRoleChange() {
+        if (!selectedNurseForRoleChange) return;
+        const newRole = document.getElementById('newRoleSelect').value;
+        const oldRole = selectedNurseForRoleChange.role;
+        if (oldRole === newRole) { alert("No change selected."); closeRoleModal(); return; }
+        if (confirm(`Change ${selectedNurseForRoleChange.name} from ${oldRole.toUpperCase()} to ${newRole.toUpperCase()}?`)) {
+            selectedNurseForRoleChange.role = newRole;
+            if (newRole === 'manager') selectedNurseForRoleChange.privilege = 3;
+            else if (newRole === 'supervisor') selectedNurseForRoleChange.privilege = Math.max(2, selectedNurseForRoleChange.privilege);
+            updateLoginUsers();
+            addAuditLog("ROLE_CHANGE", `${selectedNurseForRoleChange.name} changed from ${oldRole} to ${newRole}`);
+            showNotification(`${selectedNurseForRoleChange.name} is now a ${newRole.toUpperCase()}!`, 'success');
+            if (currentUser.id === selectedNurseForRoleChange.empId) {
+                currentUser.role = newRole;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateSidebarPrivilege();
+                const menu = getMenuForUser(currentUser);
+                document.getElementById('navMenu').innerHTML = menu.map(i => `<div class="nav-item" onclick="navigateTo('${i.id}')"><span class="nav-icon">${i.icon}</span> ${i.name}</div>`).join('');
+            }
+            closeRoleModal();
+            renderUserManagement();
+        }
+    }
+
+    // ========== DASHBOARD ==========
+    function renderDashboard() {
+        updateAllPrivileges();
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const total = nurses.length;
+        const completed = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        const inProgress = nurses.filter(n => n.trainingStatus === 'In Progress').length;
+        const pending = nurses.filter(n => n.trainingStatus === 'Pending').length;
+        const level1 = nurses.filter(n => n.privilege === 1).length;
+        const level2 = nurses.filter(n => n.privilege === 2).length;
+        const level3 = nurses.filter(n => n.privilege === 3).length;
+        const avgQuiz = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
+        const atRiskNurses = nurses.filter(n => (n.quizScore && n.quizScore < 60) || ((n.trainingModulesCompleted?.length || 0) / getAllModulesCount(n.department).total * 100) < 30);
+        let deptStats = {};
+        nurses.forEach(n => { if(!deptStats[n.department]) deptStats[n.department] = { total:0, completed:0 }; deptStats[n.department].total++; if(n.trainingStatus === 'Completed') deptStats[n.department].completed++; });
+        let html = `<div class="page-header"><h1 class="page-title">📊 Competency Dashboard</h1><p class="page-desc">Real-time training progress and privilege levels</p></div>
+        <div class="dashboard-widgets">
+            <div class="widget"><div class="widget-icon">👩‍⚕️</div><div class="widget-title">Total Nurses</div><div class="widget-value">${total}</div></div>
+            <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Completed</div><div class="widget-value">${completed}</div></div>
+            <div class="widget"><div class="widget-icon">🔄</div><div class="widget-title">In Progress</div><div class="widget-value">${inProgress}</div></div>
+            <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Level 1</div><div class="widget-value">${level1}</div></div>
+            <div class="widget"><div class="widget-icon">⭐⭐</div><div class="widget-title">Level 2</div><div class="widget-value">${level2}</div></div>
+            <div class="widget"><div class="widget-icon">⭐⭐⭐</div><div class="widget-title">Level 3</div><div class="widget-value">${level3}</div></div>
+            <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Avg Quiz</div><div class="widget-value">${Math.round(avgQuiz)}%</div></div>
+            <div class="widget"><div class="widget-icon">⚠️</div><div class="widget-title">At Risk</div><div class="widget-value">${atRiskNurses.length}</div></div>
+        </div>
+        <div class="stats-grid">${Object.entries(deptStats).map(([dept,data])=>`<div class="stat-card"><div class="stat-number">${Math.round(data.completed/data.total*100||0)}%</div><div class="stat-label">${dept}</div><small>${data.completed}/${data.total}</small></div>`).join('')}</div>
+        <div class="card"><h3>📊 Privilege Distribution</h3><div class="chart-container"><canvas id="privilegeChart"></canvas></div></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        setTimeout(() => { const ctx = document.getElementById('privilegeChart')?.getContext('2d'); if(ctx) new Chart(ctx, { type: 'doughnut', data: { labels: ['Level 1 (Trainee)', 'Level 2 (Independent)', 'Level 3 (Preceptor)'], datasets: [{ data: [level1, level2, level3], backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'] }] } }); }, 100);
+        closeSidebar();
+    }
+
+    // ========== AUDIT LOG ==========
+    function renderAuditLog() { 
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1></div><div class="tracker-card">`;
+        auditLog.slice(0, 100).forEach(l => { html += `<div class="audit-log-entry">${new Date(l.timestamp).toLocaleString()} | <strong>${l.user}</strong> (${l.role}) | ${l.action} | ${l.details}</div>`; });
+        html += `</div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function renderSettings() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Settings</h3><p>System settings coming soon.</p></div>`; closeSidebar(); }
+
+    // ========== MENU ==========
+    const allMenuItems = [
+        { id: "dashboard", name: "Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
+        { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
+        { id: "trainingStatus", name: "Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
+        { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["admin", "nurse"] },
+        { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
+        { id: "userManagement", name: "User Management", icon: "👥", roles: ["admin","manager","supervisor"] },
+        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin","manager"] },
+        { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }
+    ];
+
+    function getMenuForUser(user) {
+        if(user.role === "admin") return allMenuItems;
+        if(user.role === "manager") return allMenuItems.filter(i => i.roles.includes("manager"));
+        if(user.role === "supervisor") return allMenuItems.filter(i => i.roles.includes("supervisor"));
+        if(user.role === "nurse") return allMenuItems.filter(i => i.roles.includes("nurse"));
+        return [];
+    }
+
+    function updateSidebarPrivilege() {
+        let cls = '', txt = '';
+        if(currentUser.role === 'admin') { cls = 'privilege-admin'; txt = '👑 ADMIN'; }
+        else if(currentUser.role === 'manager') { cls = 'privilege-manager'; txt = '👔 NURSE MANAGER'; }
+        else if(currentUser.role === 'supervisor') { cls = 'privilege-supervisor'; txt = '👩‍🏫 SUPERVISOR'; }
+        else { 
+            const nurse = nursesData.find(n => n.empId === currentUser.id);
+            const priv = nurse ? nurse.privilege : currentUser.privilege;
+            txt = priv === 1 ? '⭐ Level 1 (Trainee)' : (priv === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
+            cls = priv === 1 ? 'privilege-l1' : (priv === 2 ? 'privilege-l2' : 'privilege-l3');
+            currentUser.privilege = priv;
+        }
+        document.getElementById('userInfo').innerHTML = `<div class="user-name">👤 ${currentUser.name}</div><div class="user-role">${currentUser.role.toUpperCase()} • ${currentUser.department}</div><div class="privilege-indicator ${cls}">${txt}</div>`;
+    }
+
+    function initDashboard() {
+        updateAllPrivileges();
+        updateSidebarPrivilege();
+        const menu = getMenuForUser(currentUser);
+        document.getElementById('navMenu').innerHTML = menu.map(i => `<div class="nav-item" onclick="navigateTo('${i.id}')"><span class="nav-icon">${i.icon}</span> ${i.name}</div>`).join('');
+        navigateTo('dashboard');
+    }
+
+    function navigateTo(moduleId) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(event?.target) event.target.closest('.nav-item')?.classList.add('active');
+        if(moduleId === 'dashboard') renderDashboard();
+        else if(moduleId === 'tracker') renderTrackerSheet();
+        else if(moduleId === 'trainingStatus') renderTrainingStatusUpdater();
+        else if(moduleId === 'quiz') renderQuiz();
+        else if(moduleId === 'reports') renderReports();
+        else if(moduleId === 'userManagement') renderUserManagement();
+        else if(moduleId === 'auditLog') renderAuditLog();
+        else if(moduleId === 'settings') renderSettings();
+        closeSidebar();
+    }
+
+    function logout() { addAuditLog("LOGOUT","User logged out"); localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
+
+    // Global functions
+    window.toggleSidebar = toggleSidebar;
+    window.navigateTo = navigateTo;
+    window.logout = logout;
+    window.toggleDarkMode = toggleDarkMode;
+    window.resetTimer = resetTimer;
+    window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
+    window.filterTrainingCards = filterTrainingCards;
+    window.toggleCategory = toggleCategory;
+    window.toggleModuleCompletion = toggleModuleCompletion;
+    window.markAllModules = markAllModules;
+    window.renderUserManagement = renderUserManagement;
+    window.openAddNurseModal = openAddNurseModal;
+    window.openEditNurseModal = openEditNurseModal;
+    window.closeNurseModal = closeNurseModal;
+    window.saveNurse = saveNurse;
+    window.deleteNurse = deleteNurse;
+    window.openRoleModal = openRoleModal;
+    window.closeRoleModal = closeRoleModal;
+    window.confirmRoleChange = confirmRoleChange;
+    window.openPasswordResetModal = openPasswordResetModal;
+    window.closePasswordResetModal = closePasswordResetModal;
+    window.confirmPasswordReset = confirmPasswordReset;
+    window.exportToCSV = exportToCSV;
+    window.exportToPDFReport = exportToPDFReport;
+    window.generateWeeklyReport = generateWeeklyReport;
+    window.runPrivilegeRecalculation = runPrivilegeRecalculation;
+    window.openBulkTrainingModal = openBulkTrainingModal;
+    window.closeBulkTrainingModal = closeBulkTrainingModal;
+    window.assignBulkTraining = assignBulkTraining;
+    window.renderQuiz = renderQuiz;
+    window.resetQuiz = resetQuiz;
+    window.renderReports = renderReports;
+    window.renderTrackerSheet = renderTrackerSheet;
+
+    initDashboard();
+</script>
+</body>
+</html>
