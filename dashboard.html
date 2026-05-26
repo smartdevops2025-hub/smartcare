@@ -574,11 +574,10 @@
         <input type="text" id="nurseName" placeholder="Full Name" required>
         <input type="text" id="nurseEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
         <select id="nurseDept">
-            <option value="ICU">ICU</option>
-            <option value="OT">OT</option>
-            <option value="Infection Control">Infection Control</option>
             <option value="Labour Room">Labour Room</option>
-            <option value="Emergency Department">Emergency Dept</option>
+            <option value="Emergency Department">Emergency Department</option>
+            <option value="ICU">ICU</option>
+            <option value="Infection Control">Infection Control</option>
             <option value="Critical Care">Critical Care</option>
             <option value="Ward">Ward</option>
         </select>
@@ -1301,7 +1300,7 @@
             const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
             let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
             let atRiskBadge = (n.quizScore && n.quizScore < 60) ? '<span class="badge badge-danger">⚠️</span>' : '';
-            html += `<tr><td>${n.empId} ${atRiskBadge}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td>${n.quizScore || '—'}%</td><td>${modulesDone}</td><td>${modules.total}</td><td><div style="background:#e2e8f0; border-radius:10px; width:100px;"><div style="background:#10b981; width:${percent}%; height:8px; border-radius:10px;"></div></div>${percent}%</td><td>${statusBadge}</td><td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td></tr>`;
+            html += `<tr><td>${n.empId} ${atRiskBadge}</td><td><strong>${n.name}</strong></td><td>${n.department}</td><td style="text-align:center">${n.quizScore || '—'}%</td><td style="text-align:center">${modulesDone}</td><td style="text-align:center">${modules.total}</td><td><div style="display:flex; align-items:center; gap:8px;"><div style="background:#e2e8f0; border-radius:10px; width:80px; height:6px;"><div style="background:#10b981; width:${percent}%; height:6px; border-radius:10px;"></div></div><span style="font-size:11px;">${percent}%</span></div></td><td>${statusBadge}</td><td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td></tr>`;
         });
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
@@ -1383,34 +1382,102 @@
         }
     }
 
-    // ========== REPORTS ==========
+    // ========== REPORTS (FIXED - Properly Aligned) ==========
     function renderReports() {
-        let html = `<div class="page-header"><h1 class="page-title">📑 Reports & Analytics</h1><p class="page-desc">Export competency data and view analytics</p></div>
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const totalNurses = nurses.length;
+        const completedTraining = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        const pendingTraining = nurses.filter(n => n.trainingStatus === 'Pending').length;
+        const inProgressTraining = nurses.filter(n => n.trainingStatus === 'In Progress').length;
+        const avgQuizScore = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
+        const level1Count = nurses.filter(n => n.privilege === 1).length;
+        const level2Count = nurses.filter(n => n.privilege === 2).length;
+        const level3Count = nurses.filter(n => n.privilege === 3).length;
+        
+        let html = `<div class="page-header">
+            <h1 class="page-title">📑 Reports & Analytics</h1>
+            <p class="page-desc">Export competency data and view detailed analytics</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">${totalNurses}</div><div class="stat-label">Total Nurses</div></div>
+            <div class="stat-card"><div class="stat-number">${completedTraining}</div><div class="stat-label">Completed</div></div>
+            <div class="stat-card"><div class="stat-number">${inProgressTraining}</div><div class="stat-label">In Progress</div></div>
+            <div class="stat-card"><div class="stat-number">${pendingTraining}</div><div class="stat-label">Pending</div></div>
+            <div class="stat-card"><div class="stat-number">${Math.round(avgQuizScore)}%</div><div class="stat-label">Avg Quiz</div></div>
+            <div class="stat-card"><div class="stat-number">${level3Count}</div><div class="stat-label">Level 3</div></div>
+        </div>
         <div class="filter-bar">
-            <button class="export-btn" onclick="exportToCSV()">📎 Export to CSV</button>
-            <button class="export-btn" onclick="exportToPDFReport()">📄 Export to PDF</button>
+            <button class="export-btn" onclick="exportToCSV()">📎 Export CSV</button>
+            <button class="export-btn" onclick="exportToPDFReport()">📄 Export PDF</button>
             <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
             <button class="backup-btn" onclick="exportFullBackup()">💾 Full Backup</button>
         </div>
-        <div class="tracker-card"></table><thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th><th>Quiz%</th><th>Modules</th><th>Progress</th><th>Status</th><th>Competency</th></tr></thead><tbody>`;
-        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+        <div class="tracker-card">
+            <h3 style="margin-bottom: 1rem;">📋 Nurse Competency Data</h3>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 850px; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-primary);">
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Emp ID</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Name</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Department</th>
+                            <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid var(--border-color);">Quiz%</th>
+                            <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid var(--border-color);">Modules</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Progress</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Status</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Competency</th>
+                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        
+        nurses.forEach(n => {
             const modules = getAllModulesCount(n.department);
             const modulesDone = n.trainingModulesCompleted?.length || 0;
             const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
-            html += `<tr><td>${n.empId}</td><td>${n.name}</td><td>${n.department}</td><td>${n.quizScore || '—'}%</td><td>${modulesDone}/${modules.total}</td><td>${percent}%</td><td>${n.trainingStatus}</td><td>${n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')}</td></tr>`;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:20px; font-size:12px;">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span style="background:#fef9c3; color:#854d0e; padding:4px 10px; border-radius:20px; font-size:12px;">🔄 In Progress</span>' : '<span style="background:#fff3e3; color:#b45309; padding:4px 10px; border-radius:20px; font-size:12px;">⏳ Pending</span>');
+            let competencyText = n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor');
+            let competencyColor = n.privilege === 1 ? '#3b82f6' : (n.privilege === 2 ? '#10b981' : '#8b5cf6');
+            let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
+            
+            html += `<tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px 8px;"><strong>${n.empId}</strong></td>
+                <td style="padding: 10px 8px;">${n.name}</td>
+                <td style="padding: 10px 8px;">${n.department}</td>
+                <td style="padding: 10px 8px; text-align: center;">${n.quizScore ? n.quizScore + '%' : '—'}</td>
+                <td style="padding: 10px 8px; text-align: center;">${modulesDone}/${modules.total}</td>
+                <td style="padding: 10px 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="background: #e2e8f0; border-radius: 10px; width: 80px; height: 6px; overflow: hidden;">
+                            <div style="background: #10b981; width: ${percent}%; height: 6px;"></div>
+                        </div>
+                        <span style="font-size: 11px;">${percent}%</span>
+                    </div>
+                </td>
+                <td style="padding: 10px 8px;">${statusBadge}</td>
+                <td style="padding: 10px 8px;"><span style="background: ${competencyColor}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px;">${competencyText}</span></td>
+                <td style="padding: 10px 8px; font-size: 11px;">${lastActive}</td>
+            </tr>`;
         });
-        html += `</tbody></table></div>`;
+        
+        html += `</tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 12px; color: var(--text-secondary);">Total nurses: ${nurses.length}</p>
+        </div>`;
+        
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
 
     function exportToCSV() {
-        let csv = "Emp ID,Name,Department,Quiz Score,Modules Completed,Total Modules,Progress %,Training Status,Competency Level\n";
+        let csv = "Emp ID,Name,Department,Quiz Score,Modules Completed,Total Modules,Progress %,Training Status,Competency Level,Last Activity\n";
         nursesData.filter(n => n.role === 'nurse').forEach(n => {
             const modules = getAllModulesCount(n.department);
             const modulesDone = n.trainingModulesCompleted?.length || 0;
             const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
-            csv += `"${n.empId}","${n.name}","${n.department}","${n.quizScore || '—'}","${modulesDone}","${modules.total}","${percent}","${n.trainingStatus}","${n.privilege === 1 ? 'Level 1 Trainee' : (n.privilege === 2 ? 'Level 2 Independent' : 'Level 3 Preceptor')}"\n`;
+            let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
+            csv += `"${n.empId}","${n.name}","${n.department}","${n.quizScore || '—'}","${modulesDone}","${modules.total}","${percent}%","${n.trainingStatus}","${n.privilege === 1 ? 'Level 1 Trainee' : (n.privilege === 2 ? 'Level 2 Independent' : 'Level 3 Preceptor')}","${lastActive}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -1420,7 +1487,7 @@
         a.click();
         URL.revokeObjectURL(url);
         addAuditLog("EXPORT_CSV", "Exported competency report to CSV");
-        showNotification('CSV exported!', 'success');
+        showNotification('CSV exported successfully!', 'success');
     }
 
     function exportToPDFReport() {
@@ -1432,14 +1499,39 @@
             const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
             return [n.empId, n.name, n.department, n.quizScore ? n.quizScore+'%' : '—', `${modulesDone}/${modules.total}`, `${percent}%`, n.trainingStatus, n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')];
         });
-        doc.autoTable({ head: [['Emp ID', 'Name', 'Dept', 'Quiz%', 'Modules', 'Progress', 'Status', 'Competency']], body: tableData, theme: 'striped', headStyles: { fillColor: [11, 59, 79] }, margin: { top: 20 } });
+        doc.autoTable({
+            head: [['Emp ID', 'Name', 'Department', 'Quiz%', 'Modules', 'Progress', 'Status', 'Competency']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: { fillColor: [11, 59, 79], textColor: [255, 255, 255], fontSize: 10 },
+            bodyStyles: { fontSize: 9 },
+            margin: { top: 30 },
+            columnStyles: {
+                0: { cellWidth: 25 },
+                1: { cellWidth: 35 },
+                2: { cellWidth: 35 },
+                3: { cellWidth: 20 },
+                4: { cellWidth: 25 },
+                5: { cellWidth: 20 },
+                6: { cellWidth: 25 },
+                7: { cellWidth: 25 }
+            }
+        });
         doc.setFontSize(16);
-        doc.text("SMARTCARE - Nurse Competency Report", 14, 15);
+        doc.setTextColor(11, 59, 79);
+        doc.text("SMARTCARE - Nurse Competency Report", 14, 20);
         doc.setFontSize(10);
-        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 25);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 27);
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const totalNurses = nurses.length;
+        const completedTraining = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Total Nurses: ${totalNurses} | Training Completed: ${completedTraining} | Report Date: ${new Date().toISOString().split('T')[0]}`, 14, 280);
         doc.save(`smartcare_competency_${new Date().toISOString().split('T')[0]}.pdf`);
         addAuditLog("EXPORT_PDF", "Exported competency report to PDF");
-        showNotification('PDF exported!', 'success');
+        showNotification('PDF exported successfully!', 'success');
     }
 
     function generateWeeklyReport() {
