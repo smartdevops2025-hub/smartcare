@@ -320,6 +320,7 @@
                 department: masterUsers[username].department
             };
             localStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('sessionLoginTime', Date.now().toString());
             
             // Add login audit entry (will be picked up by dashboard)
             const existingAudit = localStorage.getItem('smartcare_audit');
