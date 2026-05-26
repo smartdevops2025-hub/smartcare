@@ -6,7 +6,6 @@
     <title>SMARTCARE — Nurse Induction Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* [All existing styles remain the same - keeping for brevity] */
         * {
             margin: 0;
             padding: 0;
@@ -256,7 +255,6 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.75rem;
-            min-width: 800px;
         }
         th {
             text-align: left;
@@ -618,7 +616,7 @@
 <body>
 <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
 <div class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</div>
-<div class="timeout-warning" id="timeoutWarning" onclick="resetTimer()">⏰ Session expiring soon! Click to stay logged in.</div>
+<div class="timeout-warning" id="timeoutWarning" onclick="resetInactivityTimer()">⏰ Session expiring soon! Click to stay logged in.</div>
 <div class="app-container">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -632,11 +630,103 @@
     <div class="main-content" id="mainContent"></div>
 </div>
 
-<!-- [All existing modals remain the same - nurseModal, passwordResetModal, passwordChangeModal, roleModal, bulkTrainingModal] -->
-<!-- ... (keep all your existing modal HTML code) ... -->
+<!-- Modal for Add/Edit Nurse -->
+<div id="nurseModal" class="modal">
+    <div class="modal-content">
+        <h3 id="nurseModalTitle">Add New Nurse</h3>
+        <input type="hidden" id="editNurseId">
+        <input type="text" id="nurseName" placeholder="Full Name" required>
+        <input type="text" id="nurseEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
+        <select id="nurseDept">
+            <option value="Labour Room">Labour Room</option>
+            <option value="Emergency Department">Emergency Department</option>
+            <option value="ICU">ICU</option>
+            <option value="Infection Control">Infection Control</option>
+            <option value="Critical Care">Critical Care</option>
+            <option value="Ward">Ward</option>
+        </select>
+        <select id="nursePrivilege">
+            <option value="1">Level 1 (Trainee)</option>
+            <option value="2">Level 2 (Independent)</option>
+            <option value="3">Level 3 (Preceptor)</option>
+        </select>
+        <select id="nurseRole">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div id="passwordFieldContainer" style="display: none;">
+            <input type="password" id="nursePassword" placeholder="Password (default: nurse123)" value="nurse123">
+            <small style="font-size: 0.7rem; color: #666;">Only visible to Admin</small>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeNurseModal()">Cancel</button>
+            <button class="add-btn" onclick="saveNurse()">Save Nurse</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Password Reset (Admin only) -->
+<div id="passwordResetModal" class="modal">
+    <div class="modal-content">
+        <h3>Reset Password</h3>
+        <p id="resetNurseName" style="margin-bottom: 0.5rem;"></p>
+        <input type="password" id="newPassword" placeholder="New Password" value="nurse123">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordResetModal()">Cancel</button>
+            <button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Password Change (User self-service) -->
+<div id="passwordChangeModal" class="modal">
+    <div class="modal-content">
+        <h3>Change Password</h3>
+        <input type="password" id="currentPassword" placeholder="Current Password">
+        <input type="password" id="newPassword1" placeholder="New Password">
+        <input type="password" id="confirmPassword1" placeholder="Confirm New Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordChangeModal()">Cancel</button>
+            <button class="save-btn" onclick="confirmPasswordChange()">Update Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Role Change -->
+<div id="roleModal" class="modal">
+    <div class="modal-content">
+        <h3 id="roleModalTitle">Change Role</h3>
+        <p id="roleModalNurse" style="margin-bottom: 0.5rem;"></p>
+        <select id="newRoleSelect">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeRoleModal()">Cancel</button>
+            <button class="promote-btn" onclick="confirmRoleChange()">Confirm Change</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Bulk Training Assignment -->
+<div id="bulkTrainingModal" class="modal">
+    <div class="modal-content">
+        <h3>📚 Bulk Training Assignment</h3>
+        <p style="margin-bottom: 0.5rem;">Select nurses and training modules to assign</p>
+        <select id="bulkNurseSelect" multiple size="5" style="height: auto;"></select>
+        <select id="bulkModuleSelect" multiple size="5" style="height: auto;"></select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button>
+            <button class="add-btn" onclick="assignBulkTraining()">Assign Training</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // ========== SESSION EXPIRY (8 HOURS) - ADD THIS AT THE VERY TOP OF SCRIPT ==========
+    // ========== SESSION EXPIRY (8 HOURS) ==========
     const SESSION_EXPIRY_HOURS = 8;
     const SESSION_EXPIRY_MS = SESSION_EXPIRY_HOURS * 60 * 60 * 1000;
 
@@ -645,15 +735,8 @@
         if (loginTime) {
             const elapsed = Date.now() - parseInt(loginTime);
             if (elapsed > SESSION_EXPIRY_MS) {
-                // Session expired - clear all data and redirect to login
                 localStorage.removeItem('currentUser');
                 localStorage.removeItem('sessionLoginTime');
-                // Note: auditLog might not be available yet, but we'll try
-                try {
-                    let audit = JSON.parse(localStorage.getItem('smartcare_audit') || '[]');
-                    audit.unshift({ timestamp: new Date().toISOString(), user: "System", role: "System", action: "SESSION_EXPIRED", details: "Session expired after 8 hours" });
-                    localStorage.setItem('smartcare_audit', JSON.stringify(audit.slice(0, 1000)));
-                } catch(e) {}
                 alert("Your session has expired after 8 hours. Please login again.");
                 window.location.href = 'index.html';
                 return false;
@@ -662,9 +745,7 @@
         return true;
     }
 
-    // Call this on page load to check expiry
     if (!checkSessionExpiry()) {
-        // Stop execution if expired
         throw new Error("Session expired");
     }
 
@@ -701,9 +782,9 @@
         setTimeout(() => notification.remove(), 3000);
     }
 
-    // ========== SESSION TIMEOUT (Inactivity) ==========
+    // ========== INACTIVITY TIMEOUT ==========
     let inactivityTimer, warningTimer;
-    const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+    const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
     const WARNING_BEFORE = 60 * 1000;
 
     function resetInactivityTimer() {
@@ -711,10 +792,9 @@
         clearTimeout(warningTimer);
         document.getElementById('timeoutWarning').style.display = 'none';
         inactivityTimer = setTimeout(() => {
-            showNotification('Session will timeout in 1 minute due to inactivity', 'warning');
+            document.getElementById('timeoutWarning').style.display = 'block';
             warningTimer = setTimeout(() => {
                 logout();
-                showNotification('Session timed out due to inactivity', 'info');
             }, 60000);
         }, INACTIVITY_TIMEOUT - 60000);
     }
@@ -723,7 +803,6 @@
         resetInactivityTimer();
         document.getElementById('timeoutWarning').style.display = 'none';
         showNotification('Session extended', 'success');
-        // Also extend the 8-hour expiry by resetting login time
         localStorage.setItem('sessionLoginTime', Date.now().toString());
     }
 
@@ -809,14 +888,50 @@
     const savedConfig = localStorage.getItem('smartcare_config');
     if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
-    // ========== TRAINING MODULES ==========
+    // ========== COMPLETE TRAINING MODULES ==========
     const trainingModulesByDept = {
-        "Labour Room": { "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour"] },
-        "Emergency Department": { "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator"] },
-        "ICU": { "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP"] },
-        "Infection Control": { "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"] },
-        "Critical Care": { "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning"] },
-        "Ward": { "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"] }
+        "Labour Room": {
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort/hygiene", "Vulnerable patient care", "Pre/post-op care", "Patient transport", "Alternative communication"],
+            "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour"],
+            "Medication Management": ["Patient identification", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk meds", "Drug calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste disposal", "Device related care", "Surveillance"]
+        },
+        "Emergency Department": {
+            "Environmental Hygiene": ["Bed/Locker arrangement", "Storeroom organization", "Refrigerator cleaning", "Surface cleaning"],
+            "Provide Physical Care": ["Patient comfort", "Vulnerable care", "Pre/post-op", "Transport", "Alternative communication", "Pain assessment"],
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe administration", "Restricted Antibiotics", "ADR Recall", "Verbal orders", "Narcotics", "High Risk", "Drug calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "ICU": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort/hygiene", "Vulnerable care", "Transport", "Communication"],
+            "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR reporting"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "Infection Control": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "Critical Care": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication"],
+            "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        },
+        "Ward": {
+            "Environmental Hygiene": ["Bed/Locker", "Storeroom", "Refrigerator", "Surface cleaning"],
+            "Provide Physical Care": ["Comfort", "Vulnerable", "Pre/post-op", "Transport", "Communication", "Pain assessment"],
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"],
+            "Medication Management": ["Patient ID", "Indent/Return", "Storage", "Safe admin", "Restricted Antibiotics", "ADR", "Verbal orders", "Narcotics", "High Risk", "Calculation", "ADR"],
+            "Infection Control": ["Standard precautions", "Segregation", "Sterilization", "Device care", "Spills", "Waste", "Device care", "Surveillance"]
+        }
     };
 
     function generateQuizQuestions(department, count = 10) {
@@ -872,7 +987,7 @@
         return { total, categories };
     }
 
-    // ========== PASSWORD RESET (Admin Only) ==========
+    // ========== PASSWORD RESET (Admin only) ==========
     let selectedNurseForPasswordReset = null;
     function openPasswordResetModal(nurseId) {
         if (currentUser.role !== 'admin') { showNotification('Only Admin can reset passwords', 'error'); return; }
@@ -959,6 +1074,7 @@
         } else { document.getElementById('passwordFieldContainer').style.display = 'none'; }
         document.getElementById('nurseModal').style.display = 'flex';
     }
+    
     function openEditNurseModal(nurseId) {
         const nurse = nursesData.find(n => n.id === nurseId);
         if (nurse) {
@@ -973,7 +1089,9 @@
             document.getElementById('nurseModal').style.display = 'flex';
         }
     }
+    
     function closeNurseModal() { document.getElementById('nurseModal').style.display = 'none'; }
+    
     function saveNurse() {
         const id = document.getElementById('editNurseId').value;
         const name = document.getElementById('nurseName').value.trim();
@@ -1001,9 +1119,15 @@
         }
         updateLoginUsers();
         closeNurseModal();
-        renderUserManagement();
+        if (document.querySelector('.nav-item.active')?.innerText.includes('User Management')) {
+            renderUserManagement();
+        }
+        if (document.querySelector('.nav-item.active')?.innerText.includes('Training Status')) {
+            renderTrainingStatusUpdater();
+        }
         renderDashboard();
     }
+    
     function deleteNurse(nurseId) {
         const nurse = nursesData.find(n => n.id === nurseId);
         if (!nurse) return;
@@ -1015,12 +1139,12 @@
             showNotification(`✅ Nurse ${nurse.name} deleted`, 'success');
             renderUserManagement();
             renderDashboard();
+            renderTrainingStatusUpdater();
         }
     }
 
     // ========== COMPETENCY ENGINE ==========
     function recalculatePrivilege(nurse) {
-        if (currentUser?.role === 'admin') return nurse.privilege;
         if (!systemConfig.autoAssignPrivilege || nurse.role !== 'nurse') return nurse.privilege;
         let newPrivilege = nurse.privilege;
         const modules = getAllModulesCount(nurse.department);
@@ -1033,10 +1157,10 @@
             if (nurse.quizScore >= systemConfig.privilegeUpgradeScore && newPrivilege < 3) newPrivilege++;
             else if (nurse.quizScore < systemConfig.privilegeDowngradeScore && newPrivilege > 1) newPrivilege--;
         }
-        if (allModulesCompleted && newPrivilege < 2 && nurse.preEval >= systemConfig.passingScore) newPrivilege = 2;
-        if (nurse.preEval && nurse.preEval >= systemConfig.passingScore && nurse.trainingStatus === 'Pending') nurse.trainingStatus = 'In Progress';
+        if (allModulesCompleted && newPrivilege < 2) newPrivilege = 2;
         return Math.min(3, Math.max(1, newPrivilege));
     }
+    
     function updateAllPrivileges() {
         let changes = 0;
         nursesData.forEach(nurse => {
@@ -1051,6 +1175,7 @@
         updateLoginUsers();
         return changes;
     }
+    
     function runPrivilegeRecalculation() { const changes = updateAllPrivileges(); showNotification(`✅ Recalculated! ${changes} nurses had privilege changes.`, 'success'); renderUserManagement(); }
 
     // ========== BULK TRAINING ==========
@@ -1150,10 +1275,13 @@
             if (percentComplete < 50 && nurse.trainingStatus !== 'Completed') reminderBadge = '<span class="badge badge-warning">⚠️ Training needed</span>';
             else if (percentComplete >= 80 && percentComplete < 100) reminderBadge = '<span class="badge badge-success">📈 Almost done!</span>';
             const isExpanded = expandedNurses.has(nurse.id);
-            html += `<div class="training-card" id="card_${nurse.id}" data-nurse-id="${nurse.id}" data-nurse-name="${nurse.name.toLowerCase()}" data-nurse-emp="${nurse.empId.toLowerCase()}" data-nurse-dept="${nurse.department}">
+            
+            html += `<div class="training-card" data-nurse-id="${nurse.id}" data-nurse-name="${nurse.name.toLowerCase()}" data-nurse-emp="${nurse.empId.toLowerCase()}" data-nurse-dept="${nurse.department}">
                 <div class="training-card-header" onclick="toggleTrainingCard(${nurse.id})">
-                    <div><h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department} ${reminderBadge}</h4>
-                    <div style="font-size:0.7rem; margin-top:0.2rem;">${privilegeText} | ${statusBadge}</div></div>
+                    <div>
+                        <h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department} ${reminderBadge}</h4>
+                        <div style="font-size:0.7rem; margin-top:0.2rem;">${privilegeText} | ${statusBadge}</div>
+                    </div>
                     <div class="training-progress">
                         <span>${completedCount}/${modules.total} items</span>
                         <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentComplete}%"></div></div>
@@ -1162,17 +1290,28 @@
                     </div>
                 </div>
                 <div class="training-card-body" id="body_${nurse.id}" style="${isExpanded ? 'display: block;' : 'display: none;'}">`;
-            modules.categories.forEach(cat => {
-                const catCompleted = cat.items.filter(item => completedSet.has(item)).length;
-                html += `<div class="category-group">
-                    <div class="category-header" onclick="toggleCategory(this, event)">📁 ${cat.name} (${catCompleted}/${cat.count}) <span>▼</span></div>
-                    <div class="category-content"><div class="module-grid">`;
-                cat.items.forEach(item => {
-                    const isCompleted = completedSet.has(item);
-                    html += `<div class="module-chip ${isCompleted ? 'completed' : ''}" onclick="toggleModuleCompletion('${nurse.empId}', '${item.replace(/'/g, "\\'")}', event)">${isCompleted ? '✅' : '📘'} ${item}</div>`;
+            
+            if (modules.categories && modules.categories.length > 0) {
+                modules.categories.forEach(cat => {
+                    const catCompleted = cat.items.filter(item => completedSet.has(item)).length;
+                    html += `<div class="category-group">
+                        <div class="category-header" onclick="toggleCategory(this, event)">📁 ${cat.name} (${catCompleted}/${cat.count}) <span>▼</span></div>
+                        <div class="category-content">
+                            <div class="module-grid">`;
+                    cat.items.forEach(item => {
+                        const isCompleted = completedSet.has(item);
+                        html += `<div class="module-chip ${isCompleted ? 'completed' : ''}" onclick="toggleModuleCompletion('${nurse.empId}', '${item.replace(/'/g, "\\'")}', event)">
+                            ${isCompleted ? '✅' : '📘'} ${item}
+                        </div>`;
+                    });
+                    html += `</div>
+                        </div>
+                    </div>`;
                 });
-                html += `</div></div></div>`;
-            });
+            } else {
+                html += `<p>No training modules defined for this department.</p>`;
+            }
+            
             html += `<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', true, event)">✅ Mark All Complete</button>
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', false, event)">⬜ Mark All Incomplete</button>
@@ -1182,6 +1321,7 @@
                 </div>
             </div>`;
         });
+        
         html += `</div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
@@ -1189,7 +1329,8 @@
 
     function toggleTrainingCard(nurseId) {
         const body = document.getElementById(`body_${nurseId}`);
-        const icon = document.querySelector(`#card_${nurseId} .expand-icon`);
+        const card = document.querySelector(`.training-card[data-nurse-id="${nurseId}"]`);
+        const icon = card?.querySelector('.expand-icon');
         if (body) {
             if (body.style.display === 'none' || body.style.display === '') {
                 body.style.display = 'block';
@@ -1206,13 +1347,20 @@
     function filterTrainingCards() {
         const searchTerm = document.getElementById('searchTrainInput')?.value.toLowerCase() || '';
         const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
+        
         document.querySelectorAll('.training-card').forEach(card => {
             const nurseName = card.getAttribute('data-nurse-name') || '';
             const nurseEmp = card.getAttribute('data-nurse-emp') || '';
             const nurseDept = card.getAttribute('data-nurse-dept') || '';
+            
             const matchesSearch = nurseName.includes(searchTerm) || nurseEmp.includes(searchTerm);
             const matchesDept = filterDept === 'all' || nurseDept === filterDept;
-            card.style.display = (matchesSearch && matchesDept) ? '' : 'none';
+            
+            if (matchesSearch && matchesDept) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
         });
     }
 
@@ -1253,14 +1401,7 @@
             updateLoginUsers();
             const currentExpanded = new Set(expandedNurses);
             renderTrainingStatusUpdater();
-            currentExpanded.forEach(id => {
-                if (document.getElementById(`body_${id}`)) {
-                    document.getElementById(`body_${id}`).style.display = 'block';
-                    const icon = document.querySelector(`#card_${id} .expand-icon`);
-                    if (icon) icon.classList.add('expanded');
-                    expandedNurses.add(id);
-                }
-            });
+            currentExpanded.forEach(id => expandedNurses.add(id));
             if (currentUser.empId === empId) updateSidebarPrivilege();
         }
     }
@@ -1290,21 +1431,22 @@
             updateLoginUsers();
             const currentExpanded = new Set(expandedNurses);
             renderTrainingStatusUpdater();
-            currentExpanded.forEach(id => {
-                if (document.getElementById(`body_${id}`)) {
-                    document.getElementById(`body_${id}`).style.display = 'block';
-                    const icon = document.querySelector(`#card_${id} .expand-icon`);
-                    if (icon) icon.classList.add('expanded');
-                    expandedNurses.add(id);
-                }
-            });
+            currentExpanded.forEach(id => expandedNurses.add(id));
             if (currentUser.empId === empId) updateSidebarPrivilege();
         }
     }
 
     // ========== NURSE TRACKER ==========
     function renderTrackerSheet() {
-        let html = `<div class="page-header"><h1 class="page-title">📋 Nurse Competency Tracker</h1><p class="page-desc">Track all nurses' training progress and competency levels</p></div>
+        let nursesToShow;
+        if (currentUser.role === 'nurse') {
+            nursesToShow = nursesData.filter(n => n.empId === currentUser.id);
+        } else {
+            nursesToShow = nursesData.filter(n => n.role === 'nurse');
+        }
+        
+        let html = `<div class="page-header"><h1 class="page-title">📋 ${currentUser.role === 'nurse' ? 'My Competency Progress' : 'Nurse Competency Tracker'}</h1>
+        <p class="page-desc">${currentUser.role === 'nurse' ? 'Track your training progress and competency level' : 'Track all nurses\' training progress and competency levels'}</p></div>
         <div class="filter-bar">
             <input type="text" id="searchName" placeholder="🔍 Search" onkeyup="renderTrackerSheet()">
             <select id="filterDept" onchange="renderTrackerSheet()">
@@ -1322,32 +1464,62 @@
                 <option value="2">Level 2 (Independent)</option>
                 <option value="3">Level 3 (Preceptor)</option>
             </select>
-            <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
+            ${currentUser.role !== 'nurse' ? `<button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>` : ''}
             <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
         </div>
-        <div class="tracker-card"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Quiz %</th><th>Modules Done</th><th>Total</th><th>Progress</th><th>Status</th><th>Competency</th></thead><tbody>`;
+        <div class="tracker-card">
+            <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: var(--bg-primary);">
+                        <th style="padding: 10px 8px;">Emp ID</th>
+                        <th style="padding: 10px 8px;">Name</th>
+                        <th style="padding: 10px 8px;">Department</th>
+                        <th style="padding: 10px 8px; text-align: center;">Quiz %</th>
+                        <th style="padding: 10px 8px; text-align: center;">Modules</th>
+                        <th style="padding: 10px 8px;">Progress</th>
+                        <th style="padding: 10px 8px;">Status</th>
+                        <th style="padding: 10px 8px;">Competency</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        
         const filterDept = document.getElementById('filterDept')?.value || 'all';
         const filterPriv = document.getElementById('filterPrivilege')?.value || 'all';
         const search = document.getElementById('searchName')?.value.toLowerCase() || '';
-        nursesData.filter(n => n.role === 'nurse').filter(n => (filterDept === 'all' || n.department === filterDept) && (filterPriv === 'all' || n.privilege == filterPriv) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))).forEach(n => {
+        
+        let filtered = nursesToShow.filter(n => 
+            (filterDept === 'all' || n.department === filterDept) && 
+            (filterPriv === 'all' || n.privilege == filterPriv) && 
+            (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))
+        );
+        
+        filtered.forEach(n => {
             const modules = getAllModulesCount(n.department);
             const modulesDone = n.trainingModulesCompleted?.length || 0;
             const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
             let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
             let atRiskBadge = (n.quizScore && n.quizScore < 60) ? '<span class="badge badge-danger">⚠️</span>' : '';
-            html += `<tr>
-                <td>${n.empId} ${atRiskBadge}</td>
-                <td><strong>${n.name}</strong></td>
-                <td>${n.department}</td>
-                <td style="text-align:center">${n.quizScore || '—'}%</td>
-                <td style="text-align:center">${modulesDone}</td>
-                <td style="text-align:center">${modules.total}</td>
-                <td><div style="display:flex; align-items:center; gap:8px;"><div class="progress-bar-small"><div class="progress-fill-small" style="width:${percent}%"></div></div><span style="font-size:11px;">${percent}%</span></div></td>
-                <td>${statusBadge}</td>
-                <td>${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</td>
+            html += `<tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 8px 6px;"><strong>${n.empId}</strong> ${atRiskBadge}</td>
+                <td style="padding: 8px 6px;">${n.name}</td>
+                <td style="padding: 8px 6px;">${n.department}</td>
+                <td style="padding: 8px 6px; text-align: center;">${n.quizScore || '—'}%</td>
+                <td style="padding: 8px 6px; text-align: center;">${modulesDone}/${modules.total}</td>
+                <td style="padding: 8px 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="progress-bar-small"><div class="progress-fill-small" style="width:${percent}%"></div></div>
+                        <span style="font-size: 11px;">${percent}%</span>
+                    </div>
+                </td>
+                <td style="padding: 8px 6px;">${statusBadge}</td>
+                <td style="padding: 8px 6px;"><span style="background: ${n.privilege === 1 ? '#3b82f6' : (n.privilege === 2 ? '#10b981' : '#8b5cf6')}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px;">${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</span></td>
             </tr>`;
         });
-        html += `</tbody></table></div>`;
+        html += `</tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 11px; color: var(--text-secondary);">Total: ${filtered.length} nurses</p>
+        </div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
     }
@@ -1460,18 +1632,18 @@
         <div class="tracker-card">
             <h3 style="margin-bottom: 1rem;">📋 Nurse Competency Data</h3>
             <div style="overflow-x: auto;">
-                <table class="reports-table" style="width: 100%; border-collapse: collapse; min-width: 1100px;">
+                <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: var(--bg-primary);">
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Emp ID</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Name</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Department</th>
-                            <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid var(--border-color);">Quiz%</th>
-                            <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid var(--border-color);">Modules</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Progress</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Status</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Competency</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Last Active</th>
+                            <th style="padding: 10px 8px;">Emp ID</th>
+                            <th style="padding: 10px 8px;">Name</th>
+                            <th style="padding: 10px 8px;">Department</th>
+                            <th style="padding: 10px 8px; text-align: center;">Quiz%</th>
+                            <th style="padding: 10px 8px; text-align: center;">Modules</th>
+                            <th style="padding: 10px 8px;">Progress</th>
+                            <th style="padding: 10px 8px;">Status</th>
+                            <th style="padding: 10px 8px;">Competency</th>
+                            <th style="padding: 10px 8px;">Last Active</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -1480,7 +1652,7 @@
             const modules = getAllModulesCount(n.department);
             const modulesDone = n.trainingModulesCompleted?.length || 0;
             const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
-            let statusBadge = n.trainingStatus === 'Completed' ? '<span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:20px; font-size:12px;">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span style="background:#fef9c3; color:#854d0e; padding:4px 10px; border-radius:20px; font-size:12px;">🔄 In Progress</span>' : '<span style="background:#fff3e3; color:#b45309; padding:4px 10px; border-radius:20px; font-size:12px;">⏳ Pending</span>');
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:20px;">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span style="background:#fef9c3; color:#854d0e; padding:4px 10px; border-radius:20px;">🔄 In Progress</span>' : '<span style="background:#fff3e3; color:#b45309; padding:4px 10px; border-radius:20px;">⏳ Pending</span>');
             let competencyText = n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor');
             let competencyColor = n.privilege === 1 ? '#3b82f6' : (n.privilege === 2 ? '#10b981' : '#8b5cf6');
             let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
@@ -1500,15 +1672,15 @@
                     </div>
                 </td>
                 <td style="padding: 10px 8px;">${statusBadge}</td>
-                <td style="padding: 10px 8px;"><span style="background: ${competencyColor}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px;">${competencyText}</span></td>
-                <td style="padding: 10px 8px; font-size: 11px;">${lastActive}</td>
+                <td style="padding: 10px 8px;"><span style="background: ${competencyColor}; color: white; padding: 4px 10px; border-radius: 20px;">${competencyText}</span></td>
+                <td style="padding: 10px 8px;">${lastActive}</td>
             </tr>`;
         });
         
         html += `</tbody>
                 </table>
             </div>
-            <p style="margin-top: 1rem; font-size: 12px; color: var(--text-secondary);">Total nurses: ${nurses.length}</p>
+            <p style="margin-top: 1rem; font-size: 11px;">Total nurses: ${nurses.length}</p>
         </div>`;
         
         document.getElementById('mainContent').innerHTML = html;
@@ -1620,18 +1792,18 @@
         </div>
         <div class="tracker-card">
             <div style="overflow-x: auto;">
-                <table class="user-table" style="width: 100%; border-collapse: collapse; min-width: 1100px;">
+                <table style="min-width: 1100px; width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: var(--bg-primary);">
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Emp ID</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Name</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Department</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Role</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Privilege</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Training %</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Quiz %</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Status</th>
-                            <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid var(--border-color);">Actions</th>
+                            <th style="padding: 10px 8px;">Emp ID</th>
+                            <th style="padding: 10px 8px;">Name</th>
+                            <th style="padding: 10px 8px;">Department</th>
+                            <th style="padding: 10px 8px;">Role</th>
+                            <th style="padding: 10px 8px;">Privilege</th>
+                            <th style="padding: 10px 8px;">Training %</th>
+                            <th style="padding: 10px 8px;">Quiz %</th>
+                            <th style="padding: 10px 8px;">Status</th>
+                            <th style="padding: 10px 8px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -1670,7 +1842,7 @@
         html += `</tbody>
                 </table>
             </div>
-            <p style="margin-top: 0.8rem; font-size: 0.75rem; color: var(--text-secondary);">Total: ${filtered.length} users</p>
+            <p style="margin-top: 0.8rem; font-size: 0.75rem;">Total: ${filtered.length} users</p>
         </div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
@@ -1781,7 +1953,6 @@
             <div class="setting-group">
                 <h3>📊 Competency Rules</h3>
                 <div class="setting-row"><span class="setting-label">Inactivity Days Threshold</span><div><input type="number" id="inactivityDays" value="${systemConfig.inactivityDaysThreshold}" min="7" max="90" style="width:80px;"> <button class="save-btn" onclick="updateSetting('inactivityDaysThreshold', document.getElementById('inactivityDays').value)">Save</button></div></div>
-                <div class="setting-row"><span class="setting-label">Training Required for Level 2</span><span class="setting-value">All modules must be completed</span></div>
             </div>
             <div class="setting-group">
                 <h3>📁 Data Management</h3>
