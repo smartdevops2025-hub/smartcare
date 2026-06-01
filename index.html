@@ -174,17 +174,6 @@
             margin-right: 0.4rem;
         }
 
-        .info-card {
-            margin-top: 1.5rem;
-            background: #f0f9ff;
-            padding: 0.8rem;
-            border-radius: 1rem;
-            font-size: 0.7rem;
-            color: #2c5a6e;
-            text-align: center;
-            border: 1px dashed #bcd9e6;
-        }
-
         @media (max-width: 720px) {
             .login-container {
                 flex-direction: column;
@@ -251,67 +240,40 @@
                 </div>
                 <button type="submit" class="login-btn">→ Access SMARTCARE</button>
             </form>
-
-            <div class="info-card">
-                <strong>💡 Competency-Based Privilege System</strong><br>
-                Complete pre-evaluation (≥70%) → Unlock training modules → Complete all modules → Take post-evaluation (≥85%) → Automatic privilege upgrade!
-            </div>
         </div>
     </div>
     <footer>
-        SMARTCARE — Competency-Based Induction & Privileging System | Pre-evaluation · Training Modules · Post-evaluation · Auto Privilege
+        SMARTCARE — Competency-Based Induction & Privileging System | Training Modules · Competency Quiz · Auto Privilege
     </footer>
 </div>
 
 <script>
     // ========== MASTER USER DATABASE ==========
-    // This matches the dashboard's nursesData for seamless login
-    
     const masterUsers = {
-        // Admin
         "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" },
-        
-        // Nurse Manager
         "MGR001": { password: "manager001", role: "manager", name: "Lekha Nair", privilege: 3, department: "ICU" },
-        
-        // Supervisor
         "SUP001": { password: "super123", role: "supervisor", name: "Manoj Das", privilege: 2, department: "ICU" },
-        
-        // Level 3 Nurse (Preceptor)
         "NURSE103": { password: "nurse123", role: "nurse", name: "Punya", privilege: 3, department: "Infection Control" },
-        
-        // Level 2 Nurse (Independent)
-        "NURSE102": { password: "nurse123", role: "nurse", name: "Razim", privilege: 2, department: "OT" },
-        
-        // Level 1 Nurses (Trainees)
+        "NURSE102": { password: "nurse123", role: "nurse", name: "Razim", privilege: 2, department: "Emergency Department" },
         "NURSE101": { password: "nurse123", role: "nurse", name: "Mohan", privilege: 1, department: "ICU" },
         "NURSE104": { password: "nurse123", role: "nurse", name: "Vinesh", privilege: 1, department: "ICU" }
     };
     
-    // Load any existing users from localStorage and merge (for new nurses added via dashboard)
+    // Load any existing users from localStorage
     let storedUsers = localStorage.getItem('smartcare_users');
     if(storedUsers) {
         const parsedUsers = JSON.parse(storedUsers);
         Object.assign(masterUsers, parsedUsers);
     }
     
-    // Save master users to localStorage for dashboard to use
     localStorage.setItem('smartcare_users', JSON.stringify(masterUsers));
-    
-    // Optional: Initialize default dashboard data if not exists
-    if (!localStorage.getItem('smartcare_nurses_data')) {
-        // Dashboard will initialize its own data on first load
-        console.log("SMARTCARE ready - Dashboard will initialize data on first access");
-    }
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const username = document.getElementById('username').value.trim().toUpperCase();
         const password = document.getElementById('password').value.trim();
         
-        // Check against master users
         if(masterUsers[username] && masterUsers[username].password === password) {
-            // Store current user data
             const userData = {
                 id: username,
                 name: masterUsers[username].name,
@@ -322,7 +284,7 @@
             localStorage.setItem('currentUser', JSON.stringify(userData));
             localStorage.setItem('sessionLoginTime', Date.now().toString());
             
-            // Add login audit entry (will be picked up by dashboard)
+            // Add login audit entry
             const existingAudit = localStorage.getItem('smartcare_audit');
             let auditLog = existingAudit ? JSON.parse(existingAudit) : [];
             auditLog.unshift({
@@ -336,14 +298,14 @@
             if (auditLog.length > 1000) auditLog.pop();
             localStorage.setItem('smartcare_audit', JSON.stringify(auditLog));
             
-            // Redirect to dashboard
             window.location.href = 'dashboard.html';
         } else {
-            alert("❌ Invalid Employee ID or Password\n\nDemo credentials:\n• Admin: ADMIN999 / Admin@2025\n• Nurse Manager: MGR001 / manager123\n• Supervisor: SUP001 / super123\n• Nurse: NURSE101 / nurse123");
+            // FIXED: Show only generic error message - no credentials exposed
+            alert("❌ Incorrect Employee ID or Password.\n\nPlease contact your Administrator for password reset.");
         }
     });
     
-    // Add enter key support
+    // Enter key support
     document.getElementById('password').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             document.getElementById('loginForm').dispatchEvent(new Event('submit'));
