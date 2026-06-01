@@ -888,6 +888,43 @@
     const savedConfig = localStorage.getItem('smartcare_config');
     if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
+    // ========== LOAD SAVED NURSES DATA ==========
+    let nursesData = [];
+    const savedNursesData = localStorage.getItem('smartcare_nurses_data');
+    
+    if (savedNursesData) {
+        nursesData = JSON.parse(savedNursesData);
+    } else {
+        // Default nurses data
+        nursesData = [
+            { id: 1, name: "Mohan", empId: "NURSE101", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-01-15", quizScore: null, preEval: null, postEval: null },
+            { id: 2, name: "Razim", empId: "NURSE102", department: "Emergency Department", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null, preEval: null, postEval: null },
+            { id: 3, name: "Punya", empId: "NURSE103", department: "Infection Control", trainingStatus: "Pending", privilege: 1, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null },
+            { id: 4, name: "Vinesh", empId: "NURSE104", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null, preEval: null, postEval: null },
+            { id: 5, name: "Manoj Das", empId: "SUP001", department: "ICU", trainingStatus: "Pending", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null },
+            { id: 6, name: "Lekha Nair", empId: "MGR001", department: "ICU", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-01-10", password: "manager001", role: "manager", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null }
+        ];
+    }
+
+    function saveNursesData() {
+        localStorage.setItem('smartcare_nurses_data', JSON.stringify(nursesData));
+    }
+
+    function updateLoginUsers() {
+        let loginUsers = { "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" } };
+        nursesData.forEach(n => { 
+            loginUsers[n.empId] = { 
+                password: n.password, 
+                role: n.role, 
+                name: n.name, 
+                privilege: n.privilege, 
+                department: n.department 
+            };
+        });
+        localStorage.setItem('smartcare_users', JSON.stringify(loginUsers));
+        saveNursesData();
+    }
+
     // ========== QUIZZES FOR EACH DEPARTMENT ==========
     const quizzes = {
         "ICU": {
@@ -1009,22 +1046,6 @@
             "Technical Evaluation": ["Wound care advanced", "Enteral feeding pump", "Patient-controlled analgesia", "Telemetry monitoring", "Point-of-care testing"]
         }
     };
-
-    // ========== NURSES DATA ==========
-    let nursesData = [
-        { id: 1, name: "Mohan", empId: "NURSE101", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-01-15", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-01-15", quizScore: null, preEval: null, postEval: null },
-        { id: 2, name: "Razim", empId: "NURSE102", department: "Emergency Department", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-11-20", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null, preEval: null, postEval: null },
-        { id: 3, name: "Punya", empId: "NURSE103", department: "Infection Control", trainingStatus: "Pending", privilege: 1, joiningDate: "2024-08-10", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null },
-        { id: 4, name: "Vinesh", empId: "NURSE104", department: "ICU", trainingStatus: "Pending", privilege: 1, joiningDate: "2025-02-01", password: "nurse123", role: "nurse", trainingModulesCompleted: [], lastActivity: "2025-02-01", quizScore: null, preEval: null, postEval: null },
-        { id: 5, name: "Manoj Das", empId: "SUP001", department: "ICU", trainingStatus: "Pending", privilege: 2, joiningDate: "2024-06-15", password: "super123", role: "supervisor", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null },
-        { id: 6, name: "Lekha Nair", empId: "MGR001", department: "ICU", trainingStatus: "Pending", privilege: 3, joiningDate: "2024-01-10", password: "manager001", role: "manager", trainingModulesCompleted: [], lastActivity: "2025-02-10", quizScore: null, preEval: null, postEval: null }
-    ];
-
-    function updateLoginUsers() {
-        let loginUsers = { "ADMIN999": { password: "Admin@2025", role: "admin", name: "System Admin", privilege: 3, department: "All" } };
-        nursesData.forEach(n => { loginUsers[n.empId] = { password: n.password, role: n.role, name: n.name, privilege: n.privilege, department: n.department }; });
-        localStorage.setItem('smartcare_users', JSON.stringify(loginUsers));
-    }
 
     function getAllModulesCount(department) {
         const deptModules = trainingModulesByDept[department];
@@ -1149,9 +1170,10 @@
         renderQuiz();
     }
 
-    // ========== PRE-EVALUATION ==========
+    // ========== FIXED PRE-EVALUATION ==========
     function renderPreEvaluation() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
+        
         if (!nurse && currentUser.role !== 'admin') {
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Record not found</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
@@ -1165,13 +1187,15 @@
             return;
         }
         
+        // Check if pre-evaluation already completed
         if (nurse && nurse.preEval) {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation already completed! Score: ${nurse.preEval}%</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation already completed! Score: ${nurse.preEval}%</div><p>Your training modules are now unlocked. Please contact your Supervisor to mark training modules complete.</p><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
         let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title} (Pre-evaluation)</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}% - Required to unlock training modules</p></div><div class="card"><form id="preEvalForm">`;
         
+        // Use first 5 questions for pre-evaluation
         const preEvalQuestions = quiz.questions.slice(0, 5);
         preEvalQuestions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
@@ -1194,38 +1218,53 @@
             const percentage = Math.round((score / preEvalQuestions.length) * 100);
             const passed = percentage >= systemConfig.passingScore;
             
-            if (nurse) {
-                nurse.preEval = percentage;
-                if (passed && nurse.trainingStatus === 'Pending') {
-                    nurse.trainingStatus = 'In Progress';
+            // IMPORTANT: Find the nurse again and save the score
+            const currentNurse = nursesData.find(n => n.empId === currentUser.id);
+            
+            if (currentNurse) {
+                currentNurse.preEval = percentage;
+                if (passed && currentNurse.trainingStatus === 'Pending') {
+                    currentNurse.trainingStatus = 'In Progress';
                 }
                 updateLoginUsers();
-                addAuditLog("PRE_EVAL", `${nurse.name} scored ${percentage}%`);
+                addAuditLog("PRE_EVAL", `${currentNurse.name} scored ${percentage}% - ${passed ? 'PASSED' : 'FAILED'}`);
+                
+                // Also save to localStorage to ensure persistence
+                saveNursesData();
             }
             
             alert(`Score: ${percentage}% - ${passed ? 'PASSED ✓' : 'FAILED ✗ (Need ' + systemConfig.passingScore + '% to unlock training)'}`);
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Pre-evaluation: ${percentage}%</div>${passed ? '<button class="quiz-btn" onclick="navigateTo(\'trainingStatus\')">Start Training</button>' : '<button class="quiz-btn" onclick="renderPreEvaluation()">Retake</button>'}</div>`;
+            
+            if (passed) {
+                document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Pre-evaluation: ${percentage}% - PASSED! ✓</div><p>Your training modules are now unlocked.</p><p>Please ask your Supervisor to mark your training modules as complete.</p><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button> <button class="quiz-btn" onclick="navigateTo('trainingStatus')">View Training Modules</button></div>`;
+            } else {
+                document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Pre-evaluation: ${percentage}% - FAILED ✗</div><p>You need ${systemConfig.passingScore}% to unlock training modules.</p><button class="quiz-btn" onclick="renderPreEvaluation()">Retake Pre-evaluation</button> <button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            }
+            closeSidebar();
         });
-        closeSidebar();
     }
 
-    // ========== POST-EVALUATION ==========
+    // ========== FIXED POST-EVALUATION ==========
     function renderPostEvaluation() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
+        
         if (!nurse && currentUser.role !== 'admin') {
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Record not found</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
+        // Check if pre-evaluation completed
         if ((!nurse || !nurse.preEval) && currentUser.role !== 'admin') {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Please complete Pre-evaluation first.</p><button class="quiz-btn" onclick="navigateTo('preEval')">Go to Pre-evaluation</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">⚠️ Pre-evaluation Required</div><p>You must complete the Pre-evaluation before accessing Post-evaluation.</p><p>Your pre-evaluation status: ${!nurse?.preEval ? 'Not completed yet' : 'Completed'}</p><button class="quiz-btn" onclick="navigateTo('preEval')">Go to Pre-evaluation</button></div>`;
             return;
         }
         
+        // Check if training modules completed
         const modules = getAllModulesCount(nurse ? nurse.department : "ICU");
         const completedCount = nurse?.trainingModulesCompleted?.length || 0;
+        
         if (completedCount < modules.total && currentUser.role !== 'admin') {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Complete all training modules first. (${completedCount}/${modules.total} completed)</p><button class="quiz-btn" onclick="navigateTo('trainingStatus')">Go to Training</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">⚠️ Training Incomplete</div><p>Complete all training modules before taking Post-evaluation.</p><p>Progress: ${completedCount}/${modules.total} modules completed (${Math.round(completedCount/modules.total*100)}%)</p><button class="quiz-btn" onclick="navigateTo('trainingStatus')">Go to Training Status</button></div>`;
             return;
         }
         
@@ -1237,13 +1276,15 @@
             return;
         }
         
+        // Check if post-evaluation already completed
         if (nurse && nurse.postEval) {
-            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation already completed! Score: ${nurse.postEval}%</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation already completed! Score: ${nurse.postEval}%</div><p>Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
         let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade privilege</p></div><div class="card"><form id="postEvalForm">`;
         
+        // Use all questions for post-evaluation
         quiz.questions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
             q.options.forEach((opt, optIdx) => {
@@ -1264,24 +1305,31 @@
             });
             const percentage = Math.round((score / quiz.questions.length) * 100);
             
-            if (nurse) {
-                nurse.postEval = percentage;
-                const oldPrivilege = nurse.privilege;
-                if (percentage >= systemConfig.privilegeUpgradeScore && nurse.privilege < 3) {
-                    nurse.privilege++;
-                    addAuditLog("PRIVILEGE_UPGRADE", `${nurse.name} upgraded from Level ${oldPrivilege} to Level ${nurse.privilege}`);
-                    alert(`🎉 Congratulations! You've been upgraded to Level ${nurse.privilege}!`);
-                } else if (percentage < systemConfig.privilegeDowngradeScore && nurse.privilege > 1) {
-                    nurse.privilege--;
-                    addAuditLog("PRIVILEGE_DOWNGRADE", `${nurse.name} downgraded to Level ${nurse.privilege}`);
-                    alert(`⚠️ Your privilege has been downgraded to Level ${nurse.privilege}. Please review training materials.`);
+            // Find the nurse again
+            const currentNurse = nursesData.find(n => n.empId === currentUser.id);
+            
+            if (currentNurse) {
+                currentNurse.postEval = percentage;
+                const oldPrivilege = currentNurse.privilege;
+                
+                if (percentage >= systemConfig.privilegeUpgradeScore && currentNurse.privilege < 3) {
+                    currentNurse.privilege++;
+                    addAuditLog("PRIVILEGE_UPGRADE", `${currentNurse.name} upgraded from Level ${oldPrivilege} to Level ${currentNurse.privilege}`);
+                    alert(`🎉 CONGRATULATIONS! You've been upgraded to Level ${currentNurse.privilege}!`);
+                } else if (percentage < systemConfig.privilegeDowngradeScore && currentNurse.privilege > 1) {
+                    currentNurse.privilege--;
+                    addAuditLog("PRIVILEGE_DOWNGRADE", `${currentNurse.name} downgraded to Level ${currentNurse.privilege}`);
+                    alert(`⚠️ Your privilege has been downgraded to Level ${currentNurse.privilege}. Please review training materials.`);
                 } else {
-                    alert(`Post-evaluation Score: ${percentage}% - Your privilege remains Level ${nurse.privilege}.`);
+                    alert(`Post-evaluation Score: ${percentage}% - Your privilege remains Level ${currentNurse.privilege}.`);
                 }
-                nurse.trainingStatus = "Completed";
+                currentNurse.trainingStatus = "Completed";
                 updateLoginUsers();
                 updateSidebarPrivilege();
-                addAuditLog("POST_EVAL", `${nurse.name} scored ${percentage}%`);
+                addAuditLog("POST_EVAL", `${currentNurse.name} scored ${percentage}%`);
+                
+                // Save to localStorage
+                saveNursesData();
             } else {
                 alert(`Post-evaluation Score: ${percentage}% (Admin Test Mode)`);
             }
@@ -2147,8 +2195,8 @@
         { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
         { id: "userManagement", name: "User Management", icon: "👥", roles: ["admin","manager","supervisor"] },
-        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin"] },      // ONLY ADMIN
-        { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }        // ONLY ADMIN
+        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin"] },
+        { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }
     ];
 
     function getMenuForUser(user) {
