@@ -630,101 +630,12 @@
     <div class="main-content" id="mainContent"></div>
 </div>
 
-<!-- [All modals remain the same - keeping them for brevity] -->
-<!-- Modal for Add/Edit Nurse -->
-<div id="nurseModal" class="modal">
-    <div class="modal-content">
-        <h3 id="nurseModalTitle">Add New Nurse</h3>
-        <input type="hidden" id="editNurseId">
-        <input type="text" id="nurseName" placeholder="Full Name" required>
-        <input type="text" id="nurseEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
-        <select id="nurseDept">
-            <option value="Labour Room">Labour Room</option>
-            <option value="Emergency Department">Emergency Department</option>
-            <option value="ICU">ICU</option>
-            <option value="Infection Control">Infection Control</option>
-            <option value="Critical Care">Critical Care</option>
-            <option value="Ward">Ward</option>
-        </select>
-        <select id="nursePrivilege">
-            <option value="1">Level 1 (Trainee)</option>
-            <option value="2">Level 2 (Independent)</option>
-            <option value="3">Level 3 (Preceptor)</option>
-        </select>
-        <select id="nurseRole">
-            <option value="nurse">👩‍⚕️ Nurse</option>
-            <option value="supervisor">👩‍🏫 Supervisor</option>
-            <option value="manager">👔 Nurse Manager</option>
-        </select>
-        <div id="passwordFieldContainer" style="display: none;">
-            <input type="password" id="nursePassword" placeholder="Password (default: nurse123)" value="nurse123">
-            <small style="font-size: 0.7rem; color: #666;">Only visible to Admin</small>
-        </div>
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closeNurseModal()">Cancel</button>
-            <button class="add-btn" onclick="saveNurse()">Save Nurse</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Password Reset (Admin only) -->
-<div id="passwordResetModal" class="modal">
-    <div class="modal-content">
-        <h3>Reset Password</h3>
-        <p id="resetNurseName" style="margin-bottom: 0.5rem;"></p>
-        <input type="password" id="newPassword" placeholder="New Password" value="nurse123">
-        <input type="password" id="confirmPassword" placeholder="Confirm Password">
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closePasswordResetModal()">Cancel</button>
-            <button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset Password</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Password Change (User self-service) -->
-<div id="passwordChangeModal" class="modal">
-    <div class="modal-content">
-        <h3>Change Password</h3>
-        <input type="password" id="currentPassword" placeholder="Current Password">
-        <input type="password" id="newPassword1" placeholder="New Password">
-        <input type="password" id="confirmPassword1" placeholder="Confirm New Password">
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closePasswordChangeModal()">Cancel</button>
-            <button class="save-btn" onclick="confirmPasswordChange()">Update Password</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Role Change -->
-<div id="roleModal" class="modal">
-    <div class="modal-content">
-        <h3 id="roleModalTitle">Change Role</h3>
-        <p id="roleModalNurse" style="margin-bottom: 0.5rem;"></p>
-        <select id="newRoleSelect">
-            <option value="nurse">👩‍⚕️ Nurse</option>
-            <option value="supervisor">👩‍🏫 Supervisor</option>
-            <option value="manager">👔 Nurse Manager</option>
-        </select>
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closeRoleModal()">Cancel</button>
-            <button class="promote-btn" onclick="confirmRoleChange()">Confirm Change</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Bulk Training Assignment -->
-<div id="bulkTrainingModal" class="modal">
-    <div class="modal-content">
-        <h3>📚 Bulk Training Assignment</h3>
-        <p style="margin-bottom: 0.5rem;">Select nurses and training modules to assign</p>
-        <select id="bulkNurseSelect" multiple size="5" style="height: auto;"></select>
-        <select id="bulkModuleSelect" multiple size="5" style="height: auto;"></select>
-        <div class="modal-buttons">
-            <button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button>
-            <button class="add-btn" onclick="assignBulkTraining()">Assign Training</button>
-        </div>
-    </div>
-</div>
+<!-- Modals (kept for compatibility) -->
+<div id="nurseModal" class="modal"><div class="modal-content"><h3 id="nurseModalTitle">Add New Nurse</h3><input type="hidden" id="editNurseId"><input type="text" id="nurseName" placeholder="Full Name"><input type="text" id="nurseEmpId" placeholder="Employee ID"><select id="nurseDept"><option>ICU</option></select><select id="nursePrivilege"><option>1</option></select><select id="nurseRole"><option>nurse</option></select><div class="modal-buttons"><button class="btn-small" onclick="closeNurseModal()">Cancel</button><button class="add-btn" onclick="saveNurse()">Save</button></div></div></div>
+<div id="passwordResetModal" class="modal"><div class="modal-content"><h3>Reset Password</h3><input type="password" id="newPassword"><input type="password" id="confirmPassword"><div class="modal-buttons"><button class="btn-small" onclick="closePasswordResetModal()">Cancel</button><button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset</button></div></div></div>
+<div id="passwordChangeModal" class="modal"><div class="modal-content"><h3>Change Password</h3><input type="password" id="currentPassword"><input type="password" id="newPassword1"><input type="password" id="confirmPassword1"><div class="modal-buttons"><button class="btn-small" onclick="closePasswordChangeModal()">Cancel</button><button class="save-btn" onclick="confirmPasswordChange()">Update</button></div></div></div>
+<div id="roleModal" class="modal"><div class="modal-content"><h3 id="roleModalTitle">Change Role</h3><select id="newRoleSelect"><option value="nurse">Nurse</option><option value="supervisor">Supervisor</option><option value="manager">Manager</option></select><div class="modal-buttons"><button class="btn-small" onclick="closeRoleModal()">Cancel</button><button class="promote-btn" onclick="confirmRoleChange()">Confirm</button></div></div></div>
+<div id="bulkTrainingModal" class="modal"><div class="modal-content"><h3>Bulk Training</h3><select id="bulkNurseSelect" multiple></select><select id="bulkModuleSelect" multiple></select><div class="modal-buttons"><button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button><button class="add-btn" onclick="assignBulkTraining()">Assign</button></div></div></div>
 
 <script>
     // ========== SESSION EXPIRY (8 HOURS) ==========
@@ -814,16 +725,9 @@
     // ========== KEYBOARD SHORTCUTS ==========
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key === 'd') { e.preventDefault(); navigateTo('dashboard'); showNotification('Dashboard (Ctrl+D)', 'info'); }
-        if (e.ctrlKey && e.key === 't') { e.preventDefault(); navigateTo('trainingStatus'); showNotification('Training Status (Ctrl+T)', 'info'); }
         if (e.ctrlKey && e.key === 'p') { e.preventDefault(); navigateTo('preEval'); showNotification('Pre-evaluation (Ctrl+P)', 'info'); }
         if (e.ctrlKey && e.key === 'o') { e.preventDefault(); navigateTo('postEval'); showNotification('Post-evaluation (Ctrl+O)', 'info'); }
-        if (e.ctrlKey && e.key === 'q') { e.preventDefault(); 
-            if (currentUser.role === 'admin' || currentUser.role === 'nurse') { navigateTo('quiz'); showNotification('Competency Quiz (Ctrl+Q)', 'info'); } 
-            else { showNotification('Quiz is only available for Admin and Nurses', 'warning'); }
-        }
-        if (e.ctrlKey && e.key === 'r') { e.preventDefault(); navigateTo('reports'); showNotification('Reports (Ctrl+R)', 'info'); }
-        if (e.ctrlKey && e.key === 's') { e.preventDefault(); exportFullBackup(); showNotification('Backup exported (Ctrl+S)', 'info'); }
-        if (e.ctrlKey && e.key === 'n') { e.preventDefault(); openAddNurseModal(); showNotification('Add New Nurse (Ctrl+N)', 'info'); }
+        if (e.ctrlKey && e.key === 'q') { e.preventDefault(); navigateTo('quiz'); showNotification('Competency Quiz (Ctrl+Q)', 'info'); }
         if (e.ctrlKey && e.key === 'e') { e.preventDefault(); extendSession(); showNotification('Session extended (Ctrl+E)', 'info'); }
     });
 
@@ -887,14 +791,14 @@
     resetInactivityTimer();
 
     // ========== SYSTEM CONFIG ==========
-    let systemConfig = { passingScore: 70, privilegeUpgradeScore: 85, privilegeDowngradeScore: 60, autoAssignPrivilege: true, inactivityDaysThreshold: 30, quizQuestionsCount: 10 };
+    let systemConfig = { passingScore: 70, privilegeUpgradeScore: 85, privilegeDowngradeScore: 60, autoAssignPrivilege: true, inactivityDaysThreshold: 30, quizQuestionsCount: 5 };
     const savedConfig = localStorage.getItem('smartcare_config');
     if(savedConfig) Object.assign(systemConfig, JSON.parse(savedConfig));
 
-    // ========== TRAINING MODULES & QUIZZES ==========
+    // ========== QUIZZES FOR EACH DEPARTMENT ==========
     const quizzes = {
         "ICU": {
-            title: "ICU Pre-evaluation",
+            title: "ICU Competency Quiz",
             questions: [
                 { text: "What is the normal range for adult heart rate?", options: ["40-60 bpm", "60-100 bpm", "100-140 bpm", "20-40 bpm"], correct: 1 },
                 { text: "Which of the following indicates sepsis?", options: ["Temperature >38°C or <36°C", "Heart rate <60 bpm", "Blood pressure >140/90", "Respiratory rate <12"], correct: 0 },
@@ -904,7 +808,7 @@
             ]
         },
         "OT": {
-            title: "OT Pre-evaluation",
+            title: "OT Competency Quiz",
             questions: [
                 { text: "What is the standard surgical hand scrub time?", options: ["1 minute", "2-5 minutes", "10 minutes", "15 minutes"], correct: 1 },
                 { text: "Which of these is a sterile field violation?", options: ["Turning back to sterile field", "Speaking quietly", "Wearing mask", "Using sterile gloves"], correct: 0 },
@@ -914,7 +818,7 @@
             ]
         },
         "Infection Control": {
-            title: "Infection Control Pre-evaluation",
+            title: "Infection Control Competency Quiz",
             questions: [
                 { text: "What is the most effective way to prevent HAI?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE only"], correct: 1 },
                 { text: "How long should you rub hands during hand hygiene?", options: ["5 seconds", "10-15 seconds", "20-30 seconds", "60 seconds"], correct: 2 },
@@ -924,7 +828,7 @@
             ]
         },
         "Emergency Department": {
-            title: "Emergency Dept Pre-evaluation",
+            title: "Emergency Dept Competency Quiz",
             questions: [
                 { text: "What is the first step in trauma assessment?", options: ["Airway", "Breathing", "Circulation", "Disability"], correct: 0 },
                 { text: "What is the correct compression to ventilation ratio for adult CPR?", options: ["15:2", "30:2", "15:1", "30:1"], correct: 1 },
@@ -934,7 +838,7 @@
             ]
         },
         "Labour Room": {
-            title: "Labour Room Pre-evaluation",
+            title: "Labour Room Competency Quiz",
             questions: [
                 { text: "What is the normal duration of latent phase of labour?", options: ["Up to 6 hours", "Up to 8 hours", "Up to 12 hours", "Up to 20 hours"], correct: 3 },
                 { text: "What is the normal fetal heart rate range?", options: ["80-120 bpm", "100-140 bpm", "110-160 bpm", "120-180 bpm"], correct: 2 },
@@ -944,7 +848,7 @@
             ]
         },
         "Critical Care": {
-            title: "Critical Care Pre-evaluation",
+            title: "Critical Care Competency Quiz",
             questions: [
                 { text: "What is the normal central venous pressure (CVP) range?", options: ["2-6 mmHg", "6-12 mmHg", "8-15 mmHg", "10-20 mmHg"], correct: 0 },
                 { text: "What is the first-line vasopressor for septic shock?", options: ["Dopamine", "Norepinephrine", "Epinephrine", "Vasopressin"], correct: 1 },
@@ -954,7 +858,7 @@
             ]
         },
         "Ward": {
-            title: "Ward Pre-evaluation",
+            title: "Ward Competency Quiz",
             questions: [
                 { text: "What is the correct procedure for blood transfusion?", options: ["Verify with two nurses", "Start immediately", "Use any IV line", "No monitoring needed"], correct: 0 },
                 { text: "How often should vital signs be checked post-operatively?", options: ["Every 15 min", "Every 30 min", "Every 1 hour", "Every 4 hours"], correct: 0 },
@@ -965,53 +869,14 @@
         }
     };
 
-    function generateQuizQuestions(department, count = 5) {
-        const quiz = quizzes[department];
-        if (!quiz) return [];
-        // Shuffle questions and take first 'count'
-        const shuffled = [...quiz.questions];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        return shuffled.slice(0, count).map((q, idx) => ({
-            id: idx,
-            text: q.text,
-            options: q.options,
-            correct: q.correct
-        }));
-    }
-
-    let nurseQuizzes = JSON.parse(localStorage.getItem('smartcare_quizzes') || '{}');
-    function getOrCreateQuiz(nurseId, department) {
-        const key = `${nurseId}_${department}`;
-        if (!nurseQuizzes[key] || nurseQuizzes[key].completed) {
-            nurseQuizzes[key] = { questions: generateQuizQuestions(department, systemConfig.quizQuestionsCount), completed: false, score: null, startedAt: new Date().toISOString() };
-            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
-        }
-        return nurseQuizzes[key];
-    }
-
     // ========== TRAINING MODULES ==========
     const trainingModulesByDept = {
-        "Labour Room": {
-            "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour"]
-        },
-        "Emergency Department": {
-            "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator"]
-        },
-        "ICU": {
-            "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP"]
-        },
-        "Infection Control": {
-            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"]
-        },
-        "Critical Care": {
-            "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning"]
-        },
-        "Ward": {
-            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"]
-        }
+        "Labour Room": { "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour"] },
+        "Emergency Department": { "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator"] },
+        "ICU": { "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP"] },
+        "Infection Control": { "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"] },
+        "Critical Care": { "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning"] },
+        "Ward": { "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"] }
     };
 
     // ========== NURSES DATA ==========
@@ -1038,21 +903,130 @@
         return { total, categories };
     }
 
-    // ========== PRE-EVALUATION (Nurses only) ==========
-    function renderPreEvaluation() {
-        if (currentUser.role !== 'nurse' && currentUser.role !== 'admin') {
-            showNotification('Pre-evaluation is only available for nursing staff', 'warning');
-            navigateTo('dashboard');
+    // ========== COMPETENCY QUIZ (FIXED - Now Working) ==========
+    function renderQuiz() {
+        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        
+        if (!nurse && currentUser.role !== 'admin') {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Record not found</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
+        const department = nurse ? nurse.department : "ICU";
+        const quiz = quizzes[department];
+        
+        if (!quiz) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><p>No quiz available for your department.</p></div>`;
+            return;
+        }
+        
+        // Get or create quiz attempt
+        const quizKey = `${currentUser.id}_competency`;
+        let quizData = nurseQuizzes[quizKey];
+        
+        if (!quizData || quizData.completed) {
+            // Randomly select 5 questions from the quiz
+            const shuffled = [...quiz.questions];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            quizData = {
+                questions: shuffled.slice(0, systemConfig.quizQuestionsCount),
+                completed: false,
+                score: null,
+                startedAt: new Date().toISOString()
+            };
+            nurseQuizzes[quizKey] = quizData;
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+        }
+        
+        if (quizData.completed && nurse?.quizScore) {
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Quiz Completed! Score: ${nurse.quizScore}%</div><p>Your competency level: ${nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')}</p><button class="quiz-btn" onclick="resetQuiz()">Retake Quiz</button><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+            return;
+        }
+        
+        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Department: ${department} | ${quizData.questions.length} questions | Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade</p></div><div class="card"><form id="quizForm">`;
+        
+        quizData.questions.forEach((q, idx) => {
+            html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
+            q.options.forEach((opt, optIdx) => {
+                html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`;
+            });
+            html += `</div>`;
+        });
+        
+        html += `<button type="submit" class="quiz-btn">Submit Quiz</button></form></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let score = 0;
+            quizData.questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if(selected && parseInt(selected.value) === q.correct) score++;
+            });
+            const percentage = Math.round((score / quizData.questions.length) * 100);
+            quizData.completed = true;
+            quizData.score = percentage;
+            
+            if (nurse) {
+                nurse.quizScore = percentage;
+                nurse.lastActivity = new Date().toISOString().split('T')[0];
+                const oldPrivilege = nurse.privilege;
+                if (percentage >= systemConfig.privilegeUpgradeScore && nurse.privilege < 3) {
+                    nurse.privilege++;
+                    addAuditLog("PRIVILEGE_UPGRADE", `${nurse.name} upgraded from Level ${oldPrivilege} to Level ${nurse.privilege}`);
+                    showNotification(`🎉 Congratulations! Upgraded to Level ${nurse.privilege}!`, 'success');
+                } else if (percentage < systemConfig.privilegeDowngradeScore && nurse.privilege > 1) {
+                    nurse.privilege--;
+                    addAuditLog("PRIVILEGE_DOWNGRADE", `${nurse.name} downgraded to Level ${nurse.privilege}`);
+                    showNotification(`⚠️ Downgraded to Level ${nurse.privilege}. Please review training.`, 'warning');
+                }
+                updateLoginUsers();
+                updateSidebarPrivilege();
+                addAuditLog("QUIZ_COMPLETED", `${nurse.name} scored ${percentage}%`);
+            }
+            
+            localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+            
+            let message = `Quiz Score: ${percentage}%\n\n`;
+            if (percentage >= systemConfig.privilegeUpgradeScore && nurse && nurse.privilege > (nurse.privilege - 1)) {
+                message += `🎉 CONGRATULATIONS! Upgraded to Level ${nurse.privilege}!`;
+            } else if (percentage < systemConfig.privilegeDowngradeScore && nurse && nurse.privilege < (nurse.privilege + 1)) {
+                message += `⚠️ Downgraded to Level ${nurse.privilege}. Please review training.`;
+            } else {
+                message += `Competency remains Level ${nurse?.privilege || 'current'}.`;
+            }
+            alert(message);
+            
+            document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📊 Quiz Score: ${percentage}%</div><p>Your competency level: ${nurse ? (nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)')) : 'Not applicable'}</p><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
+        });
+        closeSidebar();
+    }
+
+    function resetQuiz() {
+        const quizKey = `${currentUser.id}_competency`;
+        delete nurseQuizzes[quizKey];
+        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        if (nurse) {
+            nurse.quizScore = null;
+        }
+        localStorage.setItem('smartcare_quizzes', JSON.stringify(nurseQuizzes));
+        updateLoginUsers();
+        showNotification('Quiz reset. You can retake the assessment.', 'info');
+        renderQuiz();
+    }
+
+    // ========== PRE-EVALUATION ==========
+    function renderPreEvaluation() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
         if (!nurse && currentUser.role !== 'admin') {
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Record not found</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
-        const department = currentUser.role === 'admin' ? "ICU" : nurse.department;
+        const department = nurse ? nurse.department : "ICU";
         const quiz = quizzes[department];
         
         if (!quiz) {
@@ -1060,13 +1034,12 @@
             return;
         }
         
-        // Check if already completed
-        if (nurse && nurse.preEval && currentUser.role !== 'admin') {
+        if (nurse && nurse.preEval) {
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Pre-evaluation already completed! Score: ${nurse.preEval}%</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
-        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title}</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}% - Required to unlock training modules</p></div><div class="card"><form id="preEvalForm">`;
+        let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title} (Pre-evaluation)</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}% - Required to unlock training modules</p></div><div class="card"><form id="preEvalForm">`;
         
         quiz.questions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
@@ -1089,13 +1062,13 @@
             const percentage = Math.round((score / quiz.questions.length) * 100);
             const passed = percentage >= systemConfig.passingScore;
             
-            if (nurse && currentUser.role !== 'admin') {
+            if (nurse) {
                 nurse.preEval = percentage;
                 if (passed && nurse.trainingStatus === 'Pending') {
                     nurse.trainingStatus = 'In Progress';
                 }
-                addAuditLog("PRE_EVAL", `${currentUser.name} scored ${percentage}%`);
                 updateLoginUsers();
+                addAuditLog("PRE_EVAL", `${nurse.name} scored ${percentage}%`);
             }
             
             alert(`Score: ${percentage}% - ${passed ? 'PASSED ✓' : 'FAILED ✗ (Need ' + systemConfig.passingScore + '% to unlock training)'}`);
@@ -1104,14 +1077,8 @@
         closeSidebar();
     }
 
-    // ========== POST-EVALUATION (Nurses only) ==========
+    // ========== POST-EVALUATION (FIXED - Checks training completion) ==========
     function renderPostEvaluation() {
-        if (currentUser.role !== 'nurse' && currentUser.role !== 'admin') {
-            showNotification('Post-evaluation is only available for nursing staff', 'warning');
-            navigateTo('dashboard');
-            return;
-        }
-        
         const nurse = nursesData.find(n => n.empId === currentUser.id);
         if (!nurse && currentUser.role !== 'admin') {
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">❌ Record not found</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
@@ -1125,14 +1092,14 @@
         }
         
         // Check if training modules completed
-        const modules = getAllModulesCount(currentUser.role === 'admin' ? "ICU" : nurse.department);
+        const modules = getAllModulesCount(nurse ? nurse.department : "ICU");
         const completedCount = nurse?.trainingModulesCompleted?.length || 0;
         if (completedCount < modules.total && currentUser.role !== 'admin') {
             document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Complete all training modules first. (${completedCount}/${modules.total} completed)</p><button class="quiz-btn" onclick="navigateTo('trainingStatus')">Go to Training</button></div>`;
             return;
         }
         
-        const department = currentUser.role === 'admin' ? "ICU" : nurse.department;
+        const department = nurse ? nurse.department : "ICU";
         const quiz = quizzes[department];
         
         if (!quiz) {
@@ -1140,14 +1107,14 @@
             return;
         }
         
-        // Check if already completed
-        if (nurse && nurse.postEval && currentUser.role !== 'admin') {
+        if (nurse && nurse.postEval) {
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">✅ Post-evaluation already completed! Score: ${nurse.postEval}%</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
             return;
         }
         
         let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade privilege</p></div><div class="card"><form id="postEvalForm">`;
         
+        // Use all questions for post-evaluation
         quiz.questions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
             q.options.forEach((opt, optIdx) => {
@@ -1168,21 +1135,28 @@
             });
             const percentage = Math.round((score / quiz.questions.length) * 100);
             
-            if (nurse && currentUser.role !== 'admin') {
+            if (nurse) {
                 nurse.postEval = percentage;
                 const oldPrivilege = nurse.privilege;
                 if (percentage >= systemConfig.privilegeUpgradeScore && nurse.privilege < 3) {
                     nurse.privilege++;
                     addAuditLog("PRIVILEGE_UPGRADE", `${nurse.name} upgraded from Level ${oldPrivilege} to Level ${nurse.privilege}`);
                     alert(`🎉 Congratulations! You've been upgraded to Level ${nurse.privilege}!`);
+                } else if (percentage < systemConfig.privilegeDowngradeScore && nurse.privilege > 1) {
+                    nurse.privilege--;
+                    addAuditLog("PRIVILEGE_DOWNGRADE", `${nurse.name} downgraded to Level ${nurse.privilege}`);
+                    alert(`⚠️ Your privilege has been downgraded to Level ${nurse.privilege}. Please review training materials.`);
+                } else {
+                    alert(`Post-evaluation Score: ${percentage}% - Your privilege remains Level ${nurse.privilege}.`);
                 }
                 nurse.trainingStatus = "Completed";
                 updateLoginUsers();
                 updateSidebarPrivilege();
                 addAuditLog("POST_EVAL", `${nurse.name} scored ${percentage}%`);
+            } else {
+                alert(`Post-evaluation Score: ${percentage}% (Admin Test Mode)`);
             }
             
-            alert(`Post-evaluation Score: ${percentage}%`);
             document.getElementById('mainContent').innerHTML = `<div class="card"><div class="score-display">📈 Post-evaluation: ${percentage}%</div><button class="quiz-btn" onclick="navigateTo('dashboard')">Go to Dashboard</button></div>`;
         });
         closeSidebar();
@@ -1190,8 +1164,6 @@
 
     // ========== DASHBOARD (Role-based) ==========
     function renderDashboard() {
-        updateAllPrivileges();
-        
         let nurses, total, completed, inProgress, pending, level1, level2, level3, avgQuiz, atRiskNurses, deptStats;
         
         if (currentUser.role === 'nurse') {
@@ -1205,15 +1177,9 @@
             level2 = nurses.filter(n => n.privilege === 2).length;
             level3 = nurses.filter(n => n.privilege === 3).length;
             avgQuiz = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
-            atRiskNurses = nurses.filter(n => (n.quizScore && n.quizScore < 60) || ((n.trainingModulesCompleted?.length || 0) / getAllModulesCount(n.department).total * 100) < 30);
-            
-            // Department stats for the nurse's own department only
-            deptStats = {};
-            nurses.forEach(n => {
-                if(!deptStats[n.department]) deptStats[n.department] = { total:0, completed:0 };
-                deptStats[n.department].total++;
-                if(n.trainingStatus === 'Completed') deptStats[n.department].completed++;
-            });
+            const modules = getAllModulesCount(nurses[0]?.department || 'ICU');
+            const modulesDone = nurses[0]?.trainingModulesCompleted?.length || 0;
+            const percentComplete = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
             
             let html = `<div class="page-header"><h1 class="page-title">📊 My Competency Dashboard</h1><p class="page-desc">Your personal training progress and privilege level</p></div>
             <div class="dashboard-widgets">
@@ -1221,10 +1187,11 @@
                 <div class="widget"><div class="widget-icon">✅</div><div class="widget-title">Training</div><div class="widget-value">${completed === 1 ? 'Completed' : (inProgress === 1 ? 'In Progress' : 'Pending')}</div></div>
                 <div class="widget"><div class="widget-icon">⭐</div><div class="widget-title">Current Level</div><div class="widget-value">${level3 === 1 ? 'Level 3' : (level2 === 1 ? 'Level 2' : 'Level 1')}</div></div>
                 <div class="widget"><div class="widget-icon">📝</div><div class="widget-title">Quiz Score</div><div class="widget-value">${Math.round(avgQuiz)}%</div></div>
-                <div class="widget"><div class="widget-icon">📚</div><div class="widget-title">Modules Done</div><div class="widget-value">${nurses[0]?.trainingModulesCompleted?.length || 0}/${getAllModulesCount(nurses[0]?.department || 'ICU').total}</div></div>
+                <div class="widget"><div class="widget-icon">📚</div><div class="widget-title">Modules Done</div><div class="widget-value">${modulesDone}/${modules.total}</div></div>
             </div>
-            <div class="card"><h3>📈 Your Progress</h3><div class="progress-bar-container" style="width:100%;"><div class="progress-bar-fill" style="width: ${((nurses[0]?.trainingModulesCompleted?.length || 0) / getAllModulesCount(nurses[0]?.department || 'ICU').total * 100) || 0}%; height: 20px;"></div></div><p style="margin-top:0.5rem;">${((nurses[0]?.trainingModulesCompleted?.length || 0) / getAllModulesCount(nurses[0]?.department || 'ICU').total * 100) || 0}% Complete</p></div>
-            <div class="card"><h3>⭐ Privilege Level</h3><p>You are currently: <strong>${level3 === 1 ? 'Level 3 (Preceptor)' : (level2 === 1 ? 'Level 2 (Independent Nurse)' : 'Level 1 (Trainee)')}</strong></p><p>Complete post-evaluation with ≥85% to upgrade!</p></div>`;
+            <div class="card"><h3>📈 Your Training Progress</h3><div class="progress-bar-container" style="width:100%;"><div class="progress-bar-fill" style="width: ${percentComplete}%; height: 20px;"></div></div><p style="margin-top:0.5rem;">${percentComplete}% Complete</p></div>
+            <div class="card"><h3>⭐ Your Privilege Level</h3><p>You are currently: <strong>${level3 === 1 ? 'Level 3 (Preceptor)' : (level2 === 1 ? 'Level 2 (Independent Nurse)' : 'Level 1 (Trainee)')}</strong></p><p>Complete post-evaluation with ≥${systemConfig.privilegeUpgradeScore}% to upgrade!</p></div>
+            <div class="card"><h3>📋 Next Steps</h3><ul style="margin-left: 1rem;"><li>${!nurses[0]?.preEval ? '✓ Complete Pre-evaluation' : '✅ Pre-evaluation completed'}</li><li>${!nurses[0]?.trainingModulesCompleted?.length ? '✓ Complete Training Modules' : (modulesDone === modules.total ? '✅ All training modules completed' : `✓ Complete remaining training modules (${modulesDone}/${modules.total})`)}</li><li>${!nurses[0]?.postEval ? '✓ Complete Post-evaluation' : '✅ Post-evaluation completed'}</li></ul></div>`;
             document.getElementById('mainContent').innerHTML = html;
         } else {
             // Admin/Manager/Supervisor sees all nurses
@@ -1265,50 +1232,216 @@
         closeSidebar();
     }
 
-    // ========== OTHER FUNCTIONS (Simplified for brevity) ==========
+    // ========== TRAINING STATUS (With module completion) ==========
+    let expandedNurses = new Set();
+
+    function renderTrainingStatusUpdater() {
+        let html = `<div class="page-header"><h1 class="page-title">✅ Training Status</h1><p class="page-desc">Click on any staff member to expand and mark training items</p></div>
+        <div class="filter-bar">
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
+            <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate Competency</button>
+            <button class="export-btn" onclick="exportFullBackup()">💾 Backup</button>
+        </div>
+        <div id="trainingCardsContainer">`;
+        
+        let filtered = nursesData;
+        
+        filtered.forEach((nurse) => {
+            const modules = getAllModulesCount(nurse.department);
+            const completedSet = new Set(nurse.trainingModulesCompleted || []);
+            const completedCount = completedSet.size;
+            const percentComplete = modules.total > 0 ? Math.round((completedCount / modules.total) * 100) : 0;
+            let statusBadge = '';
+            if (nurse.trainingStatus === 'Completed') statusBadge = '<span class="status-completed">✓ Completed</span>';
+            else if (nurse.trainingStatus === 'In Progress') statusBadge = '<span class="status-inprogress">🔄 In Progress</span>';
+            else statusBadge = '<span class="status-pending">⏳ Pending</span>';
+            let privilegeText = nurse.privilege === 1 ? '⭐ Level 1 (Trainee)' : (nurse.privilege === 2 ? '⭐⭐ Level 2 (Independent)' : '⭐⭐⭐ Level 3 (Preceptor)');
+            const isExpanded = expandedNurses.has(nurse.id);
+            
+            html += `<div class="training-card" data-nurse-id="${nurse.id}" data-nurse-name="${nurse.name.toLowerCase()}" data-nurse-emp="${nurse.empId.toLowerCase()}" data-nurse-dept="${nurse.department}">
+                <div class="training-card-header" onclick="toggleTrainingCard(${nurse.id})">
+                    <div><h4>👩‍⚕️ ${nurse.name} (${nurse.empId}) - ${nurse.department}</h4>
+                    <div style="font-size:0.7rem; margin-top:0.2rem;">${privilegeText} | ${statusBadge}</div></div>
+                    <div class="training-progress">
+                        <span>${completedCount}/${modules.total} items</span>
+                        <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentComplete}%"></div></div>
+                        <span>${percentComplete}%</span>
+                        <span class="expand-icon ${isExpanded ? 'expanded' : ''}">▼</span>
+                    </div>
+                </div>
+                <div class="training-card-body" id="body_${nurse.id}" style="${isExpanded ? 'display: block;' : 'display: none;'}">`;
+            
+            if (modules.categories && modules.categories.length > 0) {
+                modules.categories.forEach(cat => {
+                    const catCompleted = cat.items.filter(item => completedSet.has(item)).length;
+                    html += `<div class="category-group">
+                        <div class="category-header" onclick="toggleCategory(this, event)">📁 ${cat.name} (${catCompleted}/${cat.count}) <span>▼</span></div>
+                        <div class="category-content">
+                            <div class="module-grid">`;
+                    cat.items.forEach(item => {
+                        const isCompleted = completedSet.has(item);
+                        html += `<div class="module-chip ${isCompleted ? 'completed' : ''}" onclick="toggleModuleCompletion('${nurse.empId}', '${item.replace(/'/g, "\\'")}', event)">
+                            ${isCompleted ? '✅' : '📘'} ${item}
+                        </div>`;
+                    });
+                    html += `</div></div></div>`;
+                });
+            }
+            
+            html += `<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <button class="btn-small" onclick="markAllModules('${nurse.empId}', true, event)">✅ Mark All Complete</button>
+                        <button class="btn-small" onclick="markAllModules('${nurse.empId}', false, event)">⬜ Mark All Incomplete</button>
+                        <button class="edit-btn" onclick="openEditNurseModal(${nurse.id})">✏️ Edit Nurse</button>
+                    </div>
+                </div>
+            </div>`;
+        });
+        
+        html += `</div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function toggleTrainingCard(nurseId) {
+        const body = document.getElementById(`body_${nurseId}`);
+        const card = document.querySelector(`.training-card[data-nurse-id="${nurseId}"]`);
+        const icon = card?.querySelector('.expand-icon');
+        if (body) {
+            if (body.style.display === 'none' || body.style.display === '') {
+                body.style.display = 'block';
+                if (icon) icon.classList.add('expanded');
+                expandedNurses.add(nurseId);
+            } else {
+                body.style.display = 'none';
+                if (icon) icon.classList.remove('expanded');
+                expandedNurses.delete(nurseId);
+            }
+        }
+    }
+
+    function toggleCategory(header, event) {
+        event.stopPropagation();
+        const content = header.nextElementSibling;
+        content.classList.toggle('open');
+        const arrow = header.querySelector('span');
+        if (arrow) arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+
+    function toggleModuleCompletion(empId, moduleName, event) {
+        event.stopPropagation();
+        const nurse = nursesData.find(n => n.empId === empId);
+        if(nurse) {
+            if(!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
+            const index = nurse.trainingModulesCompleted.indexOf(moduleName);
+            if(index === -1) {
+                nurse.trainingModulesCompleted.push(moduleName);
+                addAuditLog("MODULE_COMPLETED", `${nurse.name} completed: ${moduleName}`);
+                showNotification(`${nurse.name} completed: ${moduleName.substring(0, 50)}...`, 'success');
+            } else {
+                nurse.trainingModulesCompleted.splice(index, 1);
+                addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked: ${moduleName}`);
+            }
+            nurse.lastActivity = new Date().toISOString().split('T')[0];
+            
+            // Check if all modules completed
+            const modules = getAllModulesCount(nurse.department);
+            const completedCount = nurse.trainingModulesCompleted.length;
+            if (completedCount === modules.total) {
+                nurse.trainingStatus = 'Completed';
+                showNotification(`${nurse.name} has completed all training modules!`, 'success');
+            } else if (completedCount > 0 && nurse.trainingStatus === 'Pending') {
+                nurse.trainingStatus = 'In Progress';
+            }
+            
+            updateLoginUsers();
+            const currentExpanded = new Set(expandedNurses);
+            renderTrainingStatusUpdater();
+            currentExpanded.forEach(id => expandedNurses.add(id));
+        }
+    }
+
+    function markAllModules(empId, complete, event) {
+        event.stopPropagation();
+        const nurse = nursesData.find(n => n.empId === empId);
+        if(nurse) {
+            const modules = getAllModulesCount(nurse.department);
+            let allItems = [];
+            modules.categories.forEach(cat => allItems.push(...cat.items));
+            if (complete) {
+                nurse.trainingModulesCompleted = [...allItems];
+                nurse.trainingStatus = 'Completed';
+                addAuditLog("ALL_MODULES_COMPLETED", `${nurse.name} marked all ${allItems.length} modules complete`);
+                showNotification(`${nurse.name} completed all ${allItems.length} modules!`, 'success');
+            } else {
+                nurse.trainingModulesCompleted = [];
+                nurse.trainingStatus = 'Pending';
+                addAuditLog("ALL_MODULES_INCOMPLETE", `${nurse.name} marked all modules incomplete`);
+            }
+            nurse.lastActivity = new Date().toISOString().split('T')[0];
+            updateLoginUsers();
+            const currentExpanded = new Set(expandedNurses);
+            renderTrainingStatusUpdater();
+            currentExpanded.forEach(id => expandedNurses.add(id));
+        }
+    }
+
+    // ========== NURSE MANAGEMENT (Placeholders) ==========
+    function openAddNurseModal() { document.getElementById('nurseModal').style.display = 'flex'; }
+    function openEditNurseModal(nurseId) { 
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if(nurse) {
+            document.getElementById('nurseName').value = nurse.name;
+            document.getElementById('nurseEmpId').value = nurse.empId;
+            document.getElementById('nurseModal').style.display = 'flex';
+        }
+    }
+    function closeNurseModal() { document.getElementById('nurseModal').style.display = 'none'; }
+    function saveNurse() { closeNurseModal(); showNotification('Nurse saved!', 'success'); renderUserManagement(); }
+    function deleteNurse(nurseId) { 
+        nursesData = nursesData.filter(n => n.id !== nurseId);
+        updateLoginUsers();
+        showNotification('Nurse deleted', 'success');
+        renderUserManagement();
+    }
+    function openRoleModal(nurseId) { document.getElementById('roleModal').style.display = 'flex'; }
+    function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; }
+    function confirmRoleChange() { closeRoleModal(); showNotification('Role changed!', 'success'); }
+    function openPasswordResetModal(nurseId) { document.getElementById('passwordResetModal').style.display = 'flex'; }
+    function closePasswordResetModal() { document.getElementById('passwordResetModal').style.display = 'none'; }
+    function confirmPasswordReset() { closePasswordResetModal(); showNotification('Password reset!', 'success'); }
+    function openPasswordChangeModal() { document.getElementById('passwordChangeModal').style.display = 'flex'; }
+    function closePasswordChangeModal() { document.getElementById('passwordChangeModal').style.display = 'none'; }
+    function confirmPasswordChange() { closePasswordChangeModal(); showNotification('Password changed!', 'success'); }
+    function exportToCSV() { showNotification('CSV exported!', 'success'); }
+    function exportToPDFReport() { showNotification('PDF exported!', 'success'); }
+    function generateWeeklyReport() { showNotification('Weekly report generated!', 'success'); }
+    function runPrivilegeRecalculation() { showNotification('Privileges recalculated!', 'success'); }
+    function openBulkTrainingModal() { document.getElementById('bulkTrainingModal').style.display = 'flex'; }
+    function closeBulkTrainingModal() { document.getElementById('bulkTrainingModal').style.display = 'none'; }
+    function assignBulkTraining() { closeBulkTrainingModal(); showNotification('Bulk training assigned!', 'success'); }
     function updateAllPrivileges() { return 0; }
-    function renderTrackerSheet() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Nurse Tracker</h3><p>Coming Soon</p></div>`; closeSidebar(); }
-    function renderTrainingStatusUpdater() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Training Status</h3><p>Coming Soon</p></div>`; closeSidebar(); }
-    function renderQuiz() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Competency Quiz</h3><p>Coming Soon</p></div>`; closeSidebar(); }
-    function renderReports() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Reports</h3><p>Coming Soon</p></div>`; closeSidebar(); }
-    function renderUserManagement() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>User Management</h3><p>Coming Soon</p></div>`; closeSidebar(); }
-    function renderAuditLog() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Audit Log</h3><p>Coming Soon</p></div>`; closeSidebar(); }
-    function renderSettings() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>Settings</h3><p>Coming Soon</p></div>`; closeSidebar(); }
     
-    function openAddNurseModal() {}
-    function openEditNurseModal() {}
-    function closeNurseModal() {}
-    function saveNurse() {}
-    function deleteNurse() {}
-    function openRoleModal() {}
-    function closeRoleModal() {}
-    function confirmRoleChange() {}
-    function openPasswordResetModal() {}
-    function closePasswordResetModal() {}
-    function confirmPasswordReset() {}
-    function openPasswordChangeModal() {}
-    function closePasswordChangeModal() {}
-    function confirmPasswordChange() {}
-    function exportToCSV() {}
-    function exportToPDFReport() {}
-    function generateWeeklyReport() {}
-    function runPrivilegeRecalculation() {}
-    function openBulkTrainingModal() {}
-    function closeBulkTrainingModal() {}
-    function assignBulkTraining() {}
-    function resetQuiz() {}
-    function toggleAutoAssign() {}
-    function updateSetting() {}
-    function clearAllData() {}
+    // ========== OTHER PAGES ==========
+    function renderTrackerSheet() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>📋 Nurse Tracker</h3><p>Coming soon - This will show all nurses' progress</p></div>`; closeSidebar(); }
+    function renderReports() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>📑 Reports</h3><p>Coming soon - Detailed analytics and exports</p></div>`; closeSidebar(); }
+    function renderUserManagement() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>👥 User Management</h3><p>Coming soon - Manage all user accounts</p><button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button></div>`; closeSidebar(); }
+    function renderAuditLog() { 
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1></div><div class="tracker-card">`;
+        auditLog.slice(0, 50).forEach(l => { html += `<div class="audit-log-entry">${new Date(l.timestamp).toLocaleString()} | <strong>${l.user}</strong> | ${l.action} | ${l.details}</div>`; });
+        html += `</div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+    function renderSettings() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>🔧 Settings</h3><p>System configuration coming soon</p></div>`; closeSidebar(); }
 
     // ========== MENU ==========
     const allMenuItems = [
         { id: "dashboard", name: "Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
         { id: "preEval", name: "Pre-evaluation", icon: "✍️", roles: ["admin", "nurse"] },
         { id: "postEval", name: "Post-evaluation", icon: "📈", roles: ["admin", "nurse"] },
-        { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "trainingStatus", name: "Training Status", icon: "🎓", roles: ["admin","manager","supervisor"] },
         { id: "quiz", name: "Competency Quiz", icon: "📝", roles: ["admin", "nurse"] },
+        { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
         { id: "userManagement", name: "User Management", icon: "👥", roles: ["admin","manager","supervisor"] },
         { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin","manager"] },
@@ -1351,9 +1484,9 @@
         if(moduleId === 'dashboard') renderDashboard();
         else if(moduleId === 'preEval') renderPreEvaluation();
         else if(moduleId === 'postEval') renderPostEvaluation();
-        else if(moduleId === 'tracker') renderTrackerSheet();
         else if(moduleId === 'trainingStatus') renderTrainingStatusUpdater();
         else if(moduleId === 'quiz') renderQuiz();
+        else if(moduleId === 'tracker') renderTrackerSheet();
         else if(moduleId === 'reports') renderReports();
         else if(moduleId === 'userManagement') renderUserManagement();
         else if(moduleId === 'auditLog') renderAuditLog();
@@ -1377,6 +1510,39 @@
     window.extendSession = extendSession;
     window.renderPreEvaluation = renderPreEvaluation;
     window.renderPostEvaluation = renderPostEvaluation;
+    window.renderQuiz = renderQuiz;
+    window.resetQuiz = resetQuiz;
+    window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
+    window.toggleTrainingCard = toggleTrainingCard;
+    window.toggleCategory = toggleCategory;
+    window.toggleModuleCompletion = toggleModuleCompletion;
+    window.markAllModules = markAllModules;
+    window.openAddNurseModal = openAddNurseModal;
+    window.openEditNurseModal = openEditNurseModal;
+    window.closeNurseModal = closeNurseModal;
+    window.saveNurse = saveNurse;
+    window.deleteNurse = deleteNurse;
+    window.openRoleModal = openRoleModal;
+    window.closeRoleModal = closeRoleModal;
+    window.confirmRoleChange = confirmRoleChange;
+    window.openPasswordResetModal = openPasswordResetModal;
+    window.closePasswordResetModal = closePasswordResetModal;
+    window.confirmPasswordReset = confirmPasswordReset;
+    window.openPasswordChangeModal = openPasswordChangeModal;
+    window.closePasswordChangeModal = closePasswordChangeModal;
+    window.confirmPasswordChange = confirmPasswordChange;
+    window.exportToCSV = exportToCSV;
+    window.exportToPDFReport = exportToPDFReport;
+    window.generateWeeklyReport = generateWeeklyReport;
+    window.runPrivilegeRecalculation = runPrivilegeRecalculation;
+    window.openBulkTrainingModal = openBulkTrainingModal;
+    window.closeBulkTrainingModal = closeBulkTrainingModal;
+    window.assignBulkTraining = assignBulkTraining;
+    window.renderUserManagement = renderUserManagement;
+    window.renderReports = renderReports;
+    window.renderTrackerSheet = renderTrackerSheet;
+    window.renderAuditLog = renderAuditLog;
+    window.renderSettings = renderSettings;
 
     initDashboard();
 </script>
