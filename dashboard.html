@@ -1172,7 +1172,6 @@
         
         let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title} (Pre-evaluation)</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}% - Required to unlock training modules</p></div><div class="card"><form id="preEvalForm">`;
         
-        // Use first 5 questions for pre-evaluation
         const preEvalQuestions = quiz.questions.slice(0, 5);
         preEvalQuestions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
@@ -1245,7 +1244,6 @@
         
         let html = `<div class="page-header"><h1 class="page-title">📈 Post-evaluation - ${quiz.title}</h1><p class="page-desc">Score ≥${systemConfig.privilegeUpgradeScore}% to upgrade privilege</p></div><div class="card"><form id="postEvalForm">`;
         
-        // Use all questions for post-evaluation
         quiz.questions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
             q.options.forEach((opt, optIdx) => {
@@ -1361,7 +1359,7 @@
         closeSidebar();
     }
 
-    // ========== TRAINING STATUS (Supervisor/Manager/Admin) ==========
+    // ========== TRAINING STATUS ==========
     let expandedNurses = new Set();
 
     function renderTrainingStatusUpdater() {
@@ -1431,8 +1429,6 @@
                     });
                     html += `</div></div></div>`;
                 });
-            } else {
-                html += `<p>No training modules defined for this department.</p>`;
             }
             
             html += `<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
@@ -1907,7 +1903,7 @@
         closeSidebar();
     }
 
-    // ========== AUDIT LOG (Admin Only) ==========
+    // ========== AUDIT LOG (ADMIN ONLY) ==========
     function renderAuditLog() { 
         let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions</p></div><div class="tracker-card">`;
         auditLog.slice(0, 100).forEach(l => { html += `<div class="audit-log-entry">${new Date(l.timestamp).toLocaleString()} | <strong>${l.user}</strong> (${l.role}) | ${l.action} | ${l.details}</div>`; });
@@ -1916,7 +1912,7 @@
         closeSidebar();
     }
 
-    // ========== SETTINGS ==========
+    // ========== SETTINGS (ADMIN ONLY) ==========
     function renderSettings() {
         let html = `<div class="page-header">
             <h1 class="page-title">🔧 System Settings</h1>
@@ -2083,6 +2079,7 @@
     function openRoleModal(nurseId) { 
         const nurse = nursesData.find(n => n.id === nurseId);
         if(nurse) {
+            selectedNurseForRoleChange = nurse;
             document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
             document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
             document.getElementById('newRoleSelect').value = nurse.role;
@@ -2140,7 +2137,7 @@
         }
     }
 
-    // ========== MENU ==========
+    // ========== MENU (Audit Log & Settings - ADMIN ONLY) ==========
     const allMenuItems = [
         { id: "dashboard", name: "Dashboard", icon: "📊", roles: ["admin","manager","supervisor","nurse"] },
         { id: "preEval", name: "Pre-evaluation", icon: "✍️", roles: ["admin", "nurse"] },
@@ -2150,8 +2147,8 @@
         { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
         { id: "userManagement", name: "User Management", icon: "👥", roles: ["admin","manager","supervisor"] },
-        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin"] },
-        { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }
+        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin"] },      // ONLY ADMIN
+        { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }        // ONLY ADMIN
     ];
 
     function getMenuForUser(user) {
