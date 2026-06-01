@@ -255,6 +255,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.75rem;
+            min-width: 800px;
         }
         th {
             text-align: left;
@@ -630,15 +631,103 @@
     <div class="main-content" id="mainContent"></div>
 </div>
 
-<!-- Modals (kept for compatibility) -->
-<div id="nurseModal" class="modal"><div class="modal-content"><h3 id="nurseModalTitle">Add New Nurse</h3><input type="hidden" id="editNurseId"><input type="text" id="nurseName" placeholder="Full Name"><input type="text" id="nurseEmpId" placeholder="Employee ID"><select id="nurseDept"><option>ICU</option></select><select id="nursePrivilege"><option>1</option></select><select id="nurseRole"><option>nurse</option></select><div class="modal-buttons"><button class="btn-small" onclick="closeNurseModal()">Cancel</button><button class="add-btn" onclick="saveNurse()">Save</button></div></div></div>
-<div id="passwordResetModal" class="modal"><div class="modal-content"><h3>Reset Password</h3><input type="password" id="newPassword"><input type="password" id="confirmPassword"><div class="modal-buttons"><button class="btn-small" onclick="closePasswordResetModal()">Cancel</button><button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset</button></div></div></div>
-<div id="passwordChangeModal" class="modal"><div class="modal-content"><h3>Change Password</h3><input type="password" id="currentPassword"><input type="password" id="newPassword1"><input type="password" id="confirmPassword1"><div class="modal-buttons"><button class="btn-small" onclick="closePasswordChangeModal()">Cancel</button><button class="save-btn" onclick="confirmPasswordChange()">Update</button></div></div></div>
-<div id="roleModal" class="modal"><div class="modal-content"><h3 id="roleModalTitle">Change Role</h3><select id="newRoleSelect"><option value="nurse">Nurse</option><option value="supervisor">Supervisor</option><option value="manager">Manager</option></select><div class="modal-buttons"><button class="btn-small" onclick="closeRoleModal()">Cancel</button><button class="promote-btn" onclick="confirmRoleChange()">Confirm</button></div></div></div>
-<div id="bulkTrainingModal" class="modal"><div class="modal-content"><h3>Bulk Training</h3><select id="bulkNurseSelect" multiple></select><select id="bulkModuleSelect" multiple></select><div class="modal-buttons"><button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button><button class="add-btn" onclick="assignBulkTraining()">Assign</button></div></div></div>
+<!-- Modal for Add/Edit Nurse -->
+<div id="nurseModal" class="modal">
+    <div class="modal-content">
+        <h3 id="nurseModalTitle">Add New Nurse</h3>
+        <input type="hidden" id="editNurseId">
+        <input type="text" id="nurseName" placeholder="Full Name" required>
+        <input type="text" id="nurseEmpId" placeholder="Employee ID (e.g., NURSE105)" required>
+        <select id="nurseDept">
+            <option value="Labour Room">Labour Room</option>
+            <option value="Emergency Department">Emergency Department</option>
+            <option value="ICU">ICU</option>
+            <option value="Infection Control">Infection Control</option>
+            <option value="Critical Care">Critical Care</option>
+            <option value="Ward">Ward</option>
+        </select>
+        <select id="nursePrivilege">
+            <option value="1">Level 1 (Trainee)</option>
+            <option value="2">Level 2 (Independent)</option>
+            <option value="3">Level 3 (Preceptor)</option>
+        </select>
+        <select id="nurseRole">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div id="passwordFieldContainer" style="display: none;">
+            <input type="password" id="nursePassword" placeholder="Password (default: nurse123)" value="nurse123">
+            <small style="font-size: 0.7rem; color: #666;">Only visible to Admin</small>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeNurseModal()">Cancel</button>
+            <button class="add-btn" onclick="saveNurse()">Save Nurse</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Password Reset (Admin only) -->
+<div id="passwordResetModal" class="modal">
+    <div class="modal-content">
+        <h3>Reset Password</h3>
+        <p id="resetNurseName" style="margin-bottom: 0.5rem;"></p>
+        <input type="password" id="newPassword" placeholder="New Password" value="nurse123">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordResetModal()">Cancel</button>
+            <button class="reset-pwd-btn" onclick="confirmPasswordReset()">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Password Change (User self-service) -->
+<div id="passwordChangeModal" class="modal">
+    <div class="modal-content">
+        <h3>Change Password</h3>
+        <input type="password" id="currentPassword" placeholder="Current Password">
+        <input type="password" id="newPassword1" placeholder="New Password">
+        <input type="password" id="confirmPassword1" placeholder="Confirm New Password">
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closePasswordChangeModal()">Cancel</button>
+            <button class="save-btn" onclick="confirmPasswordChange()">Update Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Role Change -->
+<div id="roleModal" class="modal">
+    <div class="modal-content">
+        <h3 id="roleModalTitle">Change Role</h3>
+        <p id="roleModalNurse" style="margin-bottom: 0.5rem;"></p>
+        <select id="newRoleSelect">
+            <option value="nurse">👩‍⚕️ Nurse</option>
+            <option value="supervisor">👩‍🏫 Supervisor</option>
+            <option value="manager">👔 Nurse Manager</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeRoleModal()">Cancel</button>
+            <button class="promote-btn" onclick="confirmRoleChange()">Confirm Change</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Bulk Training Assignment -->
+<div id="bulkTrainingModal" class="modal">
+    <div class="modal-content">
+        <h3>📚 Bulk Training Assignment</h3>
+        <p style="margin-bottom: 0.5rem;">Select nurses and training modules to assign</p>
+        <select id="bulkNurseSelect" multiple size="5" style="height: auto;"></select>
+        <select id="bulkModuleSelect" multiple size="5" style="height: auto;"></select>
+        <div class="modal-buttons">
+            <button class="btn-small" onclick="closeBulkTrainingModal()">Cancel</button>
+            <button class="add-btn" onclick="assignBulkTraining()">Assign Training</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // ========== SESSION EXPIRY (8 HOURS) ==========
+    // ========== SESSION EXPIRY ==========
     const SESSION_EXPIRY_HOURS = 8;
     const SESSION_EXPIRY_MS = SESSION_EXPIRY_HOURS * 60 * 60 * 1000;
 
@@ -728,6 +817,10 @@
         if (e.ctrlKey && e.key === 'p') { e.preventDefault(); navigateTo('preEval'); showNotification('Pre-evaluation (Ctrl+P)', 'info'); }
         if (e.ctrlKey && e.key === 'o') { e.preventDefault(); navigateTo('postEval'); showNotification('Post-evaluation (Ctrl+O)', 'info'); }
         if (e.ctrlKey && e.key === 'q') { e.preventDefault(); navigateTo('quiz'); showNotification('Competency Quiz (Ctrl+Q)', 'info'); }
+        if (e.ctrlKey && e.key === 't') { e.preventDefault(); navigateTo('trainingStatus'); showNotification('Training Status (Ctrl+T)', 'info'); }
+        if (e.ctrlKey && e.key === 'r') { e.preventDefault(); navigateTo('reports'); showNotification('Reports (Ctrl+R)', 'info'); }
+        if (e.ctrlKey && e.key === 'u') { e.preventDefault(); navigateTo('userManagement'); showNotification('User Management (Ctrl+U)', 'info'); }
+        if (e.ctrlKey && e.key === 'n') { e.preventDefault(); openAddNurseModal(); showNotification('Add New Nurse (Ctrl+N)', 'info'); }
         if (e.ctrlKey && e.key === 'e') { e.preventDefault(); extendSession(); showNotification('Session extended (Ctrl+E)', 'info'); }
     });
 
@@ -804,27 +897,12 @@
                 { text: "Which of the following indicates sepsis?", options: ["Temperature >38°C or <36°C", "Heart rate <60 bpm", "Blood pressure >140/90", "Respiratory rate <12"], correct: 0 },
                 { text: "What is the first-line vasopressor in septic shock?", options: ["Dopamine", "Epinephrine", "Norepinephrine", "Phenylephrine"], correct: 2 },
                 { text: "Normal PaO2 range on ABG is:", options: ["35-45 mmHg", "50-60 mmHg", "75-100 mmHg", "100-120 mmHg"], correct: 2 },
-                { text: "Which sedation score is commonly used in ICU?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 }
-            ]
-        },
-        "OT": {
-            title: "OT Competency Quiz",
-            questions: [
-                { text: "What is the standard surgical hand scrub time?", options: ["1 minute", "2-5 minutes", "10 minutes", "15 minutes"], correct: 1 },
-                { text: "Which of these is a sterile field violation?", options: ["Turning back to sterile field", "Speaking quietly", "Wearing mask", "Using sterile gloves"], correct: 0 },
-                { text: "What is the correct order for donning PPE?", options: ["Gown, mask, gloves, goggles", "Gown, mask, goggles, gloves", "Gloves, gown, mask, goggles", "Mask, goggles, gown, gloves"], correct: 1 },
-                { text: "Surgical site infection risk is highest in which surgery?", options: ["Laparoscopic", "Clean", "Clean-contaminated", "Dirty/infected"], correct: 3 },
-                { text: "What is the ideal temperature range for OT?", options: ["16-18°C", "18-22°C", "22-25°C", "25-28°C"], correct: 1 }
-            ]
-        },
-        "Infection Control": {
-            title: "Infection Control Competency Quiz",
-            questions: [
-                { text: "What is the most effective way to prevent HAI?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE only"], correct: 1 },
-                { text: "How long should you rub hands during hand hygiene?", options: ["5 seconds", "10-15 seconds", "20-30 seconds", "60 seconds"], correct: 2 },
-                { text: "Which transmission-based precaution is used for TB?", options: ["Contact", "Droplet", "Airborne", "Standard"], correct: 2 },
-                { text: "What color bag is used for infectious waste?", options: ["Black", "Yellow", "Blue", "Red"], correct: 1 },
-                { text: "Needlestick injury first aid includes:", options: ["Wash with soap and water", "Squeeze to bleed", "Apply tourniquet", "Ignore if no blood"], correct: 0 }
+                { text: "Which sedation score is commonly used in ICU?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 },
+                { text: "What is the normal central venous pressure (CVP) range?", options: ["2-6 mmHg", "6-12 mmHg", "8-15 mmHg", "10-20 mmHg"], correct: 0 },
+                { text: "What is the target SpO2 for mechanically ventilated patients?", options: ["88-92%", "90-95%", "92-96%", "94-98%"], correct: 3 },
+                { text: "Which electrolyte imbalance is most concerning in ICU patients?", options: ["Hyponatremia", "Hyperkalemia", "Hypocalcemia", "Hypomagnesemia"], correct: 1 },
+                { text: "What is the first sign of increased intracranial pressure?", options: ["Headache", "Vomiting", "Altered mental status", "Seizures"], correct: 2 },
+                { text: "Which ventilator mode provides full support?", options: ["CPAP", "PSV", "ACMV", "SIMV"], correct: 2 }
             ]
         },
         "Emergency Department": {
@@ -834,7 +912,27 @@
                 { text: "What is the correct compression to ventilation ratio for adult CPR?", options: ["15:2", "30:2", "15:1", "30:1"], correct: 1 },
                 { text: "Which medication is first line for cardiac arrest?", options: ["Atropine", "Amiodarone", "Epinephrine", "Lidocaine"], correct: 2 },
                 { text: "What is the normal respiratory rate for adults?", options: ["8-12", "12-20", "20-28", "28-36"], correct: 1 },
-                { text: "Which color tag indicates immediate care in triage?", options: ["Green", "Yellow", "Red", "Black"], correct: 2 }
+                { text: "Which color tag indicates immediate care in triage?", options: ["Green", "Yellow", "Red", "Black"], correct: 2 },
+                { text: "What is the first-line treatment for anaphylaxis?", options: ["Antihistamines", "Corticosteroids", "Epinephrine", "Oxygen"], correct: 2 },
+                { text: "What is the most common cause of cardiac arrest in adults?", options: ["Respiratory failure", "Ventricular fibrillation", "Pulmonary embolism", "Tension pneumothorax"], correct: 1 },
+                { text: "What is the normal Glasgow Coma Scale score?", options: ["3", "10", "15", "20"], correct: 2 },
+                { text: "Which rhythm requires immediate defibrillation?", options: ["Asystole", "PEA", "Ventricular fibrillation", "Sinus bradycardia"], correct: 2 },
+                { text: "What is the first intervention for a patient with chest pain?", options: ["EKG", "Oxygen", "Aspirin", "Nitroglycerin"], correct: 2 }
+            ]
+        },
+        "Infection Control": {
+            title: "Infection Control Competency Quiz",
+            questions: [
+                { text: "What is the most effective way to prevent HAI?", options: ["Isolation", "Hand hygiene", "Antibiotics", "PPE only"], correct: 1 },
+                { text: "How long should you rub hands during hand hygiene?", options: ["5 seconds", "10-15 seconds", "20-30 seconds", "60 seconds"], correct: 2 },
+                { text: "Which transmission-based precaution is used for TB?", options: ["Contact", "Droplet", "Airborne", "Standard"], correct: 2 },
+                { text: "What color bag is used for infectious waste?", options: ["Black", "Yellow", "Blue", "Red"], correct: 1 },
+                { text: "Needlestick injury first aid includes:", options: ["Wash with soap and water", "Squeeze to bleed", "Apply tourniquet", "Ignore if no blood"], correct: 0 },
+                { text: "What is the correct order for donning PPE?", options: ["Gown, mask, goggles, gloves", "Mask, gown, gloves, goggles", "Gloves, gown, mask, goggles", "Gown, mask, gloves, goggles"], correct: 0 },
+                { text: "How often should central line dressings be changed?", options: ["Daily", "Every 3 days", "Every 7 days", "Every 14 days"], correct: 2 },
+                { text: "What is the recommended isolation for C. diff?", options: ["Standard", "Contact", "Droplet", "Airborne"], correct: 1 },
+                { text: "Which disinfectant is effective against C. diff spores?", options: ["Alcohol", "Bleach", "Quaternary ammonium", "Hydrogen peroxide"], correct: 1 },
+                { text: "What is the most common source of surgical site infections?", options: ["Patient's own flora", "Operating room air", "Surgical instruments", "Healthcare workers"], correct: 0 }
             ]
         },
         "Labour Room": {
@@ -844,7 +942,12 @@
                 { text: "What is the normal fetal heart rate range?", options: ["80-120 bpm", "100-140 bpm", "110-160 bpm", "120-180 bpm"], correct: 2 },
                 { text: "Which medication is used for postpartum hemorrhage?", options: ["Oxytocin", "Magnesium sulfate", "Terbutaline", "Nifedipine"], correct: 0 },
                 { text: "What is the normal amniotic fluid volume?", options: ["200-400 mL", "500-800 mL", "800-1000 mL", "1000-1500 mL"], correct: 2 },
-                { text: "What is the first sign of placental separation?", options: ["Gush of blood", "Lengthening of cord", "Uterus becomes globular", "Fundus rises"], correct: 1 }
+                { text: "What is the first sign of placental separation?", options: ["Gush of blood", "Lengthening of cord", "Uterus becomes globular", "Fundus rises"], correct: 1 },
+                { text: "What is the normal cervical dilation rate in active labour?", options: ["0.5 cm/hr", "1 cm/hr", "1.5 cm/hr", "2 cm/hr"], correct: 1 },
+                { text: "What is the first-line treatment for eclampsia?", options: ["Labetalol", "Hydralazine", "Magnesium sulfate", "Diazepam"], correct: 2 },
+                { text: "What is the normal baseline variability of FHR?", options: ["Absent", "Minimal", "Moderate", "Marked"], correct: 2 },
+                { text: "Which position is recommended for maternal CPR?", options: ["Supine", "Left lateral tilt", "Right lateral tilt", "Trendelenburg"], correct: 1 },
+                { text: "What is the APGAR score range?", options: ["0-5", "0-8", "0-10", "0-12"], correct: 2 }
             ]
         },
         "Critical Care": {
@@ -854,7 +957,12 @@
                 { text: "What is the first-line vasopressor for septic shock?", options: ["Dopamine", "Norepinephrine", "Epinephrine", "Vasopressin"], correct: 1 },
                 { text: "What is the normal ICP range?", options: ["0-5 mmHg", "5-15 mmHg", "10-20 mmHg", "15-25 mmHg"], correct: 1 },
                 { text: "What is the target SpO2 for most critically ill patients?", options: ["88-92%", "90-95%", "92-96%", "94-98%"], correct: 3 },
-                { text: "Which sedation score is most commonly used in ICU?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 }
+                { text: "Which sedation score is most commonly used in ICU?", options: ["GCS", "RASS", "APACHE", "SOFA"], correct: 1 },
+                { text: "What is the normal urine output for critically ill adults?", options: ["0.5 mL/kg/hr", "1 mL/kg/hr", "1.5 mL/kg/hr", "2 mL/kg/hr"], correct: 0 },
+                { text: "Which laboratory value indicates acute kidney injury?", options: ["Elevated BUN", "Elevated creatinine", "Elevated potassium", "Elevated phosphorus"], correct: 1 },
+                { text: "What is the first sign of compartment syndrome?", options: ["Pallor", "Paresthesia", "Pain", "Paralysis"], correct: 2 },
+                { text: "What is the target mean arterial pressure (MAP) for septic shock?", options: ["≥55 mmHg", "≥65 mmHg", "≥75 mmHg", "≥85 mmHg"], correct: 1 },
+                { text: "Which ventilator setting directly controls tidal volume?", options: ["PEEP", "FiO2", "Tidal volume", "Respiratory rate"], correct: 2 }
             ]
         },
         "Ward": {
@@ -864,19 +972,42 @@
                 { text: "How often should vital signs be checked post-operatively?", options: ["Every 15 min", "Every 30 min", "Every 1 hour", "Every 4 hours"], correct: 0 },
                 { text: "What is the first sign of anaphylaxis?", options: ["Rash", "Difficulty breathing", "Swelling", "Hypotension"], correct: 1 },
                 { text: "What is the normal urine output for adults?", options: ["0.5 mL/kg/hr", "1 mL/kg/hr", "1.5 mL/kg/hr", "2 mL/kg/hr"], correct: 0 },
-                { text: "Which pain scale is used for non-verbal patients?", options: ["Numeric scale", "Wong-Baker", "PAINAD", "Visual analog"], correct: 2 }
+                { text: "Which pain scale is used for non-verbal patients?", options: ["Numeric scale", "Wong-Baker", "PAINAD", "Visual analog"], correct: 2 },
+                { text: "What is the correct position for a patient with dyspnea?", options: ["Supine", "Prone", "Fowler's", "Trendelenburg"], correct: 2 },
+                { text: "What is the normal blood glucose range for non-diabetic adults?", options: ["50-100 mg/dL", "70-140 mg/dL", "100-150 mg/dL", "120-180 mg/dL"], correct: 1 },
+                { text: "Which electrolyte imbalance causes tetany?", options: ["Hypernatremia", "Hypocalcemia", "Hyperkalemia", "Hypomagnesemia"], correct: 1 },
+                { text: "What is the first intervention for a fall patient?", options: ["Call doctor", "Assess for injury", "Move to bed", "Document incident"], correct: 1 },
+                { text: "What is the normal respiratory rate for adults?", options: ["8-12", "12-20", "20-28", "28-36"], correct: 1 }
             ]
         }
     };
 
     // ========== TRAINING MODULES ==========
     const trainingModulesByDept = {
-        "Labour Room": { "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour"] },
-        "Emergency Department": { "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator"] },
-        "ICU": { "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP"] },
-        "Infection Control": { "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"] },
-        "Critical Care": { "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning"] },
-        "Ward": { "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"] }
+        "Labour Room": {
+            "Clinical Skills": ["Admission criteria", "Discharge criteria", "Quick assessment", "Layout & zoning", "Equipment checklist", "PPH management", "Delivery tray", "Neonatal resuscitation", "Emergency drugs", "Stages of labour"],
+            "Technical Evaluation": ["Fetal monitoring interpretation", "Vacuum/forceps assist", "Episiotomy repair", "Newborn assessment", "Breastfeeding support"]
+        },
+        "Emergency Department": {
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Initial Assessment", "IV Cannulation", "CBG", "Collar use", "Bandaging", "POP application", "Trauma transport", "Airway Management", "Defibrillator"],
+            "Technical Evaluation": ["ECG interpretation", "Arterial blood gas analysis", "Chest tube insertion assist", "Rapid sequence intubation assist", "Ultrasound-guided IV access"]
+        },
+        "ICU": {
+            "Clinical Skills": ["Admission/Discharge", "Assessment", "Preoperative/Postoperative care", "Drainage monitoring", "PA catheter", "ECG interpretation", "Chest drainage", "Central line bundle", "Arrythmia", "IABP"],
+            "Technical Evaluation": ["Mechanical ventilation management", "Hemodynamic monitoring", "CRRT management", "ICP monitoring", "Sedation vacation protocol"]
+        },
+        "Infection Control": {
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"],
+            "Technical Evaluation": ["Outbreak investigation", "Antibiogram interpretation", "Sterilization validation", "Environmental sampling", "PPE competency assessment"]
+        },
+        "Critical Care": {
+            "Clinical Skills": ["Admission/Discharge", "Assessment", "ABG interpretation", "ECG interpretation", "Chest drainage", "Central line care", "Intubation/extubation", "Ventilator/Bi-pap", "Defibrillator", "Suctioning"],
+            "Technical Evaluation": ["Invasive pressure monitoring", "Intra-aortic balloon pump", "ECMO basics", "Therapeutic hypothermia", "Multisystem organ failure management"]
+        },
+        "Ward": {
+            "Clinical Skills": ["Admission/Discharge/Transfer", "Assessment", "IV Cannulation", "CBG", "I/O chart", "Chest drainage", "Dressing trolley", "Crash cart", "ECG", "Blood sample"],
+            "Technical Evaluation": ["Wound care advanced", "Enteral feeding pump", "Patient-controlled analgesia", "Telemetry monitoring", "Point-of-care testing"]
+        }
     };
 
     // ========== NURSES DATA ==========
@@ -903,7 +1034,9 @@
         return { total, categories };
     }
 
-    // ========== COMPETENCY QUIZ (FIXED - Now Working) ==========
+    // ========== COMPETENCY QUIZ ==========
+    let nurseQuizzes = JSON.parse(localStorage.getItem('smartcare_quizzes') || '{}');
+
     function renderQuiz() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
         
@@ -920,12 +1053,10 @@
             return;
         }
         
-        // Get or create quiz attempt
         const quizKey = `${currentUser.id}_competency`;
         let quizData = nurseQuizzes[quizKey];
         
         if (!quizData || quizData.completed) {
-            // Randomly select 5 questions from the quiz
             const shuffled = [...quiz.questions];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -1041,7 +1172,9 @@
         
         let html = `<div class="page-header"><h1 class="page-title">📝 ${quiz.title} (Pre-evaluation)</h1><p class="page-desc">Passing score: ${systemConfig.passingScore}% - Required to unlock training modules</p></div><div class="card"><form id="preEvalForm">`;
         
-        quiz.questions.forEach((q, idx) => {
+        // Use first 5 questions for pre-evaluation
+        const preEvalQuestions = quiz.questions.slice(0, 5);
+        preEvalQuestions.forEach((q, idx) => {
             html += `<div class="quiz-question"><p>${idx+1}. ${q.text}</p>`;
             q.options.forEach((opt, optIdx) => {
                 html += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${optIdx}" required> ${opt}</label>`;
@@ -1055,11 +1188,11 @@
         document.getElementById('preEvalForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let score = 0;
-            quiz.questions.forEach((q, idx) => {
+            preEvalQuestions.forEach((q, idx) => {
                 const selected = document.querySelector(`input[name="q${idx}"]:checked`);
                 if(selected && parseInt(selected.value) === q.correct) score++;
             });
-            const percentage = Math.round((score / quiz.questions.length) * 100);
+            const percentage = Math.round((score / preEvalQuestions.length) * 100);
             const passed = percentage >= systemConfig.passingScore;
             
             if (nurse) {
@@ -1077,7 +1210,7 @@
         closeSidebar();
     }
 
-    // ========== POST-EVALUATION (FIXED - Checks training completion) ==========
+    // ========== POST-EVALUATION ==========
     function renderPostEvaluation() {
         const nurse = nursesData.find(n => n.empId === currentUser.id);
         if (!nurse && currentUser.role !== 'admin') {
@@ -1085,13 +1218,11 @@
             return;
         }
         
-        // Check if pre-evaluation completed
         if ((!nurse || !nurse.preEval) && currentUser.role !== 'admin') {
             document.getElementById('mainContent').innerHTML = `<div class="card"><p>⚠️ Please complete Pre-evaluation first.</p><button class="quiz-btn" onclick="navigateTo('preEval')">Go to Pre-evaluation</button></div>`;
             return;
         }
         
-        // Check if training modules completed
         const modules = getAllModulesCount(nurse ? nurse.department : "ICU");
         const completedCount = nurse?.trainingModulesCompleted?.length || 0;
         if (completedCount < modules.total && currentUser.role !== 'admin') {
@@ -1162,12 +1293,11 @@
         closeSidebar();
     }
 
-    // ========== DASHBOARD (Role-based) ==========
+    // ========== DASHBOARD ==========
     function renderDashboard() {
         let nurses, total, completed, inProgress, pending, level1, level2, level3, avgQuiz, atRiskNurses, deptStats;
         
         if (currentUser.role === 'nurse') {
-            // Nurse sees ONLY their own data
             nurses = nursesData.filter(n => n.empId === currentUser.id);
             total = nurses.length;
             completed = nurses.filter(n => n.trainingStatus === 'Completed').length;
@@ -1194,7 +1324,6 @@
             <div class="card"><h3>📋 Next Steps</h3><ul style="margin-left: 1rem;"><li>${!nurses[0]?.preEval ? '✓ Complete Pre-evaluation' : '✅ Pre-evaluation completed'}</li><li>${!nurses[0]?.trainingModulesCompleted?.length ? '✓ Complete Training Modules' : (modulesDone === modules.total ? '✅ All training modules completed' : `✓ Complete remaining training modules (${modulesDone}/${modules.total})`)}</li><li>${!nurses[0]?.postEval ? '✓ Complete Post-evaluation' : '✅ Post-evaluation completed'}</li></ul></div>`;
             document.getElementById('mainContent').innerHTML = html;
         } else {
-            // Admin/Manager/Supervisor sees all nurses
             nurses = nursesData.filter(n => n.role === 'nurse');
             total = nurses.length;
             completed = nurses.filter(n => n.trainingStatus === 'Completed').length;
@@ -1232,19 +1361,35 @@
         closeSidebar();
     }
 
-    // ========== TRAINING STATUS (With module completion) ==========
+    // ========== TRAINING STATUS (Supervisor/Manager/Admin) ==========
     let expandedNurses = new Set();
 
     function renderTrainingStatusUpdater() {
         let html = `<div class="page-header"><h1 class="page-title">✅ Training Status</h1><p class="page-desc">Click on any staff member to expand and mark training items</p></div>
         <div class="filter-bar">
+            <input type="text" id="searchTrainInput" placeholder="🔍 Search nurse" onkeyup="filterTrainingCards()">
+            <select id="filterDeptTrain" onchange="filterTrainingCards()">
+                <option value="all">All Departments</option>
+                <option value="Labour Room">Labour Room</option>
+                <option value="Emergency Department">Emergency Dept</option>
+                <option value="ICU">ICU</option>
+                <option value="Infection Control">Infection Control</option>
+                <option value="Critical Care">Critical Care</option>
+                <option value="Ward">Ward</option>
+            </select>
             <button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>
             <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalculate Competency</button>
-            <button class="export-btn" onclick="exportFullBackup()">💾 Backup</button>
+            <button class="backup-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
+            <button class="export-btn" onclick="exportFullBackup()">💾 Backup System</button>
         </div>
         <div id="trainingCardsContainer">`;
         
-        let filtered = nursesData;
+        const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
+        const search = document.getElementById('searchTrainInput')?.value.toLowerCase() || '';
+        let filtered = nursesData.filter(n => 
+            (filterDept === 'all' || n.department === filterDept) && 
+            (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))
+        );
         
         filtered.forEach((nurse) => {
             const modules = getAllModulesCount(nurse.department);
@@ -1286,12 +1431,15 @@
                     });
                     html += `</div></div></div>`;
                 });
+            } else {
+                html += `<p>No training modules defined for this department.</p>`;
             }
             
             html += `<div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', true, event)">✅ Mark All Complete</button>
                         <button class="btn-small" onclick="markAllModules('${nurse.empId}', false, event)">⬜ Mark All Incomplete</button>
                         <button class="edit-btn" onclick="openEditNurseModal(${nurse.id})">✏️ Edit Nurse</button>
+                        ${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${nurse.id})">🔑 Reset Password</button>` : ''}
                     </div>
                 </div>
             </div>`;
@@ -1300,6 +1448,20 @@
         html += `</div>`;
         document.getElementById('mainContent').innerHTML = html;
         closeSidebar();
+    }
+
+    function filterTrainingCards() {
+        const searchTerm = document.getElementById('searchTrainInput')?.value.toLowerCase() || '';
+        const filterDept = document.getElementById('filterDeptTrain')?.value || 'all';
+        
+        document.querySelectorAll('.training-card').forEach(card => {
+            const nurseName = card.getAttribute('data-nurse-name') || '';
+            const nurseEmp = card.getAttribute('data-nurse-emp') || '';
+            const nurseDept = card.getAttribute('data-nurse-dept') || '';
+            const matchesSearch = nurseName.includes(searchTerm) || nurseEmp.includes(searchTerm);
+            const matchesDept = filterDept === 'all' || nurseDept === filterDept;
+            card.style.display = (matchesSearch && matchesDept) ? '' : 'none';
+        });
     }
 
     function toggleTrainingCard(nurseId) {
@@ -1329,6 +1491,10 @@
 
     function toggleModuleCompletion(empId, moduleName, event) {
         event.stopPropagation();
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Nurse Manager, and Supervisors can update training status', 'error');
+            return;
+        }
         const nurse = nursesData.find(n => n.empId === empId);
         if(nurse) {
             if(!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
@@ -1342,26 +1508,27 @@
                 addAuditLog("MODULE_UNCOMPLETED", `${nurse.name} unmarked: ${moduleName}`);
             }
             nurse.lastActivity = new Date().toISOString().split('T')[0];
-            
-            // Check if all modules completed
-            const modules = getAllModulesCount(nurse.department);
-            const completedCount = nurse.trainingModulesCompleted.length;
-            if (completedCount === modules.total) {
-                nurse.trainingStatus = 'Completed';
-                showNotification(`${nurse.name} has completed all training modules!`, 'success');
-            } else if (completedCount > 0 && nurse.trainingStatus === 'Pending') {
-                nurse.trainingStatus = 'In Progress';
+            const oldPrivilege = nurse.privilege;
+            const newPrivilege = recalculatePrivilege(nurse);
+            if (oldPrivilege !== newPrivilege) {
+                nurse.privilege = newPrivilege;
+                addAuditLog("PRIVILEGE_AUTO_UPDATE", `${nurse.name} competency changed from Level ${oldPrivilege} to Level ${newPrivilege}`);
+                showNotification(`${nurse.name} competency changed to Level ${newPrivilege}!`, 'info');
             }
-            
             updateLoginUsers();
             const currentExpanded = new Set(expandedNurses);
             renderTrainingStatusUpdater();
             currentExpanded.forEach(id => expandedNurses.add(id));
+            if (currentUser.empId === empId) updateSidebarPrivilege();
         }
     }
 
     function markAllModules(empId, complete, event) {
-        event.stopPropagation();
+        if (event) event.stopPropagation();
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Nurse Manager, and Supervisors can update training status', 'error');
+            return;
+        }
         const nurse = nursesData.find(n => n.empId === empId);
         if(nurse) {
             const modules = getAllModulesCount(nurse.department);
@@ -1369,29 +1536,539 @@
             modules.categories.forEach(cat => allItems.push(...cat.items));
             if (complete) {
                 nurse.trainingModulesCompleted = [...allItems];
-                nurse.trainingStatus = 'Completed';
                 addAuditLog("ALL_MODULES_COMPLETED", `${nurse.name} marked all ${allItems.length} modules complete`);
                 showNotification(`${nurse.name} completed all ${allItems.length} modules!`, 'success');
             } else {
                 nurse.trainingModulesCompleted = [];
-                nurse.trainingStatus = 'Pending';
                 addAuditLog("ALL_MODULES_INCOMPLETE", `${nurse.name} marked all modules incomplete`);
             }
             nurse.lastActivity = new Date().toISOString().split('T')[0];
+            const newPrivilege = recalculatePrivilege(nurse);
+            nurse.privilege = newPrivilege;
             updateLoginUsers();
             const currentExpanded = new Set(expandedNurses);
             renderTrainingStatusUpdater();
             currentExpanded.forEach(id => expandedNurses.add(id));
+            if (currentUser.empId === empId) updateSidebarPrivilege();
         }
     }
 
-    // ========== NURSE MANAGEMENT (Placeholders) ==========
+    function recalculatePrivilege(nurse) {
+        if (!systemConfig.autoAssignPrivilege || nurse.role !== 'nurse') return nurse.privilege;
+        let newPrivilege = nurse.privilege;
+        const modules = getAllModulesCount(nurse.department);
+        const completedCount = nurse.trainingModulesCompleted?.length || 0;
+        const allModulesCompleted = completedCount === modules.total;
+        const lastActivity = new Date(nurse.lastActivity || nurse.joiningDate);
+        const daysInactive = Math.floor((new Date() - lastActivity) / (1000 * 60 * 60 * 24));
+        if (daysInactive > systemConfig.inactivityDaysThreshold && newPrivilege > 1) newPrivilege--;
+        if (nurse.quizScore) {
+            if (nurse.quizScore >= systemConfig.privilegeUpgradeScore && newPrivilege < 3) newPrivilege++;
+            else if (nurse.quizScore < systemConfig.privilegeDowngradeScore && newPrivilege > 1) newPrivilege--;
+        }
+        if (allModulesCompleted && newPrivilege < 2) newPrivilege = 2;
+        return Math.min(3, Math.max(1, newPrivilege));
+    }
+
+    // ========== NURSE TRACKER ==========
+    function renderTrackerSheet() {
+        let nursesToShow;
+        if (currentUser.role === 'nurse') {
+            nursesToShow = nursesData.filter(n => n.empId === currentUser.id);
+        } else {
+            nursesToShow = nursesData.filter(n => n.role === 'nurse');
+        }
+        
+        let html = `<div class="page-header"><h1 class="page-title">📋 ${currentUser.role === 'nurse' ? 'My Competency Progress' : 'Nurse Competency Tracker'}</h1>
+        <p class="page-desc">${currentUser.role === 'nurse' ? 'Track your training progress and competency level' : 'Track all nurses\' training progress and competency levels'}</p></div>
+        <div class="filter-bar">
+            <input type="text" id="searchName" placeholder="🔍 Search" onkeyup="renderTrackerSheet()">
+            <select id="filterDept" onchange="renderTrackerSheet()">
+                <option value="all">All Departments</option>
+                <option value="Labour Room">Labour Room</option>
+                <option value="Emergency Department">Emergency Dept</option>
+                <option value="ICU">ICU</option>
+                <option value="Infection Control">Infection Control</option>
+                <option value="Critical Care">Critical Care</option>
+                <option value="Ward">Ward</option>
+            </select>
+            <select id="filterPrivilege" onchange="renderTrackerSheet()">
+                <option value="all">All Privileges</option>
+                <option value="1">Level 1 (Trainee)</option>
+                <option value="2">Level 2 (Independent)</option>
+                <option value="3">Level 3 (Preceptor)</option>
+            </select>
+            ${currentUser.role !== 'nurse' ? `<button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button>` : ''}
+            <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
+        </div>
+        <div class="tracker-card">
+            <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: var(--bg-primary);">
+                        <th style="padding: 10px 8px;">Emp ID</th>
+                        <th style="padding: 10px 8px;">Name</th>
+                        <th style="padding: 10px 8px;">Department</th>
+                        <th style="padding: 10px 8px; text-align: center;">Quiz %</th>
+                        <th style="padding: 10px 8px; text-align: center;">Modules</th>
+                        <th style="padding: 10px 8px;">Progress</th>
+                        <th style="padding: 10px 8px;">Status</th>
+                        <th style="padding: 10px 8px;">Competency</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        
+        const filterDept = document.getElementById('filterDept')?.value || 'all';
+        const filterPriv = document.getElementById('filterPrivilege')?.value || 'all';
+        const search = document.getElementById('searchName')?.value.toLowerCase() || '';
+        
+        let filtered = nursesToShow.filter(n => 
+            (filterDept === 'all' || n.department === filterDept) && 
+            (filterPriv === 'all' || n.privilege == filterPriv) && 
+            (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search))
+        );
+        
+        filtered.forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
+            let atRiskBadge = (n.quizScore && n.quizScore < 60) ? '<span class="badge badge-danger">⚠️</span>' : '';
+            html += `<tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 8px 6px;"><strong>${n.empId}</strong> ${atRiskBadge}</td>
+                <td style="padding: 8px 6px;">${n.name}</td>
+                <td style="padding: 8px 6px;">${n.department}</td>
+                <td style="padding: 8px 6px; text-align: center;">${n.quizScore || '—'}%</td>
+                <td style="padding: 8px 6px; text-align: center;">${modulesDone}/${modules.total}</td>
+                <td style="padding: 8px 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="progress-bar-small"><div class="progress-fill-small" style="width:${percent}%"></div></div>
+                        <span style="font-size: 11px;">${percent}%</span>
+                    </div>
+                </td>
+                <td style="padding: 8px 6px;">${statusBadge}</td>
+                <td style="padding: 8px 6px;"><span style="background: ${n.privilege === 1 ? '#3b82f6' : (n.privilege === 2 ? '#10b981' : '#8b5cf6')}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px;">${n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor')}</span></td>
+            </tr>`;
+        });
+        html += `</tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 11px; color: var(--text-secondary);">Total: ${filtered.length} nurses</p>
+        </div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    // ========== REPORTS ==========
+    function renderReports() {
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const totalNurses = nurses.length;
+        const completedTraining = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        const pendingTraining = nurses.filter(n => n.trainingStatus === 'Pending').length;
+        const inProgressTraining = nurses.filter(n => n.trainingStatus === 'In Progress').length;
+        const avgQuizScore = nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1);
+        const level1Count = nurses.filter(n => n.privilege === 1).length;
+        const level2Count = nurses.filter(n => n.privilege === 2).length;
+        const level3Count = nurses.filter(n => n.privilege === 3).length;
+        
+        let html = `<div class="page-header">
+            <h1 class="page-title">📑 Reports & Analytics</h1>
+            <p class="page-desc">Export competency data and view detailed analytics</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">${totalNurses}</div><div class="stat-label">Total Nurses</div></div>
+            <div class="stat-card"><div class="stat-number">${completedTraining}</div><div class="stat-label">Completed</div></div>
+            <div class="stat-card"><div class="stat-number">${inProgressTraining}</div><div class="stat-label">In Progress</div></div>
+            <div class="stat-card"><div class="stat-number">${pendingTraining}</div><div class="stat-label">Pending</div></div>
+            <div class="stat-card"><div class="stat-number">${Math.round(avgQuizScore)}%</div><div class="stat-label">Avg Quiz</div></div>
+            <div class="stat-card"><div class="stat-number">${level3Count}</div><div class="stat-label">Level 3</div></div>
+        </div>
+        <div class="filter-bar">
+            <button class="export-btn" onclick="exportToCSV()">📎 Export CSV</button>
+            <button class="export-btn" onclick="exportToPDFReport()">📄 Export PDF</button>
+            <button class="export-btn" onclick="generateWeeklyReport()">📊 Weekly Report</button>
+            <button class="backup-btn" onclick="exportFullBackup()">💾 Full Backup</button>
+        </div>
+        <div class="tracker-card">
+            <h3 style="margin-bottom: 1rem;">📋 Nurse Competency Data</h3>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-primary);">
+                            <th style="padding: 10px 8px;">Emp ID</th>
+                            <th style="padding: 10px 8px;">Name</th>
+                            <th style="padding: 10px 8px;">Department</th>
+                            <th style="padding: 10px 8px; text-align: center;">Quiz%</th>
+                            <th style="padding: 10px 8px; text-align: center;">Modules</th>
+                            <th style="padding: 10px 8px;">Progress</th>
+                            <th style="padding: 10px 8px;">Status</th>
+                            <th style="padding: 10px 8px;">Competency</th>
+                            <th style="padding: 10px 8px;">Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        
+        nurses.forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:20px;">✓ Completed</span>' : (n.trainingStatus === 'In Progress' ? '<span style="background:#fef9c3; color:#854d0e; padding:4px 10px; border-radius:20px;">🔄 In Progress</span>' : '<span style="background:#fff3e3; color:#b45309; padding:4px 10px; border-radius:20px;">⏳ Pending</span>');
+            let competencyText = n.privilege === 1 ? '⭐ L1 Trainee' : (n.privilege === 2 ? '⭐⭐ L2 Independent' : '⭐⭐⭐ L3 Preceptor');
+            let competencyColor = n.privilege === 1 ? '#3b82f6' : (n.privilege === 2 ? '#10b981' : '#8b5cf6');
+            let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
+            
+            html += `<tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px 8px;"><strong>${n.empId}</strong></td>
+                <td style="padding: 10px 8px;">${n.name}</td>
+                <td style="padding: 10px 8px;">${n.department}</td>
+                <td style="padding: 10px 8px; text-align: center;">${n.quizScore ? n.quizScore + '%' : '—'}</td>
+                <td style="padding: 10px 8px; text-align: center;">${modulesDone}/${modules.total}</td>
+                <td style="padding: 10px 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="background: #e2e8f0; border-radius: 10px; width: 80px; height: 6px; overflow: hidden;">
+                            <div style="background: #10b981; width: ${percent}%; height: 6px;"></div>
+                        </div>
+                        <span style="font-size: 11px;">${percent}%</span>
+                    </div>
+                </td>
+                <td style="padding: 10px 8px;">${statusBadge}</td>
+                <td style="padding: 10px 8px;"><span style="background: ${competencyColor}; color: white; padding: 4px 10px; border-radius: 20px;">${competencyText}</span></td>
+                <td style="padding: 10px 8px;">${lastActive}</td>
+            </tr>`;
+        });
+        
+        html += `</tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 11px;">Total nurses: ${nurses.length}</p>
+        </div>`;
+        
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function exportToCSV() {
+        let csv = "Emp ID,Name,Department,Quiz Score,Modules Completed,Total Modules,Progress %,Training Status,Competency Level,Last Activity\n";
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            let lastActive = n.lastActivity ? new Date(n.lastActivity).toLocaleDateString() : n.joiningDate;
+            csv += `"${n.empId}","${n.name}","${n.department}","${n.quizScore || '—'}","${modulesDone}","${modules.total}","${percent}%","${n.trainingStatus}","${n.privilege === 1 ? 'Level 1 Trainee' : (n.privilege === 2 ? 'Level 2 Independent' : 'Level 3 Preceptor')}","${lastActive}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_competency_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("EXPORT_CSV", "Exported competency report to CSV");
+        showNotification('CSV exported successfully!', 'success');
+    }
+
+    function exportToPDFReport() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape');
+        const tableData = nursesData.filter(n => n.role === 'nurse').map(n => {
+            const modules = getAllModulesCount(n.department);
+            const modulesDone = n.trainingModulesCompleted?.length || 0;
+            const percent = modules.total > 0 ? Math.round((modulesDone/modules.total)*100) : 0;
+            return [n.empId, n.name, n.department, n.quizScore ? n.quizScore+'%' : '—', `${modulesDone}/${modules.total}`, `${percent}%`, n.trainingStatus, n.privilege === 1 ? 'L1' : (n.privilege === 2 ? 'L2' : 'L3')];
+        });
+        doc.autoTable({
+            head: [['Emp ID', 'Name', 'Department', 'Quiz%', 'Modules', 'Progress', 'Status', 'Competency']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: { fillColor: [11, 59, 79], textColor: [255, 255, 255], fontSize: 10 },
+            bodyStyles: { fontSize: 9 },
+            margin: { top: 30 },
+        });
+        doc.setFontSize(16);
+        doc.setTextColor(11, 59, 79);
+        doc.text("SMARTCARE - Nurse Competency Report", 14, 20);
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 27);
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const totalNurses = nurses.length;
+        const completedTraining = nurses.filter(n => n.trainingStatus === 'Completed').length;
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Total Nurses: ${totalNurses} | Training Completed: ${completedTraining} | Report Date: ${new Date().toISOString().split('T')[0]}`, 14, 280);
+        doc.save(`smartcare_competency_${new Date().toISOString().split('T')[0]}.pdf`);
+        addAuditLog("EXPORT_PDF", "Exported competency report to PDF");
+        showNotification('PDF exported successfully!', 'success');
+    }
+
+    function generateWeeklyReport() {
+        const nurses = nursesData.filter(n => n.role === 'nurse');
+        const report = {
+            generatedAt: new Date().toISOString(),
+            totalNurses: nurses.length,
+            completedTraining: nurses.filter(n => n.trainingStatus === 'Completed').length,
+            avgQuizScore: nurses.filter(n => n.quizScore).reduce((s,n)=>s+n.quizScore,0)/(nurses.filter(n=>n.quizScore).length||1),
+            topPerformers: nurses.filter(n => n.quizScore && n.quizScore >= 85).map(n => ({ name: n.name, score: n.quizScore })),
+            atRiskNurses: nurses.filter(n => n.quizScore && n.quizScore < 60).map(n => ({ name: n.name, score: n.quizScore }))
+        };
+        const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(reportBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smartcare_weekly_report_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        addAuditLog("WEEKLY_REPORT", "Weekly report generated");
+        showNotification('Weekly report generated!', 'success');
+    }
+
+    // ========== USER MANAGEMENT ==========
+    function renderUserManagement() {
+        let html = `<div class="page-header">
+            <h1 class="page-title">👔 User Management</h1>
+            <p class="page-desc">Manage nurse accounts, roles, and permissions</p>
+        </div>
+        <div class="filter-bar">
+            <button class="add-btn" onclick="openAddNurseModal()">+ Add New User</button>
+            <button class="import-btn" onclick="openBulkTrainingModal()">📚 Bulk Assign Training</button>
+            <input type="text" id="searchUser" placeholder="🔍 Search by name or ID" onkeyup="renderUserManagement()" style="width: 200px;">
+            <select id="filterDeptUser" onchange="renderUserManagement()">
+                <option value="all">All Departments</option>
+                <option value="Labour Room">Labour Room</option>
+                <option value="Emergency Department">Emergency Dept</option>
+                <option value="ICU">ICU</option>
+                <option value="Infection Control">Infection Control</option>
+                <option value="Critical Care">Critical Care</option>
+                <option value="Ward">Ward</option>
+            </select>
+            <select id="filterRoleUser" onchange="renderUserManagement()">
+                <option value="all">All Roles</option>
+                <option value="nurse">👩‍⚕️ Nurse</option>
+                <option value="supervisor">👩‍🏫 Supervisor</option>
+                <option value="manager">👔 Nurse Manager</option>
+            </select>
+            <button class="export-btn" onclick="exportToCSV()">📎 Export CSV</button>
+            <button class="save-btn" onclick="runPrivilegeRecalculation()">🔄 Recalc Privileges</button>
+        </div>
+        <div class="tracker-card">
+            <div style="overflow-x: auto;">
+                <table style="min-width: 1100px; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-primary);">
+                            <th style="padding: 10px 8px;">Emp ID</th>
+                            <th style="padding: 10px 8px;">Name</th>
+                            <th style="padding: 10px 8px;">Department</th>
+                            <th style="padding: 10px 8px;">Role</th>
+                            <th style="padding: 10px 8px;">Privilege</th>
+                            <th style="padding: 10px 8px;">Training %</th>
+                            <th style="padding: 10px 8px;">Quiz %</th>
+                            <th style="padding: 10px 8px;">Status</th>
+                            <th style="padding: 10px 8px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        
+        const search = document.getElementById('searchUser')?.value.toLowerCase() || '';
+        const filterDept = document.getElementById('filterDeptUser')?.value || 'all';
+        const filterRole = document.getElementById('filterRoleUser')?.value || 'all';
+        let filtered = nursesData.filter(n => n.empId !== 'ADMIN999' && (filterDept === 'all' || n.department === filterDept) && (filterRole === 'all' || n.role === filterRole) && (n.name.toLowerCase().includes(search) || n.empId.toLowerCase().includes(search)));
+        
+        filtered.forEach(n => {
+            let roleBadge = n.role === 'manager' ? '<span class="role-badge role-manager">👔 Manager</span>' : (n.role === 'supervisor' ? '<span class="role-badge role-supervisor">👩‍🏫 Supervisor</span>' : '<span class="role-badge role-nurse">👩‍⚕️ Nurse</span>');
+            let modules = getAllModulesCount(n.department);
+            let trainingPercent = modules.total > 0 ? Math.round(((n.trainingModulesCompleted?.length || 0)/modules.total)*100) : 0;
+            let statusBadge = n.trainingStatus === 'Completed' ? '<span class="status-completed">✓</span>' : (n.trainingStatus === 'In Progress' ? '<span class="status-inprogress">🔄</span>' : '<span class="status-pending">⏳</span>');
+            
+            html += `<tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px 8px;"><strong>${n.empId}</strong></td>
+                <td style="padding: 10px 8px;">${n.name}</td>
+                <td style="padding: 10px 8px;">${n.department}</td>
+                <td style="padding: 10px 8px;">${roleBadge}</td>
+                <td style="padding: 10px 8px;">${n.privilege === 1 ? '⭐ L1' : (n.privilege === 2 ? '⭐⭐ L2' : '⭐⭐⭐ L3')}</td>
+                <td style="padding: 10px 8px;">${trainingPercent}%</td>
+                <td style="padding: 10px 8px;">${n.quizScore || '—'}%</td>
+                <td style="padding: 10px 8px;">${statusBadge}</td>
+                <td style="padding: 10px 8px;">
+                    <div class="action-buttons">
+                        <button class="edit-btn" onclick="openEditNurseModal(${n.id})">✏️ Edit</button>
+                        <button class="promote-btn" onclick="openRoleModal(${n.id})">Change Role</button>
+                        <button class="delete-btn" onclick="deleteNurse(${n.id})">🗑️ Delete</button>
+                        ${currentUser.role === 'admin' ? `<button class="reset-pwd-btn" onclick="openPasswordResetModal(${n.id})">🔑 Reset Pwd</button>` : ''}
+                    </div>
+                </td>
+            </tr>`;
+        });
+        
+        html += `</tbody>
+                </table>
+            </div>
+            <p style="margin-top: 0.8rem; font-size: 0.75rem;">Total: ${filtered.length} users</p>
+        </div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    // ========== AUDIT LOG (Admin Only) ==========
+    function renderAuditLog() { 
+        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1><p class="page-desc">Complete history of all user actions</p></div><div class="tracker-card">`;
+        auditLog.slice(0, 100).forEach(l => { html += `<div class="audit-log-entry">${new Date(l.timestamp).toLocaleString()} | <strong>${l.user}</strong> (${l.role}) | ${l.action} | ${l.details}</div>`; });
+        html += `<p style="margin-top: 1rem; font-size: 0.7rem;">Total: ${auditLog.length} entries</p></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    // ========== SETTINGS ==========
+    function renderSettings() {
+        let html = `<div class="page-header">
+            <h1 class="page-title">🔧 System Settings</h1>
+            <p class="page-desc">Configure system preferences, evaluation criteria, and account settings</p>
+        </div>
+        <div class="card">
+            <div class="setting-group">
+                <h3>👤 Account Settings</h3>
+                <div class="setting-row"><span class="setting-label">Change Password</span><button class="edit-btn" onclick="openPasswordChangeModal()">Change Password</button></div>
+                <div class="setting-row"><span class="setting-label">Name</span><span class="setting-value">${currentUser.name}</span></div>
+                <div class="setting-row"><span class="setting-label">Employee ID</span><span class="setting-value">${currentUser.id}</span></div>
+                <div class="setting-row"><span class="setting-label">Role</span><span class="setting-value">${currentUser.role.toUpperCase()}</span></div>
+                <div class="setting-row"><span class="setting-label">Department</span><span class="setting-value">${currentUser.department}</span></div>
+            </div>
+            <div class="setting-group">
+                <h3>⚙️ Evaluation Settings</h3>
+                <div class="setting-row"><span class="setting-label">Passing Score (%)</span><div><input type="number" id="passingScore" value="${systemConfig.passingScore}" min="0" max="100" style="width:80px;"> <button class="save-btn" onclick="updateSetting('passingScore', document.getElementById('passingScore').value)">Save</button></div></div>
+                <div class="setting-row"><span class="setting-label">Upgrade Score (%)</span><div><input type="number" id="upgradeScore" value="${systemConfig.privilegeUpgradeScore}" min="0" max="100" style="width:80px;"> <button class="save-btn" onclick="updateSetting('privilegeUpgradeScore', document.getElementById('upgradeScore').value)">Save</button></div></div>
+                <div class="setting-row"><span class="setting-label">Downgrade Score (%)</span><div><input type="number" id="downgradeScore" value="${systemConfig.privilegeDowngradeScore}" min="0" max="100" style="width:80px;"> <button class="save-btn" onclick="updateSetting('privilegeDowngradeScore', document.getElementById('downgradeScore').value)">Save</button></div></div>
+                <div class="setting-row"><span class="setting-label">Quiz Questions</span><div><input type="number" id="quizCount" value="${systemConfig.quizQuestionsCount}" min="5" max="20" style="width:80px;"> <button class="save-btn" onclick="updateSetting('quizQuestionsCount', document.getElementById('quizCount').value)">Save</button></div></div>
+                <div class="setting-row"><span class="setting-label">Auto-assign Privilege</span><div><label class="toggle-switch ${systemConfig.autoAssignPrivilege ? 'active' : ''}" onclick="toggleAutoAssign()"></label></div></div>
+            </div>
+            <div class="setting-group">
+                <h3>📊 Competency Rules</h3>
+                <div class="setting-row"><span class="setting-label">Inactivity Days Threshold</span><div><input type="number" id="inactivityDays" value="${systemConfig.inactivityDaysThreshold}" min="7" max="90" style="width:80px;"> <button class="save-btn" onclick="updateSetting('inactivityDaysThreshold', document.getElementById('inactivityDays').value)">Save</button></div></div>
+                <div class="setting-row"><span class="setting-label">Training Required for Level 2</span><span class="setting-value">All modules must be completed</span></div>
+            </div>
+            <div class="setting-group">
+                <h3>📁 Data Management</h3>
+                <div class="setting-row"><span class="setting-label">Export All Data</span><button class="export-btn" onclick="exportFullBackup()">💾 Export Backup</button></div>
+                <div class="setting-row"><span class="setting-label">Restore from Backup</span><button class="edit-btn" onclick="document.getElementById('restoreFile').click()">📥 Restore Backup</button><input type="file" id="restoreFile" style="display:none" accept=".json" onchange="importFullBackup(this.files[0])"></div>
+                <div class="setting-row"><span class="setting-label">Clear All Data</span><button class="delete-btn" onclick="clearAllData()">⚠️ Clear All Data</button></div>
+            </div>
+            <div class="setting-group">
+                <h3>ℹ️ System Information</h3>
+                <div class="setting-row"><span class="setting-label">Version</span><span class="setting-value">SMARTCARE v2.0.0</span></div>
+                <div class="setting-row"><span class="setting-label">Total Nurses</span><span class="setting-value">${nursesData.filter(n => n.role === 'nurse').length}</span></div>
+                <div class="setting-row"><span class="setting-label">Data Storage</span><span class="setting-value">Local Storage (Browser)</span></div>
+            </div>
+        </div>`;
+        document.getElementById('mainContent').innerHTML = html;
+        closeSidebar();
+    }
+
+    function toggleAutoAssign() {
+        systemConfig.autoAssignPrivilege = !systemConfig.autoAssignPrivilege;
+        localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
+        addAuditLog("CONFIG_CHANGE", `Auto-assign privilege set to ${systemConfig.autoAssignPrivilege}`);
+        showNotification(`Auto-assign privilege ${systemConfig.autoAssignPrivilege ? 'enabled' : 'disabled'}`, 'success');
+        renderSettings();
+    }
+
+    function updateSetting(key, value) {
+        systemConfig[key] = parseInt(value);
+        localStorage.setItem('smartcare_config', JSON.stringify(systemConfig));
+        addAuditLog("CONFIG_CHANGE", `${key} changed to ${value}`);
+        showNotification(`${key} updated to ${value}`, 'success');
+        renderSettings();
+    }
+
+    function clearAllData() {
+        if (confirm('⚠️ WARNING: This will delete ALL data! This action cannot be undone. Are you sure?')) {
+            if (confirm('LAST WARNING: Type "CONFIRM" to proceed')) {
+                const confirmation = prompt('Type "CONFIRM" to delete all data:');
+                if (confirmation === 'CONFIRM') {
+                    localStorage.clear();
+                    showNotification('All data cleared. Redirecting to login...', 'info');
+                    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+                }
+            }
+        }
+    }
+
+    // ========== BULK TRAINING ==========
+    function openBulkTrainingModal() {
+        if (currentUser.role !== 'admin' && currentUser.role !== 'manager' && currentUser.role !== 'supervisor') {
+            showNotification('Only Admin, Manager, and Supervisor can assign bulk training', 'error'); return;
+        }
+        const nurseSelect = document.getElementById('bulkNurseSelect');
+        const moduleSelect = document.getElementById('bulkModuleSelect');
+        nurseSelect.innerHTML = '';
+        nursesData.filter(n => n.role === 'nurse').forEach(n => {
+            const option = document.createElement('option'); option.value = n.empId; option.textContent = `${n.name} (${n.empId}) - ${n.department}`; nurseSelect.appendChild(option);
+        });
+        const allModules = new Set();
+        for (const dept in trainingModulesByDept) {
+            for (const cat in trainingModulesByDept[dept]) {
+                trainingModulesByDept[dept][cat].forEach(m => allModules.add(m));
+            }
+        }
+        moduleSelect.innerHTML = '';
+        Array.from(allModules).forEach(m => {
+            const option = document.createElement('option'); option.value = m; option.textContent = m; moduleSelect.appendChild(option);
+        });
+        document.getElementById('bulkTrainingModal').style.display = 'flex';
+    }
+    function closeBulkTrainingModal() { document.getElementById('bulkTrainingModal').style.display = 'none'; }
+    function assignBulkTraining() {
+        const nurseSelect = document.getElementById('bulkNurseSelect');
+        const moduleSelect = document.getElementById('bulkModuleSelect');
+        const selectedNurses = Array.from(nurseSelect.selectedOptions).map(opt => opt.value);
+        const selectedModules = Array.from(moduleSelect.selectedOptions).map(opt => opt.value);
+        if (selectedNurses.length === 0 || selectedModules.length === 0) { showNotification('Please select at least one nurse and one module', 'warning'); return; }
+        let assignedCount = 0;
+        selectedNurses.forEach(empId => {
+            const nurse = nursesData.find(n => n.empId === empId);
+            if (nurse) {
+                if (!nurse.trainingModulesCompleted) nurse.trainingModulesCompleted = [];
+                selectedModules.forEach(module => {
+                    if (!nurse.trainingModulesCompleted.includes(module)) {
+                        nurse.trainingModulesCompleted.push(module);
+                        assignedCount++;
+                    }
+                });
+                nurse.lastActivity = new Date().toISOString().split('T')[0];
+                recalculatePrivilege(nurse);
+            }
+        });
+        updateLoginUsers();
+        addAuditLog("BULK_TRAINING", `Assigned ${selectedModules.length} modules to ${selectedNurses.length} nurses`);
+        showNotification(`✅ Assigned ${assignedCount} training modules!`, 'success');
+        closeBulkTrainingModal();
+        renderTrainingStatusUpdater();
+    }
+
+    function runPrivilegeRecalculation() { 
+        const changes = updateAllPrivileges(); 
+        showNotification(`✅ Recalculated! ${changes} nurses had privilege changes.`, 'success'); 
+        renderTrainingStatusUpdater();
+    }
+    
+    function updateAllPrivileges() {
+        let changes = 0;
+        nursesData.forEach(nurse => {
+            const oldPrivilege = nurse.privilege;
+            const newPrivilege = recalculatePrivilege(nurse);
+            if (oldPrivilege !== newPrivilege) { nurse.privilege = newPrivilege; changes++; }
+        });
+        updateLoginUsers();
+        return changes;
+    }
+
+    // ========== NURSE MANAGEMENT FUNCTIONS ==========
     function openAddNurseModal() { document.getElementById('nurseModal').style.display = 'flex'; }
     function openEditNurseModal(nurseId) { 
         const nurse = nursesData.find(n => n.id === nurseId);
         if(nurse) {
             document.getElementById('nurseName').value = nurse.name;
             document.getElementById('nurseEmpId').value = nurse.empId;
+            document.getElementById('nurseDept').value = nurse.department;
+            document.getElementById('nursePrivilege').value = nurse.privilege;
+            document.getElementById('nurseRole').value = nurse.role;
             document.getElementById('nurseModal').style.display = 'flex';
         }
     }
@@ -1403,36 +2080,65 @@
         showNotification('Nurse deleted', 'success');
         renderUserManagement();
     }
-    function openRoleModal(nurseId) { document.getElementById('roleModal').style.display = 'flex'; }
+    function openRoleModal(nurseId) { 
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if(nurse) {
+            document.getElementById('roleModalTitle').innerText = `Change Role: ${nurse.name}`;
+            document.getElementById('roleModalNurse').innerHTML = `Current: <strong>${nurse.role.toUpperCase()}</strong>`;
+            document.getElementById('newRoleSelect').value = nurse.role;
+            document.getElementById('roleModal').style.display = 'flex';
+        }
+    }
     function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; }
-    function confirmRoleChange() { closeRoleModal(); showNotification('Role changed!', 'success'); }
-    function openPasswordResetModal(nurseId) { document.getElementById('passwordResetModal').style.display = 'flex'; }
+    function confirmRoleChange() { 
+        const newRole = document.getElementById('newRoleSelect').value;
+        if(selectedNurseForRoleChange) {
+            selectedNurseForRoleChange.role = newRole;
+            if (newRole === 'manager') selectedNurseForRoleChange.privilege = 3;
+            else if (newRole === 'supervisor') selectedNurseForRoleChange.privilege = Math.max(2, selectedNurseForRoleChange.privilege);
+            updateLoginUsers();
+            showNotification('Role changed!', 'success');
+            closeRoleModal();
+            renderUserManagement();
+        }
+    }
+    let selectedNurseForRoleChange = null;
+    function openPasswordResetModal(nurseId) { 
+        const nurse = nursesData.find(n => n.id === nurseId);
+        if(nurse) {
+            selectedNurseForPasswordReset = nurse;
+            document.getElementById('resetNurseName').innerHTML = `Reset password for: <strong>${nurse.name} (${nurse.empId})</strong>`;
+            document.getElementById('passwordResetModal').style.display = 'flex';
+        }
+    }
+    let selectedNurseForPasswordReset = null;
     function closePasswordResetModal() { document.getElementById('passwordResetModal').style.display = 'none'; }
-    function confirmPasswordReset() { closePasswordResetModal(); showNotification('Password reset!', 'success'); }
+    function confirmPasswordReset() { 
+        const newPassword = document.getElementById('newPassword').value;
+        if(selectedNurseForPasswordReset && newPassword.length >= 4) {
+            selectedNurseForPasswordReset.password = newPassword;
+            updateLoginUsers();
+            showNotification('Password reset!', 'success');
+            closePasswordResetModal();
+        } else {
+            showNotification('Password must be at least 4 characters', 'error');
+        }
+    }
     function openPasswordChangeModal() { document.getElementById('passwordChangeModal').style.display = 'flex'; }
     function closePasswordChangeModal() { document.getElementById('passwordChangeModal').style.display = 'none'; }
-    function confirmPasswordChange() { closePasswordChangeModal(); showNotification('Password changed!', 'success'); }
-    function exportToCSV() { showNotification('CSV exported!', 'success'); }
-    function exportToPDFReport() { showNotification('PDF exported!', 'success'); }
-    function generateWeeklyReport() { showNotification('Weekly report generated!', 'success'); }
-    function runPrivilegeRecalculation() { showNotification('Privileges recalculated!', 'success'); }
-    function openBulkTrainingModal() { document.getElementById('bulkTrainingModal').style.display = 'flex'; }
-    function closeBulkTrainingModal() { document.getElementById('bulkTrainingModal').style.display = 'none'; }
-    function assignBulkTraining() { closeBulkTrainingModal(); showNotification('Bulk training assigned!', 'success'); }
-    function updateAllPrivileges() { return 0; }
-    
-    // ========== OTHER PAGES ==========
-    function renderTrackerSheet() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>📋 Nurse Tracker</h3><p>Coming soon - This will show all nurses' progress</p></div>`; closeSidebar(); }
-    function renderReports() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>📑 Reports</h3><p>Coming soon - Detailed analytics and exports</p></div>`; closeSidebar(); }
-    function renderUserManagement() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>👥 User Management</h3><p>Coming soon - Manage all user accounts</p><button class="add-btn" onclick="openAddNurseModal()">+ Add New Nurse</button></div>`; closeSidebar(); }
-    function renderAuditLog() { 
-        let html = `<div class="page-header"><h1 class="page-title">📜 Audit Log</h1></div><div class="tracker-card">`;
-        auditLog.slice(0, 50).forEach(l => { html += `<div class="audit-log-entry">${new Date(l.timestamp).toLocaleString()} | <strong>${l.user}</strong> | ${l.action} | ${l.details}</div>`; });
-        html += `</div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        closeSidebar();
+    function confirmPasswordChange() { 
+        const currentPwd = document.getElementById('currentPassword').value;
+        const newPwd = document.getElementById('newPassword1').value;
+        const nurse = nursesData.find(n => n.empId === currentUser.id);
+        if(nurse && nurse.password === currentPwd) {
+            nurse.password = newPwd;
+            updateLoginUsers();
+            showNotification('Password changed!', 'success');
+            closePasswordChangeModal();
+        } else {
+            showNotification('Current password incorrect', 'error');
+        }
     }
-    function renderSettings() { document.getElementById('mainContent').innerHTML = `<div class="card"><h3>🔧 Settings</h3><p>System configuration coming soon</p></div>`; closeSidebar(); }
 
     // ========== MENU ==========
     const allMenuItems = [
@@ -1444,7 +2150,7 @@
         { id: "tracker", name: "Nurse Tracker", icon: "📋", roles: ["admin","manager","supervisor"] },
         { id: "reports", name: "Reports", icon: "📑", roles: ["admin","manager","supervisor"] },
         { id: "userManagement", name: "User Management", icon: "👥", roles: ["admin","manager","supervisor"] },
-        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin","manager"] },
+        { id: "auditLog", name: "Audit Log", icon: "📜", roles: ["admin"] },
         { id: "settings", name: "Settings", icon: "⚙️", roles: ["admin"] }
     ];
 
@@ -1508,15 +2214,12 @@
     window.toggleDarkMode = toggleDarkMode;
     window.resetInactivityTimer = resetInactivityTimer;
     window.extendSession = extendSession;
-    window.renderPreEvaluation = renderPreEvaluation;
-    window.renderPostEvaluation = renderPostEvaluation;
-    window.renderQuiz = renderQuiz;
-    window.resetQuiz = resetQuiz;
     window.renderTrainingStatusUpdater = renderTrainingStatusUpdater;
-    window.toggleTrainingCard = toggleTrainingCard;
+    window.filterTrainingCards = filterTrainingCards;
     window.toggleCategory = toggleCategory;
     window.toggleModuleCompletion = toggleModuleCompletion;
     window.markAllModules = markAllModules;
+    window.renderUserManagement = renderUserManagement;
     window.openAddNurseModal = openAddNurseModal;
     window.openEditNurseModal = openEditNurseModal;
     window.closeNurseModal = closeNurseModal;
@@ -1538,11 +2241,15 @@
     window.openBulkTrainingModal = openBulkTrainingModal;
     window.closeBulkTrainingModal = closeBulkTrainingModal;
     window.assignBulkTraining = assignBulkTraining;
-    window.renderUserManagement = renderUserManagement;
+    window.renderQuiz = renderQuiz;
+    window.resetQuiz = resetQuiz;
     window.renderReports = renderReports;
     window.renderTrackerSheet = renderTrackerSheet;
-    window.renderAuditLog = renderAuditLog;
     window.renderSettings = renderSettings;
+    window.renderAuditLog = renderAuditLog;
+    window.toggleAutoAssign = toggleAutoAssign;
+    window.updateSetting = updateSetting;
+    window.clearAllData = clearAllData;
 
     initDashboard();
 </script>
